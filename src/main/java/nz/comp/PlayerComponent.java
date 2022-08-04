@@ -1,0 +1,110 @@
+package nz.comp;
+
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.texture.AnimatedTexture;
+import com.almasb.fxgl.texture.AnimationChannel;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+public class PlayerComponent extends Component {
+    private HashMap<String,Integer> mapToken;
+    private HashMap<String,Integer> mapCoin;
+    List<Entity> devCard;
+    @Override
+    public void onAdded() {
+        mapToken=new HashMap<>(){{
+            put("whiteToken",0);
+            put("blueToken",0);
+            put("greenToken",0);
+            put("redToken",0);
+            put("blackToken",0);
+            put("score",0);
+        }};
+        mapCoin=new HashMap<>(){{
+            put("whiteToken",0);
+            put("blueToken",0);
+            put("greenToken",0);
+            put("redToken",0);
+            put("blackToken",0);
+            put("goldToken",0);
+        }};
+        devCard=new ArrayList<>();
+        showInfo();
+    }
+    @Override
+    public void onUpdate(double tpf) {
+    }
+    @Override
+    public void onRemoved() {
+        super.onRemoved();
+    }
+    public void addToken(String name) {
+        mapToken.replace(name,1+mapToken.get(name));
+
+    }
+    public void addScore(int n) {
+        mapToken.replace("score",n+mapToken.get("score"));
+
+    }
+    public int getToken(String name) {
+        return mapToken.get(name);
+    }
+
+    public void addCoin(String name,int n){
+        mapCoin.replace(name,n+mapCoin.get(name));
+
+    }
+    public void cutCoin(String name,int n){
+        mapCoin.replace(name,mapCoin.get(name)-n);
+
+    }
+
+    public void saveDecCard(Entity entity){
+        devCard.add(entity);
+    }
+
+    public void showInfo(){
+        entity.getViewComponent().clearChildren();
+        entity.getViewComponent().addChild(new Rectangle(1000,300, Color.GOLD));
+        Iterator<String> it = mapToken.keySet().iterator();
+        int its=1;
+        while(it.hasNext())
+        {
+            String key=it.next();
+            Text text = new Text(0,30*its,key+"="+mapToken.get(key));
+            text.setStyle("-fx-font-size: 30;");
+            entity.getViewComponent().addChild(text);
+            its++;
+        }
+
+        Iterator<String> is = mapCoin.keySet().iterator();
+        int iss=1;
+        while(is.hasNext())
+        {
+            String key=is.next();
+            Text text = new Text(300,30*iss,key+"Coin="+mapCoin.get(key));
+            text.setStyle("-fx-font-size: 30;");
+            entity.getViewComponent().addChild(text);
+            iss++;
+        }
+
+
+        for (int i = 0; i < devCard.size(); i++) {
+            devCard.get(i).setPosition(100+200*i,800);
+        }
+
+    }
+
+}
+
+
+
