@@ -15,6 +15,7 @@ import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import nz.proj.Config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,59 +29,55 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class CardComponent extends Component {
 
-    private String giveToken;
     private AnimatedTexture at;
     private HashMap<String,Integer> mapToken;
-    private int clevel;
+    private String giveToken;
+    private String clevel;
+    private List<String> coins=new ArrayList<>();
     public CardComponent(String level) {
-        mapToken=new HashMap<>(){{
-            put("whiteToken",0);
-            put("blueToken",0);
-            put("greenToken",0);
-            put("redToken",0);
-            put("blackToken",0);
-            put("goldToken",0);
-            put("score",0);
-        }};
+
         int RandomFrame= FXGLMath.random(0,24);
         at=new AnimatedTexture(new AnimationChannel(FXGL.image("cards_620_860.png")
-                ,5,620/5,860/5, Duration.seconds(1),RandomFrame,RandomFrame));
+                ,5,Config.CARD_WID,Config.CARD_HEI, Duration.seconds(1),RandomFrame,RandomFrame));
         
         int cardLevel;
         cardLevel=Integer.parseInt(level.substring(level.length()-1));
-        clevel=cardLevel;
-        mapToken.remove("goldToken");
-        
-        List<String> list=new ArrayList<>();
-        list.add("whiteToken");
-        list.add("blueToken");
-        list.add("greenToken");
-        list.add("redToken");
-        list.add("blackToken");
 
-        giveToken=list.get(FXGLMath.random(0,4));
 
-        Iterator<String> it = mapToken.keySet().iterator();
-        while(it.hasNext())
-        {
-            String key=it.next();
-            if (key=="score"){
-                if (level=="level1"){
-                    mapToken.replace(key,0);
-                }else if (level=="level2"){
-                    mapToken.replace(key,FXGLMath.random(1,3));
-                }else {
-                    mapToken.replace(key,FXGLMath.random(3,5));
-                }
-            }else {
-                mapToken.replace(key,FXGLMath.random(-1+cardLevel,2*cardLevel));
-            }
+        clevel=level;
+        giveToken=Config.list.get(FXGLMath.random(0,4));
 
-        }
+        mapToken=new HashMap<>(){{
+            put("score",2);
+            put("cardLevel",cardLevel);
+            put("blackToken",2);
+            put("blueToken",2);
+            put("whiteToken",2);
+
+        }};
+        coins.add("blackToken");
+        coins.add("blueToken");
+        coins.add("whiteToken");
+//        Iterator<String> it = mapToken.keySet().iterator();
+//        while(it.hasNext())
+//        {
+//            String key=it.next();
+//            if (key=="score"){
+//                if (level=="level1"){
+//                    mapToken.replace(key,0);
+//                }else if (level=="level2"){
+//                    mapToken.replace(key,FXGLMath.random(1,3));
+//                }else {
+//                    mapToken.replace(key,FXGLMath.random(3,5));
+//                }
+//            }else {
+//                mapToken.replace(key,FXGLMath.random(-1+cardLevel,2*cardLevel));
+//            }
+//
+//        }
     }
     @Override
     public void onAdded() {
-
         showInfo();
     }
     @Override
@@ -91,24 +88,24 @@ public class CardComponent extends Component {
         super.onRemoved();
     }
 
-    public int numToken(String name){
-        return mapToken.get(name);
-    }
 
-    public int getScore() {
-        return mapToken.get("score");
-    }
-    public String getToken() {
+    public String getGiveToken() {
         return giveToken;
     }
-    public int getLevel(){
+    public String getClevel() {
         return clevel;
     }
-
+    public HashMap<String,Integer> getMap(){
+        return mapToken;
+    }
+    public List<String> getCoins(){
+        return coins;
+    }
     public void showInfo(){
         entity.getViewComponent().clearChildren();
         entity.getViewComponent().addChild(at);
         at.play();
+
         Texture texture=FXGL.texture(giveToken+".png",50,50);
         texture.setTranslateX(70);
         entity.getViewComponent().addChild(texture);

@@ -8,7 +8,6 @@ import com.almasb.fxgl.texture.AnimationChannel;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,9 +17,10 @@ import java.util.List;
 public class PlayerComponent extends Component {
     private HashMap<String,Integer> mapToken;
     private HashMap<String,Integer> mapCoin;
-    List<Entity> devCard;
+    private List<Entity> saveCard;
     @Override
     public void onAdded() {
+        saveCard=new ArrayList<>();
         mapToken=new HashMap<>(){{
             put("whiteToken",0);
             put("blueToken",0);
@@ -37,7 +37,6 @@ public class PlayerComponent extends Component {
             put("blackToken",0);
             put("goldToken",0);
         }};
-        devCard=new ArrayList<>();
         showInfo();
     }
     @Override
@@ -47,29 +46,26 @@ public class PlayerComponent extends Component {
     public void onRemoved() {
         super.onRemoved();
     }
-    public void addToken(String name) {
-        mapToken.replace(name,1+mapToken.get(name));
 
-    }
-    public void addScore(int n) {
-        mapToken.replace("score",n+mapToken.get("score"));
 
-    }
-    public int getToken(String name) {
-        return mapToken.get(name);
-    }
-
-    public void addCoin(String name,int n){
-        mapCoin.replace(name,n+mapCoin.get(name));
+    public void addTokenAndScore(String name,int n) {
+        mapToken.replace(name,n+mapToken.get(name));
 
     }
     public void cutCoin(String name,int n){
         mapCoin.replace(name,mapCoin.get(name)-n);
 
     }
+    public void addCoin(String name){
+        mapCoin.replace(name,1+mapCoin.get(name));
 
-    public void saveDecCard(Entity entity){
-        devCard.add(entity);
+    }
+
+    public List<Entity> getSaveCard() {
+        return saveCard;
+    }
+    public void setSaveCard(ArrayList<Entity> saveCard) {
+
     }
 
     public void showInfo(){
@@ -97,10 +93,6 @@ public class PlayerComponent extends Component {
             iss++;
         }
 
-
-        for (int i = 0; i < devCard.size(); i++) {
-            devCard.get(i).setPosition(100+200*i,800);
-        }
 
     }
 

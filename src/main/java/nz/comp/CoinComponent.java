@@ -35,11 +35,11 @@ public class CoinComponent extends Component {
         super.onRemoved();
     }
 
-    public int getcoinNumber() {
-        return coinNumber;
+    public String getCoinName() {
+        return style;
     }
-    public void setcoinNumber(int coinNumber) {
-        this.coinNumber = this.coinNumber-coinNumber;
+    public void cutcoinNumber() {
+        this.coinNumber = this.coinNumber-1;
     }
     public String getStyle(){
         return style;

@@ -8,6 +8,7 @@ import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.Texture;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import nz.proj.Config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,23 +22,23 @@ public class NobleComponent extends Component {
     private HashMap<String,Integer> mapToken;
     public NobleComponent() {
         mapToken=new HashMap<>(){{
-            put("whiteToken",0);
-            put("blueToken",0);
-            put("greenToken",0);
-            put("redToken",0);
-            put("blackToken",0);
-            put("score",0);
+            put("whiteToken",5);
+            put("blueToken",5);
+            put("greenToken",5);
+//            put("redToken",0);
+//            put("blackToken",0);
+            put("score",5);
         }};
         at=new AnimatedTexture(new AnimationChannel(FXGL.image("nobles.png")
-                ,2,754/5,302/2, Duration.seconds(1),0,0));
+                ,2, Config.NOBLE_WID,Config.NOBLE_HEI, Duration.seconds(1),0,0));
 
-        Iterator<String> it = mapToken.keySet().iterator();
-        while(it.hasNext())
-        {
-            String key=it.next();
-            mapToken.replace(key,FXGLMath.random(3,5));
-
-        }
+//        Iterator<String> it = mapToken.keySet().iterator();
+//        while(it.hasNext())
+//        {
+//            String key=it.next();
+//            mapToken.replace(key,FXGLMath.random(3,5));
+//
+//        }
     }
     @Override
     public void onAdded() {

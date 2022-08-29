@@ -50,11 +50,7 @@ public class FirstCardComponent extends Component {
     public void onRemoved() {
         super.onRemoved();
     }
-
-    public int getCardNumber() {
-        return cardNumber;
-    }
-    public void setCardNumber() {
+    public void cutCardNumber() {
         this.cardNumber = this.cardNumber-1;
     }
 

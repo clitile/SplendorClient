@@ -9,10 +9,16 @@ import java.util.*;
 import static javafx.util.Duration.seconds;
 
 public interface Config {
-    int WIDTH = 1920;
-    int HEIGHT = 1080;
+    int APP_WIDTH = 1920;
+    int APP_HEIGHT = 1080;
+    int CARD_WID = 124;
+    int CARD_HEI=172;
+    int COIN_WID = 90;
+    int COIN_HEI=75;
+    int NOBLE_WID = 151;
+    int NOBLE_HEI=151;
     Color BlockColor = Color.DARKBLUE;
-    String BackMusic="rain.mp3";
+    String BackMusic="ba.mp3";
     List<String> list=new ArrayList<>(){{
         add("whiteToken");
         add("blueToken");

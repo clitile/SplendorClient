@@ -37,7 +37,7 @@ public class SplendorMainMenu extends FXGLMenu {
     public SplendorMainMenu() {
         super(MenuType.MAIN_MENU);
         loopBGM(Config.BackMusic);
-        getContentRoot().getChildren().setAll(texture("backg (2).png",Config.WIDTH,Config.HEIGHT));
+        getContentRoot().getChildren().setAll(texture("backg (2).png",Config.APP_WIDTH,Config.APP_HEIGHT));
         var blocks = new ArrayList<ColorBlock>();
 
         for (int i = 0; i < 15; i++) {
