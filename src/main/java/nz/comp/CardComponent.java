@@ -6,13 +6,6 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.Texture;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import nz.proj.Config;
@@ -47,34 +40,68 @@ public class CardComponent extends Component {
         clevel=level;
         giveToken=Config.list.get(FXGLMath.random(0,4));
 
-        mapToken=new HashMap<>(){{
-            put("score",2);
-            put("cardLevel",cardLevel);
-            put("blackToken",2);
-            put("blueToken",2);
-            put("whiteToken",2);
+        List<String> lists=new ArrayList<>();
+        int length=FXGLMath.random(1,3);
 
+
+        while (lists.size()!=length){
+            String a=Config.list.get(FXGLMath.random(0,4));
+            if (!lists.contains(a)){
+                lists.add(a);
+            }
+        }
+
+
+        mapToken=new HashMap<>(){{
+            put("cardLevel",cardLevel);
         }};
-        coins.add("blackToken");
-        coins.add("blueToken");
-        coins.add("whiteToken");
-//        Iterator<String> it = mapToken.keySet().iterator();
-//        while(it.hasNext())
-//        {
-//            String key=it.next();
-//            if (key=="score"){
-//                if (level=="level1"){
-//                    mapToken.replace(key,0);
-//                }else if (level=="level2"){
-//                    mapToken.replace(key,FXGLMath.random(1,3));
-//                }else {
-//                    mapToken.replace(key,FXGLMath.random(3,5));
-//                }
-//            }else {
-//                mapToken.replace(key,FXGLMath.random(-1+cardLevel,2*cardLevel));
-//            }
-//
-//        }
+
+        if (level == "level1") {
+            mapToken.put("score",0);
+            if (length==1){
+                mapToken.put(lists.get(0),3);
+            }else if (length==2){
+                mapToken.put(lists.get(0),FXGLMath.random(1,2));
+                mapToken.put(lists.get(1),FXGLMath.random(1,2));
+            }else {
+                mapToken.put(lists.get(0),FXGLMath.random(1,2));
+                mapToken.put(lists.get(1),1);
+                mapToken.put(lists.get(2),1);
+            }
+
+
+        }else if (level=="level2"){
+            mapToken.put("score",FXGLMath.random(1,3));
+            if (length==1){
+                mapToken.put(lists.get(0),FXGLMath.random(5,6));
+            }else if (length==2){
+                mapToken.put(lists.get(0),FXGLMath.random(4,6));
+                mapToken.put(lists.get(1),FXGLMath.random(1,3));
+            }else {
+                mapToken.put(lists.get(0),FXGLMath.random(2,3));
+                mapToken.put(lists.get(1),FXGLMath.random(2,3));
+                mapToken.put(lists.get(2),FXGLMath.random(2,3));
+            }
+
+        }else {
+            mapToken.put("score",FXGLMath.random(3,5));
+            if (length==1){
+                mapToken.put(lists.get(0),FXGLMath.random(6,7));
+            }else if (length==2){
+                mapToken.put(lists.get(0),FXGLMath.random(5,7));
+                mapToken.put(lists.get(1),FXGLMath.random(3,4));
+            }else {
+                mapToken.put(lists.get(0),FXGLMath.random(3,6));
+                mapToken.put(lists.get(1),FXGLMath.random(3,6));
+                mapToken.put(lists.get(2),FXGLMath.random(3,6));
+            }
+
+        }
+        for (int i = 0; i < length; i++) {
+            coins.add(lists.get(i));
+        }
+
+
     }
     @Override
     public void onAdded() {

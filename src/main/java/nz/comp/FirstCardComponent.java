@@ -53,7 +53,13 @@ public class FirstCardComponent extends Component {
     public void cutCardNumber() {
         this.cardNumber = this.cardNumber-1;
     }
-
+    public boolean numIsNull(){
+        if (this.cardNumber==0){
+            return false;
+        }else {
+            return true;
+        }
+    }
     public void showInfo(){
         entity.getViewComponent().clearChildren();
         entity.getViewComponent().addChild(at);

@@ -4,21 +4,24 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.MouseButton;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class SplendorApp extends GameApplication {
+    //玩家1
     Entity player;
+    //最左边的三张标志卡
     List<Entity> f_card_3;
+    //中间的12张卡
     List<Entity> s_card_12;
+    //硬币
     List<Entity> coinList;
+    //贵族卡
     List<Entity> nobleList;
 
     double mouse_x;
@@ -30,7 +33,6 @@ public class SplendorApp extends GameApplication {
         settings.setTitle("Splendor");
         settings.setVersion("1.0.1");
         settings.setAppIcon("fp_token-1.png");
-
 //        settings.setFullScreenAllowed(true);
 //        settings.setFullScreenFromStart(true);
 
@@ -43,44 +45,78 @@ public class SplendorApp extends GameApplication {
 //        });
 
     }
+
     @Override
     protected void initInput() {
 
         onBtnDown(MouseButton.PRIMARY,()->{
             List<Entity> entities;
+            //判断对中间的12张牌的实体操作
             if (mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI){
                 entities=getGameWorld().getEntitiesInRange(new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
                 if (entities.size()!=0){
                     HashMap<String,Integer> hashMap=entities.get(0).call("getMap");
                     List<String> coins=entities.get(0).call("getCoins");
-                    //对玩家进行操作
-                    player.call("addTokenAndScore","score",hashMap.get("score"));
-                    player.call("addTokenAndScore",entities.get(0).call("getGiveToken"),1);
-                    player.call("cutCoin",coins.get(0),hashMap.get(coins.get(0)));
-                    player.call("cutCoin",coins.get(1),hashMap.get(coins.get(1)));
-                    player.call("cutCoin",coins.get(2),hashMap.get(coins.get(2)));
-                    player.call("showInfo");
-                    //对最右边的三张操作
-                    f_card_3.get(hashMap.get("cardLevel")-1).call("cutCardNumber");
-                    f_card_3.get(hashMap.get("cardLevel")-1).call("showInfo");
-                    //替换成新的
-                    entities.get(0).removeFromWorld();
-                    s_card_12.set(s_card_12.indexOf(entities.get(0)),
-                            getGameWorld().spawn(entities.get(0).call("getClevel"),new SpawnData(entities.get(0).getX(),entities.get(0).getY())));
+                    boolean numisnull=f_card_3.get(hashMap.get("cardLevel")-1).call("numIsNull");
 
+                    boolean jud=true;
+                    for (int i = 0; i < coins.size(); i++) {
+                        boolean c=player.call("enoughCoin",coins.get(i),hashMap.get(coins.get(i)));
+                        if (c==false){
+                            jud=false;
+                        }
+                    }
+
+                    //判断是否点到实体&&卡片数量不为0&&拥有足够的宝石
+                    if (numisnull && jud){
+                        HashMap<String,Integer> tokenMap=player.call("getMapToken");
+
+
+                        for (int i = 0; i < coins.size(); i++) {
+                            //扣除玩家的硬币
+                            player.call("cutCoin",coins.get(i),hashMap.get(coins.get(i))-tokenMap.get(coins.get(i)));
+                            //买卡时还回硬币
+                            coinList.get(Config.list.indexOf(coins.get(i))).call("addCoin",hashMap.get(coins.get(i))-tokenMap.get(coins.get(i)));
+                            coinList.get(Config.list.indexOf(coins.get(i))).call("showInfo");
+                        }
+
+                        //玩家获得分数和宝石
+                        player.call("addTokenAndScore","score",hashMap.get("score"));
+                        player.call("addTokenAndScore",entities.get(0).call("getGiveToken"),1);
+                        player.call("showInfo");
+
+
+                        //对最右边的三张操作
+                        f_card_3.get(hashMap.get("cardLevel")-1).call("cutCardNumber");
+                        f_card_3.get(hashMap.get("cardLevel")-1).call("showInfo");
+                        //替换成新的
+                        entities.get(0).removeFromWorld();
+                        s_card_12.set(s_card_12.indexOf(entities.get(0)),
+                                getGameWorld().spawn(entities.get(0).call("getClevel"),new SpawnData(entities.get(0).getX(),entities.get(0).getY())));
+
+                    }
                 }
+
+                //对硬币实体操作
             }else if (mouse_x<=1100+Config.COIN_WID && mouse_x>=1100 && mouse_y>=100 && mouse_y<=600+Config.COIN_HEI){
                 entities=getGameWorld().getEntitiesInRange(new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
+                //判断硬币不为0时才操作
                 if (entities.size()!=0){
-                    //对玩家操作
-                    String s=entities.get(0).call("getCoinName");
-                    player.call("addCoin",s);
-                    player.call("showInfo");
-                    //对硬币操作
-                    entities.get(0).call("cutcoinNumber");
-                    entities.get(0).call("showInfo");
+                    int a=entities.get(0).call("getNum");
+                    if (a>0){
+                        //对玩家操作
+                        String s=entities.get(0).call("getCoinName");
+                        player.call("addCoin",s);
+                        player.call("showInfo");
+                        //对硬币操作
+                        entities.get(0).call("cutcoinNumber");
+                        entities.get(0).call("showInfo");
 
+                    }
                 }
+
+
+                //对贵族实体操作
             }else if (mouse_x<=1300+Config.NOBLE_WID && mouse_x>=1300){
                 entities=getGameWorld().getEntitiesInRange(new Rectangle2D(mouse_x-Config.NOBLE_WID,mouse_y-Config.NOBLE_HEI,Config.NOBLE_WID,Config.NOBLE_HEI));
                 if (entities.size()!=0){
@@ -92,30 +128,51 @@ public class SplendorApp extends GameApplication {
                     nobleList.remove(entities.get(0));
                     entities.get(0).removeFromWorld();
                 }
+                //对左下角保留的实体操作
             }else if (mouse_x<=500+Config.CARD_WID && mouse_x>=100 && mouse_y>=800 && mouse_y<=800+Config.CARD_HEI) {
                 entities=getGameWorld().getEntitiesInRange(new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
                 if (entities.size()!=0){
-                    List<Entity> saveList=player.call("getSaveCard");
                     HashMap<String,Integer> hashMap=entities.get(0).call("getMap");
                     List<String> coins=entities.get(0).call("getCoins");
-                    //对玩家进行操作
-                    player.call("addTokenAndScore","score",hashMap.get("score"));
-                    player.call("addTokenAndScore",entities.get(0).call("getGiveToken"),1);
-                    player.call("cutCoin",coins.get(0),hashMap.get(coins.get(0)));
-                    player.call("cutCoin",coins.get(1),hashMap.get(coins.get(1)));
-                    player.call("cutCoin",coins.get(2),hashMap.get(coins.get(2)));
-                    player.call("showInfo");
-                    //替换成新的
-                    saveList.remove(entities.get(0));
-                    entities.get(0).removeFromWorld();
-                    for (int i = 0; i < saveList.size(); i++) {
-                        saveList.get(i).setPosition(200*i+100,800);
-                    }player.call("setSaveCard",saveList);
+                    boolean numisnull=f_card_3.get(hashMap.get("cardLevel")-1).call("numIsNull");
 
+                    boolean jud=true;
+                    for (int i = 0; i < coins.size(); i++) {
+                        boolean c=player.call("enoughCoin",coins.get(i),hashMap.get(coins.get(i)));
+                        if (c==false){
+                            jud=false;
+                        }
+                    }
+                    //判断是否点到实体，卡片数量不为0，拥有足够的宝石
+                    if (numisnull &&jud){
+                        List<Entity> saveList=player.call("getSaveCard");
+                        HashMap<String,Integer> tokenMap=player.call("getMapToken");
+
+                        for (int i = 0; i < coins.size(); i++) {
+                            //扣除玩家的硬币
+                            player.call("cutCoin",coins.get(i),hashMap.get(coins.get(i))-tokenMap.get(coins.get(i)));
+                            //买卡时还回硬币
+                            coinList.get(Config.list.indexOf(coins.get(i))).call("addCoin",hashMap.get(coins.get(i))-tokenMap.get(coins.get(i)));
+                            coinList.get(Config.list.indexOf(coins.get(i))).call("showInfo");
+                        }
+                        //玩家获得分数和宝石
+                        player.call("addTokenAndScore","score",hashMap.get("score"));
+                        player.call("addTokenAndScore",entities.get(0).call("getGiveToken"),1);
+                        player.call("showInfo");
+                        //替换成新的
+                        saveList.remove(entities.get(0));
+                        entities.get(0).removeFromWorld();
+                        for (int i = 0; i < saveList.size(); i++) {
+                            saveList.get(i).setPosition(200*i+100,800);
+                        }player.call("setSaveCard",saveList);
+
+                    }
                 }
+
+
             }
         });
-
+        //对左下角保留的实体操作
         onBtnDown(MouseButton.SECONDARY,()->{
             if (mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI) {
                 List<Entity> saveList=player.call("getSaveCard");
@@ -170,7 +227,6 @@ public class SplendorApp extends GameApplication {
                 s_card_12.add(getGameWorld().spawn(Config.list_s.get(j),new SpawnData(200*i-100,500-200*j)));
             }
         }
-
     }
 
     @Override

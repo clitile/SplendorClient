@@ -21,24 +21,25 @@ public class NobleComponent extends Component {
     private AnimatedTexture at;
     private HashMap<String,Integer> mapToken;
     public NobleComponent() {
+        List<String> lists=new ArrayList<>();
+
+        while (lists.size()!=3){
+            String a=Config.list.get(FXGLMath.random(0,4));
+            if (!lists.contains(a)){
+                lists.add(a);
+            }
+        }
+
+
         mapToken=new HashMap<>(){{
-            put("whiteToken",5);
-            put("blueToken",5);
-            put("greenToken",5);
-//            put("redToken",0);
-//            put("blackToken",0);
-            put("score",5);
+            put(lists.get(0),FXGLMath.random(3,5));
+            put(lists.get(1),FXGLMath.random(3,5));
+            put(lists.get(2),FXGLMath.random(3,5));
+            put("score",FXGLMath.random(3,5));
         }};
         at=new AnimatedTexture(new AnimationChannel(FXGL.image("nobles.png")
                 ,2, Config.NOBLE_WID,Config.NOBLE_HEI, Duration.seconds(1),0,0));
 
-//        Iterator<String> it = mapToken.keySet().iterator();
-//        while(it.hasNext())
-//        {
-//            String key=it.next();
-//            mapToken.replace(key,FXGLMath.random(3,5));
-//
-//        }
     }
     @Override
     public void onAdded() {

@@ -41,6 +41,15 @@ public class CoinComponent extends Component {
     public void cutcoinNumber() {
         this.coinNumber = this.coinNumber-1;
     }
+
+
+    public void addCoin(int i){
+        this.coinNumber=coinNumber+i;
+
+    }
+    public int getNum(){
+        return this.coinNumber;
+    }
     public String getStyle(){
         return style;
     }

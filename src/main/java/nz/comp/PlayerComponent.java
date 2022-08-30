@@ -52,6 +52,9 @@ public class PlayerComponent extends Component {
         mapToken.replace(name,n+mapToken.get(name));
 
     }
+    public HashMap<String,Integer> getMapToken(){
+        return this.mapToken;
+    }
     public void cutCoin(String name,int n){
         mapCoin.replace(name,mapCoin.get(name)-n);
 
@@ -65,8 +68,15 @@ public class PlayerComponent extends Component {
         return saveCard;
     }
     public void setSaveCard(ArrayList<Entity> saveCard) {
-
+        this.saveCard=saveCard;
     }
+    public boolean enoughCoin(String a,int b){
+        if (b>mapCoin.get(a)+mapToken.get(a)){
+                return false;
+        }
+        return true;
+    }
+
 
     public void showInfo(){
         entity.getViewComponent().clearChildren();
