@@ -1,12 +1,12 @@
 package nz.proj;
 
+import com.almasb.fxgl.core.serialization.Bundle;
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.net.Client;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
 
 import java.util.*;
-
-import static javafx.util.Duration.seconds;
 
 public interface Config {
     int APP_WIDTH = 1920;
@@ -38,5 +38,7 @@ public interface Config {
         add("f_level3");
     }};
 
-
+    String HOST = "localhost";
+    int PORT = 34000;
+    Client<Bundle> CLIENT = FXGL.getNetService().newTCPClient(HOST, PORT);
 }

@@ -2,6 +2,8 @@ package nz.proj;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.scene.FXGLMenu;
+import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import javafx.geometry.Rectangle2D;
@@ -36,13 +38,13 @@ public class SplendorApp extends GameApplication {
 //        settings.setFullScreenAllowed(true);
 //        settings.setFullScreenFromStart(true);
 
-//        settings.setMainMenuEnabled(true);
-//        settings.setSceneFactory(new SceneFactory(){
-//            @Override
-//            public FXGLMenu newMainMenu() {
-//                return new SplendorMainMenu();
-//            }
-//        });
+        settings.setMainMenuEnabled(true);
+        settings.setSceneFactory(new SceneFactory(){
+            @Override
+            public FXGLMenu newMainMenu() {
+                return new SplendorMainMenu();
+            }
+        });
 
     }
 
