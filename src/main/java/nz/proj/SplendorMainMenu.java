@@ -1,38 +1,26 @@
 package nz.proj;
 
-import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.input.view.KeyView;
-import com.almasb.fxgl.input.view.MouseButtonView;
-import com.almasb.fxgl.input.view.TriggerView;
-import com.almasb.fxgl.logging.Logger;
-import com.almasb.fxgl.scene.Scene;
+import com.almasb.fxgl.ui.DialogService;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
-import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.effect.Bloom;
-import javafx.scene.effect.DropShadow;
+import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.InnerShadow;
-import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
-import static javafx.scene.input.KeyCode.*;
-import static javafx.scene.input.KeyCode.X;
+
 public class SplendorMainMenu extends FXGLMenu {
     public SplendorMainMenu() {
         super(MenuType.MAIN_MENU);
@@ -88,11 +76,44 @@ public class SplendorMainMenu extends FXGLMenu {
         menuBox.setTranslateX(getAppWidth() / 2.0 - 140);
         menuBox.setTranslateY(getAppHeight() / 2.0 + 200);
         getContentRoot().getChildren().addAll(menuBox);
+    }
 
+    private void loginPane() {
+        GridPane pane = new GridPane();
+        pane.setAlignment(Pos.CENTER);
+        DialogService dialogService = getDialogService();
+        pane.setHgap(20);
+        pane.setVgap(15);
+
+        TextField account_inp = new TextField();
+        PasswordField password_inp = new PasswordField();
+        pane.addRow(0, getUIFactoryService().newText("Account"), account_inp);
+        pane.addRow(1, getUIFactoryService().newText("Password"), password_inp);
+
+        Button ack = getUIFactoryService().newButton("SignIn");
+        Button signup = getUIFactoryService().newButton("SignUp");
+        Button retrieve = getUIFactoryService().newButton("Retrieve pwd");
+
+        ack.setOnAction(actionEvent -> {
+            String account = account_inp.getText();
+            String pwd = password_inp.getText();
+            //TODO send data
+        });
+        retrieve.setOnAction(actionEvent -> {
+            dialogService.showMessageBox("he");
+        });
+        pane.addRow(2, signup, retrieve);
+        dialogService.showBox("Login", pane, ack, getUIFactoryService().newButton("Cancel"));
     }
 
     private void onlineGame() {
-        getDialogService().showMessageBox("联网");
+//        try {
+//            Socket s = new Socket(Config.HOST, Config.PORT);
+//            loginPane();
+//        } catch (IOException e) {
+//            getDialogService().showMessageBox("Network Error");
+//        }
+        loginPane();
     }
 
 

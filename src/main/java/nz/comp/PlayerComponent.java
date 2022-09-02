@@ -15,9 +15,14 @@ import java.util.Iterator;
 import java.util.List;
 
 public class PlayerComponent extends Component {
+    //存储玩家持有的宝石和分数
     private HashMap<String,Integer> mapToken;
+    //存储玩家持有的硬币
     private HashMap<String,Integer> mapCoin;
+    //存储玩家持有的保留卡
     private List<Entity> saveCard;
+    //存储玩家当前的活动
+    private String activity="";
     @Override
     public void onAdded() {
         saveCard=new ArrayList<>();
@@ -77,10 +82,16 @@ public class PlayerComponent extends Component {
         return true;
     }
 
+    public void setActivity(String activity) {
+        this.activity = activity;
+    }
+    public String getActivity() {
+        return activity;
+    }
 
     public void showInfo(){
         entity.getViewComponent().clearChildren();
-        entity.getViewComponent().addChild(new Rectangle(1000,300, Color.GOLD));
+        entity.getViewComponent().addChild(new Rectangle(800,300, Color.GOLD));
         Iterator<String> it = mapToken.keySet().iterator();
         int its=1;
         while(it.hasNext())
