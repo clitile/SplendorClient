@@ -92,17 +92,42 @@ public class SplendorMainMenu extends FXGLMenu {
 
         Button ack = getUIFactoryService().newButton("SignIn");
         Button signup = getUIFactoryService().newButton("SignUp");
-        Button retrieve = getUIFactoryService().newButton("Retrieve pwd");
+        Button reset = getUIFactoryService().newButton("Reset pwd");
 
         ack.setOnAction(actionEvent -> {
             String account = account_inp.getText();
             String pwd = password_inp.getText();
             //TODO send data
         });
-        retrieve.setOnAction(actionEvent -> {
-            dialogService.showMessageBox("he");
+        reset.setOnAction(actionEvent -> {
+            GridPane re_pane = new GridPane();
+            re_pane.setAlignment(Pos.CENTER);
+            re_pane.setHgap(20);
+            re_pane.setVgap(15);
+
+            TextField username_inp = new TextField();
+            PasswordField pwd_inp = new PasswordField();
+            PasswordField re_pwd_inp = new PasswordField();
+            re_pane.addRow(0, getUIFactoryService().newText("Username"), username_inp);
+            re_pane.addRow(1, getUIFactoryService().newText("Password"), pwd_inp);
+            re_pane.addRow(2, getUIFactoryService().newText("Retype"), re_pwd_inp);
+
+            Button ack_re = getUIFactoryService().newButton("OK");
+            ack_re.setOnAction(event -> {
+                String pwd = pwd_inp.getText();
+                String re_pwd = re_pwd_inp.getText();
+                //TODO check username
+                if (pwd.equals(re_pwd)) {
+                    //TODO send data
+
+                } else {
+                    dialogService.showMessageBox("Password is different!");
+                }
+            });
+
+            dialogService.showBox("Reset Password", re_pane, ack_re, getUIFactoryService().newButton("Cancel"));
         });
-        pane.addRow(2, signup, retrieve);
+        pane.addRow(2, signup, reset);
         dialogService.showBox("Login", pane, ack, getUIFactoryService().newButton("Cancel"));
     }
 
