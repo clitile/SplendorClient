@@ -91,14 +91,14 @@ public class PlayerComponent extends Component {
 
     public void showInfo(){
         entity.getViewComponent().clearChildren();
-        entity.getViewComponent().addChild(new Rectangle(800,300, Color.GOLD));
+        entity.getViewComponent().addChild(new Rectangle(300,100, Color.GOLD));
         Iterator<String> it = mapToken.keySet().iterator();
         int its=1;
         while(it.hasNext())
         {
             String key=it.next();
-            Text text = new Text(0,30*its,key+"="+mapToken.get(key));
-            text.setStyle("-fx-font-size: 30;");
+            Text text = new Text(0,15*its,key+"="+mapToken.get(key));
+            text.setStyle("-fx-font-size: 15;");
             entity.getViewComponent().addChild(text);
             its++;
         }
@@ -108,8 +108,8 @@ public class PlayerComponent extends Component {
         while(is.hasNext())
         {
             String key=is.next();
-            Text text = new Text(300,30*iss,key+"Coin="+mapCoin.get(key));
-            text.setStyle("-fx-font-size: 30;");
+            Text text = new Text(120,15*iss,key+"Coin="+mapCoin.get(key));
+            text.setStyle("-fx-font-size: 15;");
             entity.getViewComponent().addChild(text);
             iss++;
         }
