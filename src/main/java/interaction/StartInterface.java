@@ -1,25 +1,54 @@
 package interaction;
 
 import javafx.application.Application;
-import javafx.stage.Modality;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
-public class StartInterface extends Application{
+public abstract class StartInterface extends Application{
 	
-	public static void main(String[] args) {
-        launch(args);
-    }
-
-	Stage stgInterface = null;
-	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public static void start() throws Exception {
 	    
-		stgInterface = new Stage();
-		stgInterface.setResizable(false);//设置无法调节窗口大小
-		stgInterface.initStyle(StageStyle.UTILITY);//窗口只有退出
-		stgInterface.initModality(Modality.APPLICATION_MODAL);//只能点改窗口
+		Stage primaryStage = new Stage();
 		
+		HBox hBox = new HBox();
+		hBox.setPadding(new Insets(15, 10, 50, 50));
+		
+		Button button1 = new Button("Log in");
+		Button button2 = new Button("Register");
+		
+		hBox.getChildren().addAll(button1, button2);
+		button1.setPrefWidth(100);
+		button2.setPrefWidth(100);
+		
+		primaryStage.setTitle("Login or Register");
+		primaryStage.setScene(new Scene(hBox, 300, 50));
+		
+		primaryStage.show();
+		
+		
+		button1.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent actionEvent) {
+				primaryStage.close();
+				// Login Stage
+				Login.LoginInterface();
+				
+			}
+		});
+		
+		button2.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent actionEvent) {
+				primaryStage.close();
+				// Register Stage
+				Register.RegisterInterface();
+			}
+		});
 	}
 
 }

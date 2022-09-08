@@ -21,21 +21,20 @@ import javafx.stage.StageStyle;
 
 import java.sql.*;
 
-public class Login extends Application {
+public class Login{
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    Label lblUserId = null;
-    Label lblPassWord = null;
-    TextField tfUserId = null;
-    TextField tfPassWord = null;
-    Stage stgSuccess = null;
-    Stage stgFail = null;
+	
+	public static Label lblUserId = null;
+	public static Label lblPassWord = null;
+	public static TextField tfUserId = null;
+	public static TextField tfPassWord = null;
+	public static Stage stgSuccess = null;
+	public static Stage stgFail = null;
+    public static Stage primaryStage = null;
     
-    @Override
-    public void start(Stage primaryStage) {
+    public static void LoginInterface() {
+    	primaryStage = new Stage();
+    	
         //登录成功的窗口
         stgSuccess = new Stage();
         stgSuccess.setResizable(false);//设置无法调节窗口大小
@@ -116,13 +115,17 @@ public class Login extends Application {
         BorderPane pane = new BorderPane();
         pane.setBottom(hBox);
         pane.setCenter(gridPane);
+        
+   
+        Login j = new Login();
 
-        btSubmit.setOnAction(event -> judge());
-        btSubmit.setOnKeyPressed(event -> {if(event.getCode() == KeyCode.ENTER) judge();});
-        tfPassWord.setOnKeyPressed(event -> {if(event.getCode() == KeyCode.ENTER) judge();});
-        tfUserId.setOnKeyPressed(event -> {if(event.getCode() == KeyCode.ENTER) judge();});
+        btSubmit.setOnAction(event -> j.judge());
+        btSubmit.setOnKeyPressed(event -> {if(event.getCode() == KeyCode.ENTER) j.judge();});
+        tfPassWord.setOnKeyPressed(event -> {if(event.getCode() == KeyCode.ENTER) j.judge();});
+        tfUserId.setOnKeyPressed(event -> {if(event.getCode() == KeyCode.ENTER) j.judge();});
 
         Scene scene = new Scene(pane,400,300);
+        
         primaryStage.setScene(scene);
         primaryStage.setTitle("Player Login System");
         primaryStage.show();
@@ -133,6 +136,7 @@ public class Login extends Application {
         if (submit() == true){
             //账号密码正确
             stgSuccess.show();
+            primaryStage.close();
         }else {
             //账号密码错误
             stgFail.show();
