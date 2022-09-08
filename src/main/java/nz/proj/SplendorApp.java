@@ -42,6 +42,7 @@ public class SplendorApp extends GameApplication {
     //输出玩家当前的活动
     Text player_action;
 
+    //Set the game's initial properties
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setHeight(Config.APP_HEIGHT);

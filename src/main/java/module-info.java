@@ -7,4 +7,9 @@ open module SplendorClient {
     requires common.kit;
     requires jprotobuf;
     requires java.sql;
+	requires javafx.fxml;
+	requires javafx.controls;
+	requires java.desktop;
+	requires javafx.base;
+	requires javafx.graphics;
 }

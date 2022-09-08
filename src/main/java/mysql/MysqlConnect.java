@@ -2,6 +2,7 @@ package mysql;
 import java.sql.*;
 
 public class MysqlConnect {
+	/*
 	public static void main(String args[]) {
 		
 		System.out.println("begin!");
@@ -48,4 +49,5 @@ public class MysqlConnect {
 			e.printStackTrace();
 		}
 	}
+	*/
 }
