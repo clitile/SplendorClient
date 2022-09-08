@@ -2,6 +2,7 @@ package nz.proj;
 
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
+import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.ui.DialogService;
 import javafx.beans.binding.Bindings;
@@ -16,7 +17,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import mysql.MysqlConn;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -92,53 +96,58 @@ public class SplendorMainMenu extends FXGLMenu {
 
         Button ack = getUIFactoryService().newButton("SignIn");
         Button signup = getUIFactoryService().newButton("SignUp");
-        Button reset = getUIFactoryService().newButton("Reset pwd");
+        Button retrieve = getUIFactoryService().newButton("Retrieve pwd");
 
         ack.setOnAction(actionEvent -> {
             String account = account_inp.getText();
             String pwd = password_inp.getText();
+            if (Config.CONN.login(account, pwd)) {
+                FXGL.getNotificationService().pushNotification("Login successfully");
+            }
             //TODO send data
         });
-        reset.setOnAction(actionEvent -> {
-            GridPane re_pane = new GridPane();
-            re_pane.setAlignment(Pos.CENTER);
-            re_pane.setHgap(20);
-            re_pane.setVgap(15);
 
-            TextField username_inp = new TextField();
-            PasswordField pwd_inp = new PasswordField();
-            PasswordField re_pwd_inp = new PasswordField();
-            re_pane.addRow(0, getUIFactoryService().newText("Username"), username_inp);
-            re_pane.addRow(1, getUIFactoryService().newText("Password"), pwd_inp);
-            re_pane.addRow(2, getUIFactoryService().newText("Retype"), re_pwd_inp);
+        signup.setOnAction(actionEvent -> {
+            GridPane signup_pane = new GridPane();
+            signup_pane.setAlignment(Pos.CENTER);
+            signup_pane.setHgap(20);
+            signup_pane.setVgap(15);
+            TextField newName = new TextField();
+            TextField newAcc = new TextField();
+            PasswordField newPwd = new PasswordField();
 
-            Button ack_re = getUIFactoryService().newButton("OK");
-            ack_re.setOnAction(event -> {
-                String pwd = pwd_inp.getText();
-                String re_pwd = re_pwd_inp.getText();
-                //TODO check username
-                if (pwd.equals(re_pwd)) {
-                    //TODO send data
-
-                } else {
-                    dialogService.showMessageBox("Password is different!");
+            Button ok = getUIFactoryService().newButton("SignUp");
+            ok.setOnAction(event -> {
+                if (Config.CONN.signUp(newAcc.getText(), newPwd.getText(), newName.getText())) {
+                    FXGL.getNotificationService().pushNotification("log on successfully");
                 }
             });
 
-            dialogService.showBox("Reset Password", re_pane, ack_re, getUIFactoryService().newButton("Cancel"));
+            signup_pane.addRow(0, getUIFactoryService().newText("Set Username"), newName);
+            signup_pane.addRow(1, getUIFactoryService().newText("Set Account"), newAcc);
+            signup_pane.addRow(2, getUIFactoryService().newText("Set Password"), newPwd);
+            dialogService.showBox("Login", signup_pane, ok, getUIFactoryService().newButton("Cancel"));
         });
-        pane.addRow(2, signup, reset);
+
+        retrieve.setOnAction(actionEvent -> {
+            dialogService.showMessageBox("he");
+        });
+        pane.addRow(2, signup, retrieve);
         dialogService.showBox("Login", pane, ack, getUIFactoryService().newButton("Cancel"));
     }
 
     private void onlineGame() {
-//        try {
 //            Socket s = new Socket(Config.HOST, Config.PORT);
-//            loginPane();
-//        } catch (IOException e) {
-//            getDialogService().showMessageBox("Network Error");
-//        }
-        loginPane();
+//            s.close();
+        if (!Config.CONN.isConnected()) {
+            if (Config.CONN.Connect()) {
+                loginPane();
+            } else {
+                getDialogService().showMessageBox("Network Error");
+            }
+        } else {
+            FXGL.getNotificationService().pushNotification("You have logged in");
+        }
     }
 
 

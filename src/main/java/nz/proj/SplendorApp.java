@@ -5,17 +5,13 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.GameScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.texture.Texture;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
 
@@ -36,13 +32,16 @@ public class SplendorApp extends GameApplication {
     List<Entity> coinList;
     //贵族卡
     List<Entity> nobleList;
-    //
+    //鼠标坐标
     double mouse_x;
     double mouse_y;
     //输出玩家当前的活动
     Text player_action;
 
-    //Set the game's initial properties
+    //ai是否操作
+    int round=0;
+    //Ai玩家
+    List<Entity> ai_player;
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setHeight(Config.APP_HEIGHT);
@@ -50,15 +49,15 @@ public class SplendorApp extends GameApplication {
         settings.setTitle("Splendor");
         settings.setVersion("1.0.1");
         settings.setAppIcon("fp_token-1.png");
-//        settings.setFullScreenAllowed(true);
+        settings.setFullScreenAllowed(true);
 //        settings.setFullScreenFromStart(true);
-//        settings.setMainMenuEnabled(true);
-//        settings.setSceneFactory(new SceneFactory(){
-//            @Override
-//            public FXGLMenu newMainMenu() {
-//                return new SplendorMainMenu();
-//            }
-//        });
+        settings.setMainMenuEnabled(true);
+        settings.setSceneFactory(new SceneFactory(){
+            @Override
+            public FXGLMenu newMainMenu() {
+                return new SplendorMainMenu();
+            }
+        });
 
     }
     List<Point2D> num=new ArrayList<>();
@@ -129,6 +128,7 @@ public class SplendorApp extends GameApplication {
         s_card_12=new ArrayList<>();
         coinList=new ArrayList<>();
         nobleList=new ArrayList<>();
+        ai_player=new ArrayList<>();
         player = getGameWorld().spawn("player",new SpawnData(1000,750));
         for (int i = 0; i < 6; i++) {
             coinList.add(getGameWorld().spawn("coin",new SpawnData(1100,100*(1+i)).put("style",Config.list.get(i))));
@@ -143,28 +143,55 @@ public class SplendorApp extends GameApplication {
             }
         }
 
-        player_action = new Text(0,40,"选取你想进行的操作");
+        player_action = new Text(0,40,"请选择你想游玩的AI人数");
         player_action.setLayoutX(700);
         player_action.setLayoutY(750);
         player_action.setStyle("-fx-font-size: 25;");
         getGameScene().addChild(player_action);
+        ///////////////////////////////////////////
 
-
+        var choicebox=getUIFactoryService().newChoiceBox(FXCollections.observableArrayList(
+                "2 player", "3 player", "4 player"));
+        choicebox.setLayoutX(700);
+        choicebox.setLayoutY(850);
+        choicebox.getSelectionModel().selectedIndexProperty()
+                .addListener(new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1){
+                        round=t1.intValue()+2;
+                        for (int i = 0; i < round-1; i++) {
+                            ai_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
+                        }
+                        System.out.println(ai_player.size());
+                        getGameScene().removeChild(choicebox);
+                    }
+                });
+        getGameScene().addChild(choicebox);
     }
-
+    boolean ai_round=false;
     @Override
     protected void onUpdate(double tpf) {
         mouse_x =getInput().mouseXWorldProperty().getValue();
         mouse_y =getInput().mouseYWorldProperty().getValue();
-        if (player.call("getActivity")==""){
-            player_action.setText("选取你想进行的操作");
-            dealActPlayer(getGameScene());
+        if (round!=0){
+            if (player.call("getActivity")=="" && !ai_round){
+
+                player_action.setText("选取你想进行的操作");
+                dealActPlayer(getGameScene());
+            }
+            if (ai_round){
+                for (int i = 0; i < ai_player.size(); i++) {
+                    System.out.println("i am player"+i);
+                }ai_round=false;
+            }
+
         }
     }
 
     public static void main(String[] args) {
         launch(args);
     }
+
 
 
     //获取一枚硬币
@@ -193,6 +220,7 @@ public class SplendorApp extends GameApplication {
         if (num.size()==size){
             player.call("setActivity","");
             num=new ArrayList<>();
+            ai_round=true;
         }
     }
     //获取一张卡牌
@@ -248,7 +276,7 @@ public class SplendorApp extends GameApplication {
                 entities.get(0).removeFromWorld();
             }
             player.call("setActivity","");
-
+            ai_round=true;
         }
 
     }
@@ -278,6 +306,7 @@ public class SplendorApp extends GameApplication {
             }player.call("setSaveCard",saveList);
         }
         player.call("setActivity","");
+        ai_round=true;
     }
     //下拉框选择玩家选择的活动
     public void dealActPlayer(GameScene gameScene){
@@ -299,6 +328,7 @@ public class SplendorApp extends GameApplication {
                     public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1){
                         player.call("setActivity",act_list.get(t1.intValue()));
                         player_action.setText(act_list.get(t1.intValue()));
+
                         getGameScene().removeChild(choicebox);
                     }
                 });
