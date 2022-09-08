@@ -5,23 +5,14 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.GameScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-import com.almasb.fxgl.scene.Scene;
-import com.almasb.fxgl.texture.Texture;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -57,15 +48,15 @@ public class SplendorApp extends GameApplication {
         settings.setTitle("Splendor");
         settings.setVersion("1.0.1");
         settings.setAppIcon("fp_token-1.png");
-//        settings.setFullScreenAllowed(true);
+        settings.setFullScreenAllowed(true);
 //        settings.setFullScreenFromStart(true);
-//        settings.setMainMenuEnabled(true);
-//        settings.setSceneFactory(new SceneFactory(){
-//            @Override
-//            public FXGLMenu newMainMenu() {
-//                return new SplendorMainMenu();
-//            }
-//        });
+        settings.setMainMenuEnabled(true);
+        settings.setSceneFactory(new SceneFactory(){
+            @Override
+            public FXGLMenu newMainMenu() {
+                return new SplendorMainMenu();
+            }
+        });
 
     }
     List<Point2D> num=new ArrayList<>();
@@ -175,7 +166,6 @@ public class SplendorApp extends GameApplication {
                     }
                 });
         getGameScene().addChild(choicebox);
-
     }
     boolean ai_round=false;
     @Override

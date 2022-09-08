@@ -2,6 +2,7 @@ package nz.proj;
 
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
+import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.ui.DialogService;
 import javafx.beans.binding.Bindings;
@@ -16,7 +17,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import mysql.MysqlConn;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -97,8 +101,34 @@ public class SplendorMainMenu extends FXGLMenu {
         ack.setOnAction(actionEvent -> {
             String account = account_inp.getText();
             String pwd = password_inp.getText();
+            if (Config.CONN.login(account, pwd)) {
+                FXGL.getNotificationService().pushNotification("Login successfully");
+            }
             //TODO send data
         });
+
+        signup.setOnAction(actionEvent -> {
+            GridPane signup_pane = new GridPane();
+            signup_pane.setAlignment(Pos.CENTER);
+            signup_pane.setHgap(20);
+            signup_pane.setVgap(15);
+            TextField newName = new TextField();
+            TextField newAcc = new TextField();
+            PasswordField newPwd = new PasswordField();
+
+            Button ok = getUIFactoryService().newButton("SignUp");
+            ok.setOnAction(event -> {
+                if (Config.CONN.signUp(newAcc.getText(), newPwd.getText(), newName.getText())) {
+                    FXGL.getNotificationService().pushNotification("log on successfully");
+                }
+            });
+
+            signup_pane.addRow(0, getUIFactoryService().newText("Set Username"), newName);
+            signup_pane.addRow(1, getUIFactoryService().newText("Set Account"), newAcc);
+            signup_pane.addRow(2, getUIFactoryService().newText("Set Password"), newPwd);
+            dialogService.showBox("Login", signup_pane, ok, getUIFactoryService().newButton("Cancel"));
+        });
+
         retrieve.setOnAction(actionEvent -> {
             dialogService.showMessageBox("he");
         });
@@ -107,13 +137,17 @@ public class SplendorMainMenu extends FXGLMenu {
     }
 
     private void onlineGame() {
-//        try {
 //            Socket s = new Socket(Config.HOST, Config.PORT);
-//            loginPane();
-//        } catch (IOException e) {
-//            getDialogService().showMessageBox("Network Error");
-//        }
-        loginPane();
+//            s.close();
+        if (!Config.CONN.isConnected()) {
+            if (Config.CONN.Connect()) {
+                loginPane();
+            } else {
+                getDialogService().showMessageBox("Network Error");
+            }
+        } else {
+            FXGL.getNotificationService().pushNotification("You have logged in");
+        }
     }
 
 
