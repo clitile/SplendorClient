@@ -17,13 +17,11 @@
   </properties>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>8.0.28</version>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -44,6 +42,14 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>com.gluonhq</groupId>
+        <artifactId>gluonfx-maven-plugin</artifactId>
+        <version>1.0.15</version>
+        <configuration>
+          <mainClass>nz.proj.SplendorApp</mainClass>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-archetype-plugin</artifactId>
@@ -109,4 +115,18 @@
       </plugins>
     </pluginManagement>
   </build>
+  <profiles>
+    <profile>
+      <id>ios</id>
+      <properties>
+        <gluonfx.target>ios</gluonfx.target>
+      </properties>
+    </profile>
+    <profile>
+      <id>android</id>
+      <properties>
+        <gluonfx.target>android</gluonfx.target>
+      </properties>
+    </profile>
+  </profiles>
 </project>
