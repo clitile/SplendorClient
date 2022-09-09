@@ -43,7 +43,7 @@ public class SplendorApp extends GameApplication {
     //Ai玩家
     List<Entity> ai_player;
     @Override
-    protected void initSettings(GameSettings settings) {
+    public void initSettings(GameSettings settings) {
         settings.setHeight(Config.APP_HEIGHT);
         settings.setWidth(Config.APP_WIDTH);
         settings.setTitle("Splendor");
@@ -58,30 +58,29 @@ public class SplendorApp extends GameApplication {
                 return new SplendorMainMenu();
             }
         });
-
     }
     List<Point2D> num=new ArrayList<>();
     @Override
-    protected void initInput() {
+    public void initInput() {
         onBtnDown(MouseButton.PRIMARY,()->{
             List<Entity> entities=getGameWorld().getEntitiesInRange(
                     new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
             String activity=player.call("getActivity");
-            if (activity=="getThreeCoin"){
+            if (activity.equals("getThreeCoin")){
                 //获取三枚不同的硬币
                 entities=getGameWorld().getEntitiesInRange(
                         new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
                 getCoin(3,entities,player);
-            }else if (activity=="getTwoSameCoin"){
+            }else if (activity.equals("getTwoSameCoin")){
                 //获取两枚相同的硬币
                 entities=getGameWorld().getEntitiesInRange(
                         new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
                 getCoin(2,entities,player);
-            }else if (activity=="getOneMidCard"){
+            }else if (activity.equals("getOneMidCard")){
                 //判断对中间的12张牌的实体操作
                 getOneCard("getOneMidCard",entities,player);
 
-            }else if (activity=="getOneSaveCard"){
+            }else if (activity.equals("getOneSaveCard")){
                 //对左下角的保留牌操作
                 getOneCard("getOneSaveCard",entities,player);
             }
@@ -106,22 +105,20 @@ public class SplendorApp extends GameApplication {
             List<Entity> entities=getGameWorld().getEntitiesInRange(
                     new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
             String activity=player.call("getActivity");
-            if (activity=="getSaveCard"){
+            if (activity.equals("getSaveCard")){
                 //获取保留卡和一枚黄金硬币
                 getSaveCard(entities,player);
             }
         });
     }
     @Override
-    protected void onPreInit() {
+    public void onPreInit() {
         getAssetLoader().loadImage("cards_620_860.png");
         getAssetLoader().loadImage("nobles.png");
         getAssetLoader().loadImage("cards_372_172.png");
-
-
     }
     @Override
-    protected void initGame() {
+    public void initGame() {
         getGameScene().setBackgroundRepeat(image("backg (6).png"));
         getGameWorld().addEntityFactory(new SplendorFactory());
         f_card_3=new ArrayList<>();
@@ -170,7 +167,7 @@ public class SplendorApp extends GameApplication {
     }
     boolean ai_round=false;
     @Override
-    protected void onUpdate(double tpf) {
+    public void onUpdate(double tpf) {
         mouse_x =getInput().mouseXWorldProperty().getValue();
         mouse_y =getInput().mouseYWorldProperty().getValue();
         if (round!=0){
@@ -225,7 +222,7 @@ public class SplendorApp extends GameApplication {
     }
     //获取一张卡牌
     public void getOneCard(String actname,List<Entity> entities,Entity player){
-        boolean ra=actname=="getOneMidCard"?
+        boolean ra= actname.equals("getOneMidCard") ?
                 //中间的12张牌
                 mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI:
                 //坐下的保留牌
@@ -236,29 +233,29 @@ public class SplendorApp extends GameApplication {
             boolean numisnull=f_card_3.get(hashMap.get("cardLevel")-1).call("numIsNull");
 
             boolean jud=true;
-            for (int i = 0; i < coins.size(); i++) {
-                boolean c=player.call("enoughCoin",coins.get(i),hashMap.get(coins.get(i)));
-                if (!c){
-                    jud=false;
+            for (String coin : coins) {
+                boolean c = player.call("enoughCoin", coin, hashMap.get(coin));
+                if (!c) {
+                    jud = false;
                 }
             }
             //判断是否点到实体，卡片数量不为0，且拥有足够的宝石
             if (numisnull &&jud){
                 HashMap<String,Integer> tokenMap=player.call("getMapToken");
 
-                for (int i = 0; i < coins.size(); i++) {
+                for (String coin : coins) {
                     //扣除玩家的硬币
-                    player.call("cutCoin",coins.get(i),hashMap.get(coins.get(i))-tokenMap.get(coins.get(i)));
+                    player.call("cutCoin", coin, hashMap.get(coin) - tokenMap.get(coin));
                     //买卡时还回硬币
-                    coinList.get(Config.list.indexOf(coins.get(i))).call("addCoin",hashMap.get(coins.get(i))-tokenMap.get(coins.get(i)));
-                    coinList.get(Config.list.indexOf(coins.get(i))).call("showInfo");
+                    coinList.get(Config.list.indexOf(coin)).call("addCoin", hashMap.get(coin) - tokenMap.get(coin));
+                    coinList.get(Config.list.indexOf(coin)).call("showInfo");
                 }
                 //玩家获得分数和宝石
                 player.call("addTokenAndScore","score",hashMap.get("score"));
                 player.call("addTokenAndScore",entities.get(0).call("getGiveToken"),1);
                 player.call("showInfo");
                 //添加保留卡
-                if (actname=="getOneSaveCard"){
+                if (actname.equals("getOneSaveCard")){
                     List<Entity> saveList=player.call("getSaveCard");
                     saveList.remove(entities.get(0));
                     for (int i = 0; i < saveList.size(); i++) {
@@ -278,11 +275,9 @@ public class SplendorApp extends GameApplication {
             player.call("setActivity","");
             ai_round=true;
         }
-
     }
     //获取保留卡和一枚黄金硬币
     public void getSaveCard(List<Entity> entities,Entity player){
-
         List<Entity> saveList=player.call("getSaveCard");
         if (mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI&&
                 entities.size()!=0&&saveList.size()<=2) {
@@ -328,13 +323,9 @@ public class SplendorApp extends GameApplication {
                     public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1){
                         player.call("setActivity",act_list.get(t1.intValue()));
                         player_action.setText(act_list.get(t1.intValue()));
-
                         getGameScene().removeChild(choicebox);
                     }
                 });
         gameScene.addChild(choicebox);
-
-
     }
-
 }
