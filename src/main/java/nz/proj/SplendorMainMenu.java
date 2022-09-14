@@ -17,15 +17,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import mysql.MysqlConn;
+import nz.net.SocketClient;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class SplendorMainMenu extends FXGLMenu {
+    public boolean isConn = false;
     public SplendorMainMenu() {
         super(MenuType.MAIN_MENU);
         loopBGM(Config.BackMusic);
@@ -71,10 +70,10 @@ public class SplendorMainMenu extends FXGLMenu {
 
         var menuBox = new VBox(
                 5,
-                new MenuButton("New Game", () -> fireNewGame()),
-                new MenuButton("Online Game", () -> onlineGame()),
-                new MenuButton("How to Play", () -> instructions()),
-                new MenuButton("Exit", () -> fireExit())
+                new MenuButton("New Game", this::fireNewGame),
+                new MenuButton("Online Game", this::onlineGame),
+                new MenuButton("How to Play", this::instructions),
+                new MenuButton("Exit", this::fireExit)
         );
         menuBox.setAlignment(Pos.TOP_CENTER);
         menuBox.setTranslateX(getAppWidth() / 2.0 - 140);
@@ -83,15 +82,17 @@ public class SplendorMainMenu extends FXGLMenu {
     }
 
     private void loginPane() {
+        SocketClient SOCKET_CLIENT = SocketClient.getInstance();
+        SOCKET_CLIENT.connect();
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.CENTER);
         DialogService dialogService = getDialogService();
         pane.setHgap(20);
         pane.setVgap(15);
 
-        TextField account_inp = new TextField();
+        TextField name_inp = new TextField();
         PasswordField password_inp = new PasswordField();
-        pane.addRow(0, getUIFactoryService().newText("Account"), account_inp);
+        pane.addRow(0, getUIFactoryService().newText("Account"), name_inp);
         pane.addRow(1, getUIFactoryService().newText("Password"), password_inp);
 
         Button ack = getUIFactoryService().newButton("SignIn");
@@ -99,12 +100,13 @@ public class SplendorMainMenu extends FXGLMenu {
         Button retrieve = getUIFactoryService().newButton("Retrieve pwd");
 
         ack.setOnAction(actionEvent -> {
-            String account = account_inp.getText();
+            String name = name_inp.getText();
             String pwd = password_inp.getText();
-            if (Config.CONN.login(account, pwd)) {
-                FXGL.getNotificationService().pushNotification("Login successfully");
-            }
-            //TODO send data
+            Bundle loginBundle = new Bundle("login");
+            loginBundle.put("name", name);
+            loginBundle.put("pwd", pwd);
+            SocketClient.getInstance().send(loginBundle);
+            FXGL.set("name", name);
         });
 
         signup.setOnAction(actionEvent -> {
@@ -118,9 +120,11 @@ public class SplendorMainMenu extends FXGLMenu {
 
             Button ok = getUIFactoryService().newButton("SignUp");
             ok.setOnAction(event -> {
-                if (Config.CONN.signUp(newAcc.getText(), newPwd.getText(), newName.getText())) {
-                    FXGL.getNotificationService().pushNotification("log on successfully");
-                }
+                Bundle sign_up = new Bundle("signup");
+                sign_up.put("name", newName.getText());
+                sign_up.put("pwd", newPwd.getText());
+                sign_up.put("acc", newAcc.getText());
+                SocketClient.getInstance().send(sign_up);
             });
 
             signup_pane.addRow(0, getUIFactoryService().newText("Set Username"), newName);
@@ -130,24 +134,46 @@ public class SplendorMainMenu extends FXGLMenu {
         });
 
         retrieve.setOnAction(actionEvent -> {
-            dialogService.showMessageBox("he");
+            GridPane reset_pane = new GridPane();
+            reset_pane.setAlignment(Pos.CENTER);
+            reset_pane.setHgap(20);
+            reset_pane.setVgap(15);
+            TextField re_name = new TextField();
+            PasswordField re_pwd = new PasswordField();
+
+            Button ok = getUIFactoryService().newButton("Reset");
+            ok.setOnAction(event -> {
+                Bundle re = new Bundle("reset");
+                re.put("name", re_name.getText());
+                re.put("pwd", re_pwd.getText());
+                SocketClient.getInstance().send(re);
+            });
+
+            reset_pane.addRow(0, getUIFactoryService().newText("Your Username"), re_name);
+            reset_pane.addRow(1, getUIFactoryService().newText("Set Password"), re_pwd);
+            dialogService.showBox("Login", reset_pane, ok, getUIFactoryService().newButton("Cancel"));
         });
         pane.addRow(2, signup, retrieve);
         dialogService.showBox("Login", pane, ack, getUIFactoryService().newButton("Cancel"));
     }
 
     private void onlineGame() {
-//            Socket s = new Socket(Config.HOST, Config.PORT);
-//            s.close();
-        if (!Config.CONN.isConnected()) {
-            if (Config.CONN.Connect()) {
-                loginPane();
-            } else {
-                getDialogService().showMessageBox("Network Error");
-            }
+        if (!FXGL.getb("login")) {
+            System.out.println(Thread.currentThread().getId());
+            loginPane();
         } else {
-            FXGL.getNotificationService().pushNotification("You have logged in");
+            //TODO select mode
+            fireNewGame();
         }
+//        if (!Config.CONN.isConnected()) {
+//            if (Config.CONN.Connect()) {
+//                loginPane();
+//            } else {
+//                getDialogService().showMessageBox("Network Error");
+//            }
+//        } else {
+//            FXGL.getNotificationService().pushNotification("You have logged in");
+//        }
     }
 
 
@@ -180,7 +206,4 @@ public class SplendorMainMenu extends FXGLMenu {
             }
         }
     }
-
-
-
 }

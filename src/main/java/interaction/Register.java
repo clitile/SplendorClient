@@ -161,7 +161,7 @@ public class Register {
             conn = DriverManager.getConnection("jdbc:mysql://20.239.88.211/players?useSSL=false","root","158356Proj.");
             // 3、获取数据库操作对象
             //先建立起一个sql框架，用？占位符占位
-            String sql1 = "select * from playersInfo where name = ? "; //and password = ?
+            String sql1 = "select * from players.playersInfo where name = ? "; //and password = ?
             ps = conn.prepareStatement(sql1);
             //给？占位符传值
             ps.setString(1,inputName);
@@ -173,11 +173,11 @@ public class Register {
                 return false;
             }else {
             	Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            	ResultSet rs2 = stmt.executeQuery("select * from playersInfo");
+            	ResultSet rs2 = stmt.executeQuery("select * from players.playersInfo");
             	rs2.last();
             	int id = rs.getRow();
             	int account = id*111;
-            	String sql2 = "INSERT INTO playersInfo (id, name, password, account) values (id, ?, ?, account)";
+            	String sql2 = "INSERT INTO players.playersInfo (id, name, password, account) values (id, ?, ?, account)";
             	ps = conn.prepareStatement(sql2);
             	ps.setString(1, inputName);
             	ps.setString(2, inputPwd);

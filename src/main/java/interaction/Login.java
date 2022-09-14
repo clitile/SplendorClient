@@ -22,8 +22,6 @@ import javafx.stage.StageStyle;
 import java.sql.*;
 
 public class Login{
-
-	
 	public static Label lblUserId = null;
 	public static Label lblPassWord = null;
 	public static TextField tfUserId = null;
@@ -133,7 +131,7 @@ public class Login{
     }
 
     public void judge(){
-        if (submit() == true){
+        if (submit()){
             //账号密码正确
             stgSuccess.show();
             primaryStage.close();
@@ -159,7 +157,7 @@ public class Login{
             conn = DriverManager.getConnection("jdbc:mysql://20.239.88.211/players?useSSL=false","root","158356Proj.");
             // 3、获取数据库操作对象
             //先建立起一个sql框架，用？占位符占位
-            String sql = "select * from playersInfo where name = ? and password = ?";
+            String sql = "select * from players.playersInfo where name = ? and password = ?";
             ps = conn.prepareStatement(sql);
             //给？占位符传值
             ps.setString(1,inputName);

@@ -9,4 +9,5 @@ open module SplendorClient {
 	requires javafx.graphics;
     requires io.vertx.core;
     requires mysql.connector.java;
+    requires Java.WebSocket;
 }

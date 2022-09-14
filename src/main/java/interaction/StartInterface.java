@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public abstract class StartInterface extends Application{
-	
 	public static void start() throws Exception {
 	    
 		Stage primaryStage = new Stage();

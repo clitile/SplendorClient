@@ -5,6 +5,8 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.GameScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
+import com.almasb.fxgl.core.serialization.Bundle;
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import javafx.beans.value.ChangeListener;
@@ -14,10 +16,12 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Text;
+import nz.net.SocketClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -117,6 +121,14 @@ public class SplendorApp extends GameApplication {
         getAssetLoader().loadImage("nobles.png");
         getAssetLoader().loadImage("cards_372_172.png");
     }
+
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("login", false);
+        vars.put("online", false);
+        vars.put("name", "");
+    }
+
     @Override
     public void initGame() {
         getGameScene().setBackgroundRepeat(image("backg (6).png"));
@@ -140,7 +152,7 @@ public class SplendorApp extends GameApplication {
             }
         }
 
-        player_action = new Text(0,40,"请选择你想游玩的AI人数");
+        player_action = new Text(0,40,"选择游戏人数");
         player_action.setLayoutX(700);
         player_action.setLayoutY(750);
         player_action.setStyle("-fx-font-size: 25;");
@@ -156,11 +168,19 @@ public class SplendorApp extends GameApplication {
                     @Override
                     public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1){
                         round=t1.intValue()+2;
-                        for (int i = 0; i < round-1; i++) {
-                            ai_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
+                        if (!FXGL.getb("online")) {
+                            for (int i = 0; i < round-1; i++) {
+                                ai_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
+                            }
+                            System.out.println(ai_player.size());
+                            getGameScene().removeChild(choicebox);
+                        } else {
+                            Bundle bundle = new Bundle("match");
+                            bundle.put("mode", round);
+                            bundle.put("name", FXGL.gets("name"));
+                            SocketClient.getInstance().send(bundle);
                         }
-                        System.out.println(ai_player.size());
-                        getGameScene().removeChild(choicebox);
+
                     }
                 });
         getGameScene().addChild(choicebox);
