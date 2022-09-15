@@ -1,8 +1,10 @@
 package nz.comp;
 
+import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.entity.component.SerializableComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import javafx.scene.paint.Color;
@@ -14,7 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public class PlayerComponent extends Component {
+public class PlayerComponent extends Component implements SerializableComponent {
     //存储玩家持有的宝石和分数
     private HashMap<String,Integer> mapToken;
     //存储玩家持有的硬币
@@ -117,6 +119,15 @@ public class PlayerComponent extends Component {
 
     }
 
+    @Override
+    public void read(Bundle bundle) {
+
+    }
+
+    @Override
+    public void write(Bundle bundle) {
+
+    }
 }
 
 
