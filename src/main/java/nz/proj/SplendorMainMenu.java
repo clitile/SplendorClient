@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class SplendorMainMenu extends FXGLMenu {
-    public boolean isConn = false;
     public SplendorMainMenu() {
         super(MenuType.MAIN_MENU);
         loopBGM(Config.BackMusic);
@@ -158,12 +157,8 @@ public class SplendorMainMenu extends FXGLMenu {
     }
 
     private void onlineGame() {
-        if (!FXGL.getb("login")) {
-            System.out.println(Thread.currentThread().getId());
+        if (!SocketClient.getInstance().login) {
             loginPane();
-        } else {
-            //TODO select mode
-            fireNewGame();
         }
 //        if (!Config.CONN.isConnected()) {
 //            if (Config.CONN.Connect()) {
@@ -175,7 +170,6 @@ public class SplendorMainMenu extends FXGLMenu {
 //            FXGL.getNotificationService().pushNotification("You have logged in");
 //        }
     }
-
 
     private void instructions() {
         getDialogService().showMessageBox("目前:右键拿牌左键保留牌");
@@ -204,6 +198,13 @@ public class SplendorMainMenu extends FXGLMenu {
                 shadow.setOffsetY(-3);
                 setEffect(shadow);
             }
+        }
+    }
+
+    @Override
+    protected void onUpdate(double tpf) {
+        if (SocketClient.getInstance().login) {
+            fireNewGame();
         }
     }
 }
