@@ -18,6 +18,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.28</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
@@ -26,12 +31,30 @@
     <dependency>
       <groupId>com.github.almasb</groupId>
       <artifactId>fxgl</artifactId>
-      <version>17.1</version>
+      <version>17.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.java-websocket</groupId>
+      <artifactId>Java-WebSocket</artifactId>
+      <version>1.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+      <version>4.3.3</version>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>com.gluonhq</groupId>
+        <artifactId>gluonfx-maven-plugin</artifactId>
+        <version>1.0.15</version>
+        <configuration>
+          <mainClass>nz.proj.SplendorApp</mainClass>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-archetype-plugin</artifactId>
@@ -97,4 +120,18 @@
       </plugins>
     </pluginManagement>
   </build>
+  <profiles>
+    <profile>
+      <id>ios</id>
+      <properties>
+        <gluonfx.target>ios</gluonfx.target>
+      </properties>
+    </profile>
+    <profile>
+      <id>android</id>
+      <properties>
+        <gluonfx.target>android</gluonfx.target>
+      </properties>
+    </profile>
+  </profiles>
 </project>

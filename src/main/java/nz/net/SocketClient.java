@@ -23,7 +23,7 @@ public class SocketClient extends WebSocketClient {
     }
 
     public SocketClient() throws URISyntaxException {
-        this(new URI("ws://192.168.3.216:10100/websocket"));
+        this(new URI("ws://localhost:10100/websocket"));
     }
 
     public static SocketClient getInstance() {
@@ -49,18 +49,13 @@ public class SocketClient extends WebSocketClient {
         Bundle mess = bytes2Bundle(bytes);
         if (mess.getName().equals("login")) {
             login = true;
-            FXGL.set("login", true);
-            System.out.println("login" + FXGL.getb("login"));
+//            FXGL.set("login", true);
+//            System.out.println("login" + FXGL.getb("login"));
         } else if (mess.getName().equals("matchFind")) {
             FXGL.set("match", true);
             FXGL.set("id", mess.get("id"));
             FXGL.set("playersNames", mess.get("players"));
         }
-
-
-        //服务器告诉客户端该操作了
-        //player.setActivity("your_activity")
-
     }
 
     private Bundle bytes2Bundle(ByteBuffer bytes) {
