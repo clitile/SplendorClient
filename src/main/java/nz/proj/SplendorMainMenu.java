@@ -105,7 +105,7 @@ public class SplendorMainMenu extends FXGLMenu {
             loginBundle.put("name", name);
             loginBundle.put("pwd", pwd);
             SocketClient.getInstance().send(loginBundle);
-            FXGL.set("name", name);
+            SocketClient.getInstance().name = name;
         });
 
         signup.setOnAction(actionEvent -> {
