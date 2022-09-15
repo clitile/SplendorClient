@@ -13,6 +13,12 @@ import java.nio.ByteBuffer;
 public class SocketClient extends WebSocketClient {
     private static final SocketClient client;
     public boolean login = false;
+    public boolean match = false;
+    public double x;
+    public double y;
+    public int id;
+    public String name;
+    public String activity;
 
     static {
         try {
@@ -52,9 +58,13 @@ public class SocketClient extends WebSocketClient {
             FXGL.set("login", true);
             System.out.println("login" + FXGL.getb("login"));
         } else if (mess.getName().equals("matchFind")) {
-            FXGL.set("match", true);
-            FXGL.set("id", mess.get("id"));
+            match = true;
+            id = mess.get("id");
             FXGL.set("playersNames", mess.get("players"));
+        } else if (mess.getName().equals("act")) {
+            x = mess.get("x");
+            y = mess.get("y");
+            activity = mess.get("activity");
         }
 
 
