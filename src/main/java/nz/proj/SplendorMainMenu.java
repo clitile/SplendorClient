@@ -26,7 +26,7 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class SplendorMainMenu extends FXGLMenu {
     public SplendorMainMenu() {
         super(MenuType.MAIN_MENU);
-        loopBGM(Config.BackMusic);
+//        loopBGM(Config.BackMusic);
         getContentRoot().getChildren().setAll(texture("backg (2).png",Config.APP_WIDTH,Config.APP_HEIGHT));
         var blocks = new ArrayList<ColorBlock>();
 
@@ -204,6 +204,7 @@ public class SplendorMainMenu extends FXGLMenu {
     @Override
     protected void onUpdate(double tpf) {
         if (SocketClient.getInstance().login) {
+            FXGL.getNotificationService().pushNotification("Login Successfully");
             fireNewGame();
         }
     }

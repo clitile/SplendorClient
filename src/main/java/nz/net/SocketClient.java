@@ -65,6 +65,7 @@ public class SocketClient extends WebSocketClient {
             System.out.println(mess);
             FXGL.set("playersNames", mess.get("players"));
             isThis = mess.get("next").equals(this.name);
+            System.out.println("matchfind: " + isThis);
         } else if (mess.getName().equals("act")) {
             x = mess.get("x");
             y = mess.get("y");

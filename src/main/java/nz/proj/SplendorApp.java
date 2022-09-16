@@ -8,6 +8,7 @@ import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+import com.almasb.fxgl.input.UserAction;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -64,34 +65,36 @@ public class SplendorApp extends GameApplication {
     List<Point2D> num=new ArrayList<>();
     @Override
     protected void initInput() {
-        onBtnDown(MouseButton.PRIMARY,()->{
-            mouse_x =getInput().mouseXWorldProperty().getValue();
-            mouse_y =getInput().mouseYWorldProperty().getValue();
-            List<Entity> entities=getGameWorld().getEntitiesInRange(
-                    new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
-            String activity=player.call("getActivity");
-            if (activity=="getThreeCoin"){
-                //获取三枚不同的硬币
-                entities=getGameWorld().getEntitiesInRange(
-                        new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
-                if (entities.size()!=0){
-                    getCoin(3,entities.get(0),player,false,mouse_x,mouse_y);
+        getInput().addAction(new UserAction("Click") {
+            @Override
+            protected void onAction() {
+                mouse_x =getInput().mouseXWorldProperty().getValue();
+                mouse_y =getInput().mouseYWorldProperty().getValue();
+                List<Entity> entities=getGameWorld().getEntitiesInRange(
+                        new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
+                String activity=player.call("getActivity");
+                if (activity=="getThreeCoin"){
+                    //获取三枚不同的硬币
+                    entities=getGameWorld().getEntitiesInRange(
+                            new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
+                    if (entities.size()!=0){
+                        getCoin(3,entities.get(0),player,false,mouse_x,mouse_y);
+                    }
+                }else if (activity=="getTwoSameCoin"){
+                    //获取两枚相同的硬币
+                    entities=getGameWorld().getEntitiesInRange(
+                            new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
+                    if (entities.size()!=0){
+                        getCoin(2,entities.get(0),player,false,mouse_x,mouse_y);
+                    }
+                }else if (activity=="getOneMidCard"&&entities.size()!=0){
+                    //判断对中间的12张牌的实体操作
+                    getOneCard("getOneMidCard",entities.get(0),player,false, SocketClient.getInstance().x, SocketClient.getInstance().y);
+                }else if (activity=="getOneSaveCard"&&entities.size()!=0){
+                    //对左下角的保留牌操作
+                    getOneCard("getOneSaveCard",entities.get(0),player,false, SocketClient.getInstance().x, SocketClient.getInstance().y);
                 }
-            }else if (activity=="getTwoSameCoin"){
-                //获取两枚相同的硬币
-                entities=getGameWorld().getEntitiesInRange(
-                        new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
-                if (entities.size()!=0){
-                    getCoin(2,entities.get(0),player,false,mouse_x,mouse_y);
-                }
-            }else if (activity=="getOneMidCard"&&entities.size()!=0){
-                //判断对中间的12张牌的实体操作
-                getOneCard("getOneMidCard",entities.get(0),player,false, SocketClient.getInstance().x, SocketClient.getInstance().y);
-            }else if (activity=="getOneSaveCard"&&entities.size()!=0){
-                //对左下角的保留牌操作
-                getOneCard("getOneSaveCard",entities.get(0),player,false, SocketClient.getInstance().x, SocketClient.getInstance().y);
-            }
-            //对贵族实体操作,贵族自动归入门下
+                //对贵族实体操作,贵族自动归入门下
 //            else if (mouse_x<=1300+Config.NOBLE_WID && mouse_x>=1300){
 //                entities=getGameWorld().getEntitiesInRange(new Rectangle2D(mouse_x-Config.NOBLE_WID,mouse_y-Config.NOBLE_HEI,Config.NOBLE_WID,Config.NOBLE_HEI));
 //                if (entities.size()!=0){
@@ -105,22 +108,22 @@ public class SplendorApp extends GameApplication {
 //                }
 //
 //            }
-
-        });
-        //添加保留卡
-        onBtnDown(MouseButton.SECONDARY,()->{
-
-            mouse_x =getInput().mouseXWorldProperty().getValue();
-            mouse_y =getInput().mouseYWorldProperty().getValue();
-            List<Entity> entities=getGameWorld().getEntitiesInRange(
-                    new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
-            String activity=player.call("getActivity");
-            if (activity=="getSaveCard" && entities.size()!=0){
-                //获取保留卡和一枚黄金硬币
-                getSaveCard(entities.get(0),player, mouse_x, mouse_y);
             }
-
-        });
+        }, MouseButton.PRIMARY);
+        getInput().addAction(new UserAction("Get saved Card") {
+            @Override
+            protected void onAction() {
+                mouse_x =getInput().mouseXWorldProperty().getValue();
+                mouse_y =getInput().mouseYWorldProperty().getValue();
+                List<Entity> entities=getGameWorld().getEntitiesInRange(
+                        new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
+                String activity=player.call("getActivity");
+                if (activity=="getSaveCard" && entities.size()!=0){
+                    //获取保留卡和一枚黄金硬币
+                    getSaveCard(entities.get(0),player, mouse_x, mouse_y);
+                }
+            }
+        }, MouseButton.SECONDARY);
     }
     @Override
     protected void onPreInit() {
@@ -171,7 +174,7 @@ public class SplendorApp extends GameApplication {
                             }
                         } else {
                             Bundle match = new Bundle("match");
-                            match.put("mode", t1.intValue()+2);
+                            match.put("mode", Integer.toString(t1.intValue()+2));
                             match.put("name", SocketClient.getInstance().name);
                             SocketClient.getInstance().send(match);
                             getSceneService().pushSubScene(new MatchScene());
@@ -198,7 +201,11 @@ public class SplendorApp extends GameApplication {
     }
     @Override
     protected void onUpdate(double tpf) {
-        if (!getb("login")){
+        if (SocketClient.getInstance().match && !getb("match")) {
+            getNotificationService().pushNotification("Match Find");
+            set("match", true);
+        }
+        if (!SocketClient.getInstance().login){
             if (ai_player.size()!=0){
                 if (player.call("getActivity")=="" && !ai_round){
                     player_action.setText("选取你想进行的操作");
@@ -220,7 +227,7 @@ public class SplendorApp extends GameApplication {
                             }
                             //卡片数量不为0，且拥有足够的宝石
                             if (numisnull &&jud){
-                                getOneCard("",s_card_12.get(j),ai_player.get(i),true, mouse_x, mouse_y);
+                                getOneCard("",s_card_12.get(j),ai_player.get(i),true, s_card_12.get(j).getX()+1,s_card_12.get(j).getY()+1);
                                 break label;
                             }
                         }
@@ -228,7 +235,7 @@ public class SplendorApp extends GameApplication {
                         for (int j = 0; j < 5; j++) {
                             int a=coinList.get(j).call("getNum");
                             if (a>0 && lp<3){
-                                getCoin(3,coinList.get(j),ai_player.get(i),true,0,0);
+                                getCoin(3,coinList.get(j),ai_player.get(i),true,coinList.get(j).getX()+1,coinList.get(j).getY()+1);
                                 lp++;
                             }
                         }
@@ -236,9 +243,10 @@ public class SplendorApp extends GameApplication {
                     ai_round=false;
                 }
             }
-        }else {
+        } else {
             if (human_player.size()!=0){
                 if (SocketClient.getInstance().isThis && player.call("getActivity")=="") {
+                    System.out.println(SocketClient.getInstance().name + "is true");
                     player_action.setText("选取你想进行的操作");
                     dealActPlayer(getGameScene());
 
@@ -256,7 +264,7 @@ public class SplendorApp extends GameApplication {
                         if (entities.size()!=0){
                             getCoin(3,entities.get(0),human_player.get(round),false,SocketClient.getInstance().x, SocketClient.getInstance().y);
                         }
-                    }else if (Objects.equals(SocketClient.getInstance().activity, "getTwoSameCoin")){
+                    } else if (Objects.equals(SocketClient.getInstance().activity, "getTwoSameCoin")){
                         //获取两枚相同的硬币
                         entities=getGameWorld().getEntitiesInRange(
                                 new Rectangle2D(SocketClient.getInstance().x-Config.COIN_WID,SocketClient.getInstance().y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
@@ -323,15 +331,17 @@ public class SplendorApp extends GameApplication {
             player.call("setActivity","");
             num=new ArrayList<>();
 
-            SocketClient.getInstance().isThis=false;
+            if (SocketClient.getInstance().login) {
+                SocketClient.getInstance().isThis=false;
 
-            Bundle roundOver = new Bundle("roundOver");
-            roundOver.put("name", SocketClient.getInstance().name);
-            roundOver.put("x", mouse_x);
-            roundOver.put("y", mouse_y);
-            roundOver.put("activity", size == 2 ? "getTwoSameCoin" : "getThreeCoin");
-            SocketClient.getInstance().send(roundOver);
-            //改下一个人操作了
+                Bundle roundOver = new Bundle("roundOver");
+                roundOver.put("name", SocketClient.getInstance().name);
+                roundOver.put("x", mouse_x);
+                roundOver.put("y", mouse_y);
+                roundOver.put("id", SocketClient.getInstance().id);
+                roundOver.put("activity", size == 2 ? "getTwoSameCoin" : "getThreeCoin");
+                SocketClient.getInstance().send(roundOver);
+            }
         }
     }
     //获取一张卡牌
@@ -391,13 +401,15 @@ public class SplendorApp extends GameApplication {
                 SocketClient.getInstance().isThis=false;
                 //发信息，获取一张卡牌
                 //改下一个人操作了
-                Bundle roundOver = new Bundle("roundOver");
-                roundOver.put("name", SocketClient.getInstance().name);
-                roundOver.put("x", mouse_x);
-                roundOver.put("y", mouse_y);
-                roundOver.put("id", SocketClient.getInstance().id);
-                roundOver.put("activity",mouse_y>=800?"getOneSaveCard":"getOneMidCard");
-                SocketClient.getInstance().send(roundOver);
+                if (SocketClient.getInstance().login) {
+                    Bundle roundOver = new Bundle("roundOver");
+                    roundOver.put("name", SocketClient.getInstance().name);
+                    roundOver.put("x", mouse_x);
+                    roundOver.put("y", mouse_y);
+                    roundOver.put("id", SocketClient.getInstance().id);
+                    roundOver.put("activity",mouse_y>=800?"getOneSaveCard":"getOneMidCard");
+                    SocketClient.getInstance().send(roundOver);
+                }
             }
         }
 
@@ -432,14 +444,15 @@ public class SplendorApp extends GameApplication {
         SocketClient.getInstance().isThis=false;
         //发信息，玩家获取保留卡和一枚黄金硬币
         //改下一个人操作了
-        Bundle roundOver = new Bundle("roundOver");
-        roundOver.put("name", SocketClient.getInstance().name);
-        roundOver.put("x", mouse_x);
-        roundOver.put("y", mouse_y);
-        roundOver.put("id", SocketClient.getInstance().id);
-        roundOver.put("activity","getSaveCard");
-        SocketClient.getInstance().send(roundOver);
-
+        if (SocketClient.getInstance().login) {
+            Bundle roundOver = new Bundle("roundOver");
+            roundOver.put("name", SocketClient.getInstance().name);
+            roundOver.put("x", mouse_x);
+            roundOver.put("y", mouse_y);
+            roundOver.put("id", SocketClient.getInstance().id);
+            roundOver.put("activity","getSaveCard");
+            SocketClient.getInstance().send(roundOver);
+        }
     }
     //下拉框选择玩家选择的活动
     public void dealActPlayer(GameScene gameScene){
@@ -458,7 +471,7 @@ public class SplendorApp extends GameApplication {
         choicebox.getSelectionModel().selectedIndexProperty()
                 .addListener(new ChangeListener<Number>() {
                     @Override
-                    public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1){
+                    public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
                         player.call("setActivity",act_list.get(t1.intValue()));
                         player_action.setText(act_list.get(t1.intValue()));
 
