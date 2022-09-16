@@ -75,14 +75,14 @@ public class SplendorApp extends GameApplication {
                 entities=getGameWorld().getEntitiesInRange(
                         new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
                 if (entities.size()!=0){
-                    getCoin(3,entities.get(0),player,false);
+                    getCoin(3,entities.get(0),player,false,mouse_x,mouse_y);
                 }
             }else if (activity=="getTwoSameCoin"){
                 //获取两枚相同的硬币
                 entities=getGameWorld().getEntitiesInRange(
                         new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
                 if (entities.size()!=0){
-                    getCoin(2,entities.get(0),player,false);
+                    getCoin(2,entities.get(0),player,false,mouse_x,mouse_y);
                 }
             }else if (activity=="getOneMidCard"&&entities.size()!=0){
                 //判断对中间的12张牌的实体操作
@@ -180,9 +180,7 @@ public class SplendorApp extends GameApplication {
                             for (int i = 0; i < t1.intValue()+2-1; i++) {
                                 human_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
                             }
-
                         }
-
                         getGameScene().removeChild(choicebox);
                     }
                 });
@@ -230,7 +228,7 @@ public class SplendorApp extends GameApplication {
                         for (int j = 0; j < 5; j++) {
                             int a=coinList.get(j).call("getNum");
                             if (a>0 && lp<3){
-                                getCoin(3,coinList.get(j),ai_player.get(i),true);
+                                getCoin(3,coinList.get(j),ai_player.get(i),true,0,0);
                                 lp++;
                             }
                         }
@@ -238,35 +236,46 @@ public class SplendorApp extends GameApplication {
                     ai_round=false;
                 }
             }
-        } else {
-            if (player.call("getActivity").equals(SocketClient.getInstance().name)) {
-                player_action.setText("选取你想进行的操作");
-                dealActPlayer(getGameScene());
-            } else if (player.call("getActivity").equals(SocketClient.getInstance().activity)) {
-                List<Entity> entities=getGameWorld().getEntitiesInRange(
-                        new Rectangle2D(SocketClient.getInstance().x-Config.CARD_WID,SocketClient.getInstance().y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
-                if (Objects.equals(SocketClient.getInstance().activity, "getThreeCoin")){
-                    //获取三枚不同的硬币
-                    entities=getGameWorld().getEntitiesInRange(
-                            new Rectangle2D(SocketClient.getInstance().x-Config.COIN_WID,SocketClient.getInstance().y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
-                    if (entities.size()!=0){
-                        getCoin(3,entities.get(0),player,false);
+        }else {
+            if (human_player.size()!=0){
+                if (SocketClient.getInstance().isThis && player.call("getActivity")=="") {
+                    player_action.setText("选取你想进行的操作");
+                    dealActPlayer(getGameScene());
+
+
+                }else if(SocketClient.getInstance().activity!=""){
+                    if (round==human_player.size()){
+                        round=0;
                     }
-                }else if (Objects.equals(SocketClient.getInstance().activity, "getTwoSameCoin")){
-                    //获取两枚相同的硬币
-                    entities=getGameWorld().getEntitiesInRange(
-                            new Rectangle2D(SocketClient.getInstance().x-Config.COIN_WID,SocketClient.getInstance().y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
-                    if (entities.size()!=0){
-                        getCoin(2,entities.get(0),player,false);
+                    List<Entity> entities=getGameWorld().getEntitiesInRange(
+                            new Rectangle2D(SocketClient.getInstance().x-Config.CARD_WID,SocketClient.getInstance().y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
+                    if (Objects.equals(SocketClient.getInstance().activity, "getThreeCoin")){
+                        //获取三枚不同的硬币
+                        entities=getGameWorld().getEntitiesInRange(
+                                new Rectangle2D(SocketClient.getInstance().x-Config.COIN_WID,SocketClient.getInstance().y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
+                        if (entities.size()!=0){
+                            getCoin(3,entities.get(0),human_player.get(round),false,SocketClient.getInstance().x, SocketClient.getInstance().y);
+                        }
+                    }else if (Objects.equals(SocketClient.getInstance().activity, "getTwoSameCoin")){
+                        //获取两枚相同的硬币
+                        entities=getGameWorld().getEntitiesInRange(
+                                new Rectangle2D(SocketClient.getInstance().x-Config.COIN_WID,SocketClient.getInstance().y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
+                        if (entities.size()!=0){
+                            getCoin(2,entities.get(0),human_player.get(round),false,SocketClient.getInstance().x, SocketClient.getInstance().y);
+                        }
+                    }else if (Objects.equals(SocketClient.getInstance().activity, "getOneMidCard") &&entities.size()!=0){
+                        //判断对中间的12张牌的实体操作
+                        getOneCard("getOneMidCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x, SocketClient.getInstance().y);
+                    }else if (Objects.equals(SocketClient.getInstance().activity, "getOneSaveCard") &&entities.size()!=0){
+                        //对左下角的保留牌操作
+                        getOneCard("getOneSaveCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x, SocketClient.getInstance().y);
                     }
-                }else if (Objects.equals(SocketClient.getInstance().activity, "getOneMidCard") &&entities.size()!=0){
-                    //判断对中间的12张牌的实体操作
-                    getOneCard("getOneMidCard",entities.get(0),player,false, SocketClient.getInstance().x, SocketClient.getInstance().y);
-                }else if (Objects.equals(SocketClient.getInstance().activity, "getOneSaveCard") &&entities.size()!=0){
-                    //对左下角的保留牌操作
-                    getOneCard("getOneSaveCard",entities.get(0),player,false, SocketClient.getInstance().x, SocketClient.getInstance().y);
+                    round++;
+                    SocketClient.getInstance().activity="";
+
                 }
             }
+
         }
     }
 
@@ -278,7 +287,7 @@ public class SplendorApp extends GameApplication {
 
 
     //获取一枚硬币
-    public void getCoin(int size,Entity entities,Entity player,boolean isAi){
+    public void getCoin(int size,Entity entities,Entity player,boolean isAi,double mouse_x,double mouse_y){
 
         //获取鼠标点到位置的实体
         if ((mouse_x<=1100+Config.COIN_WID && mouse_x>=1100 && mouse_y>=100 && mouse_y<=500+Config.COIN_HEI || isAi)){
@@ -313,6 +322,9 @@ public class SplendorApp extends GameApplication {
         if (num.size()==size){
             player.call("setActivity","");
             num=new ArrayList<>();
+
+            SocketClient.getInstance().isThis=false;
+
             Bundle roundOver = new Bundle("roundOver");
             roundOver.put("name", SocketClient.getInstance().name);
             roundOver.put("x", mouse_x);
@@ -376,9 +388,15 @@ public class SplendorApp extends GameApplication {
                 entities.removeFromWorld();
                 player.call("setActivity","");
                 ai_round=true;
-
+                SocketClient.getInstance().isThis=false;
                 //发信息，获取一张卡牌
                 //改下一个人操作了
+                Bundle roundOver = new Bundle("roundOver");
+                roundOver.put("name", SocketClient.getInstance().name);
+                roundOver.put("x", mouse_x);
+                roundOver.put("y", mouse_y);
+                roundOver.put("activity",mouse_y>=800?"getOneSaveCard":"getOneMidCard");
+                SocketClient.getInstance().send(roundOver);
             }
         }
 
@@ -410,9 +428,15 @@ public class SplendorApp extends GameApplication {
         player.call("setActivity","");
         ai_round=true;
 
-
+        SocketClient.getInstance().isThis=false;
         //发信息，玩家获取保留卡和一枚黄金硬币
         //改下一个人操作了
+        Bundle roundOver = new Bundle("roundOver");
+        roundOver.put("name", SocketClient.getInstance().name);
+        roundOver.put("x", mouse_x);
+        roundOver.put("y", mouse_y);
+        roundOver.put("activity","getSaveCard");
+        SocketClient.getInstance().send(roundOver);
 
     }
     //下拉框选择玩家选择的活动

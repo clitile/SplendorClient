@@ -19,6 +19,7 @@ public class SocketClient extends WebSocketClient {
     public int id;
     public String name;
     public String activity;
+    public boolean isThis = false;
 
     static {
         try {
@@ -61,10 +62,17 @@ public class SocketClient extends WebSocketClient {
             match = true;
             id = mess.get("id");
             FXGL.set("playersNames", mess.get("players"));
+            isThis = mess.get("next").equals(this.name);
         } else if (mess.getName().equals("act")) {
             x = mess.get("x");
             y = mess.get("y");
             activity = mess.get("activity");
+        } else if (mess.getName().equals("roundOver")) {
+            x = mess.get("x");
+            y = mess.get("y");
+            activity = mess.get("activity");
+
+            isThis = mess.get("next").equals(this.name);
         }
 
 

@@ -25,6 +25,8 @@ public class PlayerComponent extends Component implements SerializableComponent 
     private List<Entity> saveCard;
     //存储玩家当前的活动
     private String activity="";
+    //登录用户名称
+    private String user_name="";
     @Override
     public void onAdded() {
         saveCard=new ArrayList<>();
@@ -66,6 +68,15 @@ public class PlayerComponent extends Component implements SerializableComponent 
         mapCoin.replace(name,mapCoin.get(name)-n);
 
     }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
     public void addCoin(String name){
         mapCoin.replace(name,1+mapCoin.get(name));
 
