@@ -21,6 +21,7 @@ public class SocketClient extends WebSocketClient {
     public String activity;
     public boolean isThis = false;
 
+
     static {
         try {
             client = new SocketClient();
@@ -61,6 +62,7 @@ public class SocketClient extends WebSocketClient {
         } else if (mess.getName().equals("matchFind")) {
             match = true;
             id = mess.get("id");
+            System.out.println(mess);
             FXGL.set("playersNames", mess.get("players"));
             isThis = mess.get("next").equals(this.name);
         } else if (mess.getName().equals("act")) {

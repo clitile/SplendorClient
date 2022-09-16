@@ -4,8 +4,6 @@ import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.net.Client;
 import javafx.scene.paint.Color;
-import mysql.MysqlConn;
-import nz.net.SocketClient;
 
 
 import java.util.*;
@@ -39,10 +37,4 @@ public interface Config {
         add("f_level2");
         add("f_level3");
     }};
-
-    String HOST = "localhost";
-    int PORT = 10100;
-    Client<Bundle> CLIENT = FXGL.getNetService().newTCPClient(HOST, PORT);
-
-    MysqlConn CONN = new MysqlConn();
 }

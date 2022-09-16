@@ -51,7 +51,7 @@ public class SplendorApp extends GameApplication {
         settings.setVersion("1.0.1");
         settings.setAppIcon("fp_token-1.png");
         settings.setFullScreenAllowed(true);
-        settings.setFullScreenFromStart(true);
+//        settings.setFullScreenFromStart(true);
         settings.setMainMenuEnabled(true);
         settings.setSceneFactory(new SceneFactory(){
             @Override
@@ -165,13 +165,13 @@ public class SplendorApp extends GameApplication {
                 .addListener(new ChangeListener<Number>() {
                     @Override
                     public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1){
-                        if (!getb("login")){
+                        if (!SocketClient.getInstance().login){
                             for (int i = 0; i < t1.intValue()+2-1; i++) {
                                 ai_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
                             }
                         } else {
                             Bundle match = new Bundle("match");
-                            match.put("mode", t1.intValue()+2-1);
+                            match.put("mode", t1.intValue()+2);
                             match.put("name", SocketClient.getInstance().name);
                             SocketClient.getInstance().send(match);
                             getSceneService().pushSubScene(new MatchScene());
@@ -308,12 +308,12 @@ public class SplendorApp extends GameApplication {
 
                 num.add(entities.getPosition());
 
-                //TODO 发信息，玩家获得一个硬币
                 if (SocketClient.getInstance().login && num.size()!=size) {
                     Bundle act = new Bundle("act");
                     act.put("name", SocketClient.getInstance().name);
                     act.put("x", mouse_x);
                     act.put("y", mouse_y);
+                    act.put("id", SocketClient.getInstance().id);
                     act.put("activity", size == 2 ? "getTwoSameCoin" : "getThreeCoin");
                     SocketClient.getInstance().send(act);
                 }
@@ -395,6 +395,7 @@ public class SplendorApp extends GameApplication {
                 roundOver.put("name", SocketClient.getInstance().name);
                 roundOver.put("x", mouse_x);
                 roundOver.put("y", mouse_y);
+                roundOver.put("id", SocketClient.getInstance().id);
                 roundOver.put("activity",mouse_y>=800?"getOneSaveCard":"getOneMidCard");
                 SocketClient.getInstance().send(roundOver);
             }
@@ -435,6 +436,7 @@ public class SplendorApp extends GameApplication {
         roundOver.put("name", SocketClient.getInstance().name);
         roundOver.put("x", mouse_x);
         roundOver.put("y", mouse_y);
+        roundOver.put("id", SocketClient.getInstance().id);
         roundOver.put("activity","getSaveCard");
         SocketClient.getInstance().send(roundOver);
 
@@ -464,8 +466,5 @@ public class SplendorApp extends GameApplication {
                     }
                 });
         gameScene.addChild(choicebox);
-
-
     }
-
 }
