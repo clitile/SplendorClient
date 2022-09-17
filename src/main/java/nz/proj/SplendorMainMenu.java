@@ -19,6 +19,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import nz.net.SocketClient;
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -101,8 +103,7 @@ public class SplendorMainMenu extends FXGLMenu {
     }
 
     private void loginPane() {
-        SocketClient SOCKET_CLIENT = SocketClient.getInstance();
-        SOCKET_CLIENT.connect();
+        SocketClient.getInstance().connect();
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.CENTER);
         DialogService dialogService = getDialogService();
@@ -111,7 +112,7 @@ public class SplendorMainMenu extends FXGLMenu {
 
         TextField name_inp = new TextField();
         PasswordField password_inp = new PasswordField();
-        pane.addRow(0, getUIFactoryService().newText("Account"), name_inp);
+        pane.addRow(0, getUIFactoryService().newText("Name"), name_inp);
         pane.addRow(1, getUIFactoryService().newText("Password"), password_inp);
 
         Button ack = getUIFactoryService().newButton("SignIn");
@@ -119,13 +120,16 @@ public class SplendorMainMenu extends FXGLMenu {
         Button retrieve = getUIFactoryService().newButton("Retrieve pwd");
 
         ack.setOnAction(actionEvent -> {
-            String name = name_inp.getText();
-            String pwd = password_inp.getText();
-            Bundle loginBundle = new Bundle("login");
-            loginBundle.put("name", name);
-            loginBundle.put("pwd", pwd);
-            SocketClient.getInstance().send(loginBundle);
-            SocketClient.getInstance().name = name;
+            if (! SocketClient.getInstance().login) {
+                String name = name_inp.getText();
+                String pwd = password_inp.getText();
+                Bundle loginBundle = new Bundle("login");
+                loginBundle.put("name", name);
+                loginBundle.put("pwd", pwd);
+                SocketClient.getInstance().send(loginBundle);
+                SocketClient.getInstance().name = name;
+            } else temp = 0;
+
         });
 
         signup.setOnAction(actionEvent -> {
@@ -177,8 +181,12 @@ public class SplendorMainMenu extends FXGLMenu {
     }
 
     private void onlineGame() {
-        if (!SocketClient.getInstance().login) {
-            loginPane();
+        if (!isReachable()) {
+            getDialogService().showMessageBox("Server Error");
+        } else {
+            if (!SocketClient.getInstance().login) {
+                loginPane();
+            }
         }
 //        if (!Config.CONN.isConnected()) {
 //            if (Config.CONN.Connect()) {
@@ -237,5 +245,27 @@ public class SplendorMainMenu extends FXGLMenu {
                 fireNewGame();
             }
         }
+        if (! SocketClient.getInstance().info_corr) {
+            FXGL.getNotificationService().pushNotification("Information Error");
+            SocketClient.getInstance().info_corr = true;
+        }
+        if (SocketClient.getInstance().match && ! SocketClient.getInstance().roomStop) {
+            SocketClient.getInstance().match = false;
+            Bundle b = new Bundle("roomStop");
+            b.put("name", SocketClient.getInstance().name);
+            SocketClient.getInstance().send(b);
+        }
+    }
+
+    private boolean isReachable() {
+        boolean reachable;
+        // 如果端口为空，使用 isReachable 检测，非空使用 socket 检测
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(Config.IP, Integer.parseInt(Config.PORT)));
+            reachable = true;
+        } catch (Exception e) {
+            reachable = false;
+        }
+        return reachable;
     }
 }

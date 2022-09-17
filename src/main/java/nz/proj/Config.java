@@ -36,4 +36,7 @@ public interface Config {
     }};
 
     ModeScene MODE_SCENE = new ModeScene();
+
+    String PORT = "10100";
+    String IP = "localhost";
 }

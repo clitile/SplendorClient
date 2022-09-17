@@ -3,6 +3,7 @@ package nz.net;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
+import nz.proj.Config;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -24,6 +25,7 @@ public class SocketClient extends WebSocketClient {
     public boolean isThis = false;
     public Random r;
     public boolean roomStop = false;
+    public boolean info_corr = true;
 
 
     static {
@@ -35,7 +37,7 @@ public class SocketClient extends WebSocketClient {
     }
 
     public SocketClient() throws URISyntaxException {
-        this(new URI("ws://localhost:10100/websocket"));
+        this(new URI("ws://%s:%s/websocket".formatted(Config.IP, Config.PORT)));
     }
 
     public static SocketClient getInstance() {
@@ -85,6 +87,9 @@ public class SocketClient extends WebSocketClient {
             this.roomStop = true;
             id = 0;
             match = false;
+            Config.MODE_SCENE.mode = 0;
+        } else if (mess.getName().equals("false")) {
+            info_corr = false;
         }
     }
 
