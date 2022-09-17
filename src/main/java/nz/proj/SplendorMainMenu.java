@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class SplendorMainMenu extends FXGLMenu {
+    private ModeScene modeScene = new ModeScene();
+    int temp = 0;
+
     public SplendorMainMenu() {
         super(MenuType.MAIN_MENU);
 //        loopBGM(Config.BackMusic);
@@ -204,8 +207,15 @@ public class SplendorMainMenu extends FXGLMenu {
     @Override
     protected void onUpdate(double tpf) {
         if (SocketClient.getInstance().login) {
-            FXGL.getNotificationService().pushNotification("Login Successfully");
-            fireNewGame();
+            if (temp == 0) {
+                getSceneService().pushSubScene(modeScene);
+                FXGL.getNotificationService().pushNotification("Login Successfully");
+                temp += 1;
+            }
+//            fireNewGame();
+            if (modeScene.mode != 0 && SocketClient.getInstance().match) {
+                fireNewGame();
+            }
         }
     }
 }

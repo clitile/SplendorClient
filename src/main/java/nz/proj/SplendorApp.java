@@ -198,6 +198,7 @@ public class SplendorApp extends GameApplication {
         vars.put("match", false);
         vars.put("id", 0);
         vars.put("playersNames", new ArrayList<>());
+        vars.put("mode", 0);
     }
     @Override
     protected void onUpdate(double tpf) {

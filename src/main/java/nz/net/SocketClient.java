@@ -1,5 +1,6 @@
 package nz.net;
 
+import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import org.java_websocket.client.WebSocketClient;
@@ -9,6 +10,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.Random;
 
 public class SocketClient extends WebSocketClient {
     private static final SocketClient client;
@@ -20,6 +22,8 @@ public class SocketClient extends WebSocketClient {
     public String name;
     public String activity;
     public boolean isThis = false;
+    public Random r;
+    private int seed;
 
 
     static {
@@ -62,7 +66,8 @@ public class SocketClient extends WebSocketClient {
         } else if (mess.getName().equals("matchFind")) {
             match = true;
             id = mess.get("id");
-            System.out.println(mess);
+            this.seed = mess.get("seed");
+            r = FXGLMath.getRandom(seed);
             FXGL.set("playersNames", mess.get("players"));
             isThis = mess.get("next").equals(this.name);
             System.out.println("matchfind: " + isThis);
