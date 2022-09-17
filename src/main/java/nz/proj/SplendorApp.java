@@ -352,7 +352,7 @@ public class SplendorApp extends GameApplication {
                 roundOver.put("id", SocketClient.getInstance().id);
                 roundOver.put("activity", size == 2 ? "getTwoSameCoin" : "getThreeCoin");
                 SocketClient.getInstance().send(roundOver);
-            }
+            } else ai_round = true;
         }
     }
     //获取一张卡牌
