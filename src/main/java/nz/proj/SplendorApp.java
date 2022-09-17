@@ -170,6 +170,7 @@ public class SplendorApp extends GameApplication {
                 human_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
             }
         }
+        Config.MODE_SCENE.mode = 0;
     }
     boolean ai_round=false;
     @Override
