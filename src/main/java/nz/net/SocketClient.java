@@ -23,7 +23,7 @@ public class SocketClient extends WebSocketClient {
     public String activity;
     public boolean isThis = false;
     public Random r;
-    private int seed;
+    public boolean roomStop = false;
 
 
     static {
@@ -66,7 +66,7 @@ public class SocketClient extends WebSocketClient {
         } else if (mess.getName().equals("matchFind")) {
             match = true;
             id = mess.get("id");
-            this.seed = mess.get("seed");
+            int seed = mess.get("seed");
             r = FXGLMath.getRandom(seed);
             FXGL.set("playersNames", mess.get("players"));
             isThis = mess.get("next").equals(this.name);
@@ -81,12 +81,11 @@ public class SocketClient extends WebSocketClient {
             activity = mess.get("activity");
 
             isThis = mess.get("next").equals(this.name);
+        } else if (mess.getName().equals("roomStop")) {
+            this.roomStop = true;
+            id = 0;
+            match = false;
         }
-
-
-        //服务器告诉客户端该操作了
-        //player.setActivity("your_activity")
-
     }
 
     private Bundle bytes2Bundle(ByteBuffer bytes) {

@@ -28,6 +28,14 @@ public class SplendorMainMenu extends FXGLMenu {
 
     public SplendorMainMenu() {
         super(MenuType.MAIN_MENU);
+        getPrimaryStage().setOnCloseRequest(event -> {
+            if (SocketClient.getInstance().login) {
+                Bundle b = new Bundle("close");
+                b.put("name", SocketClient.getInstance().name);
+                SocketClient.getInstance().send(b);
+                SocketClient.getInstance().close();
+            }
+        });
 //        loopBGM(Config.BackMusic);
         getContentRoot().getChildren().setAll(texture("backg (2).png",Config.APP_WIDTH,Config.APP_HEIGHT));
         var blocks = new ArrayList<ColorBlock>();
@@ -76,7 +84,15 @@ public class SplendorMainMenu extends FXGLMenu {
                 }),
                 new MenuButton("Online Game", this::onlineGame),
                 new MenuButton("How to Play", this::instructions),
-                new MenuButton("Exit", this::fireExit)
+                new MenuButton("Exit", () -> {
+                    if (SocketClient.getInstance().login) {
+                        Bundle b = new Bundle("close");
+                        b.put("name", SocketClient.getInstance().name);
+                        SocketClient.getInstance().send(b);
+                        SocketClient.getInstance().close();
+                    }
+                    fireExit();
+                })
         );
         menuBox.setAlignment(Pos.TOP_CENTER);
         menuBox.setTranslateX(getAppWidth() / 2.0 - 140);
