@@ -30,7 +30,7 @@ public class CardComponent extends Component {
     private List<String> coins=new ArrayList<>();
     public CardComponent(String level) {
 
-        int RandomFrame= SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(0, 24) : FXGLMath.random(0,24);
+        int RandomFrame= SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(0, 25) : FXGLMath.random(0,24);
         at=new AnimatedTexture(new AnimationChannel(FXGL.image("cards_620_860.png")
                 ,5,Config.CARD_WID,Config.CARD_HEI, Duration.seconds(1),RandomFrame,RandomFrame));
 

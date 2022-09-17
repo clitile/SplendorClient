@@ -35,7 +35,7 @@ public class SocketClient extends WebSocketClient {
     }
 
     public SocketClient() throws URISyntaxException {
-        this(new URI("ws://192.168.3.216:10100/websocket"));
+        this(new URI("ws://localhost:10100/websocket"));
     }
 
     public static SocketClient getInstance() {

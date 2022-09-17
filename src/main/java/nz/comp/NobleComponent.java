@@ -8,6 +8,7 @@ import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.Texture;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import nz.net.SocketClient;
 import nz.proj.Config;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class NobleComponent extends Component {
         List<String> lists=new ArrayList<>();
 
         while (lists.size()!=3){
-            String a=Config.list.get(FXGLMath.random(0,4));
+            String a=Config.list.get(SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(0, 5) : FXGLMath.random(0,4));
             if (!lists.contains(a)){
                 lists.add(a);
             }
@@ -32,10 +33,10 @@ public class NobleComponent extends Component {
 
 
         mapToken=new HashMap<>(){{
-            put(lists.get(0),FXGLMath.random(3,5));
-            put(lists.get(1),FXGLMath.random(3,5));
-            put(lists.get(2),FXGLMath.random(3,5));
-            put("score",FXGLMath.random(3,5));
+            put(lists.get(0),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(3, 6) : FXGLMath.random(3,5));
+            put(lists.get(1),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(3, 6) : FXGLMath.random(3,5));
+            put(lists.get(2),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(3, 6) : FXGLMath.random(3,5));
+            put("score",SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(3, 6) : FXGLMath.random(3,5));
         }};
         at=new AnimatedTexture(new AnimationChannel(FXGL.image("nobles.png")
                 ,2, Config.NOBLE_WID,Config.NOBLE_HEI, Duration.seconds(1),0,0));
