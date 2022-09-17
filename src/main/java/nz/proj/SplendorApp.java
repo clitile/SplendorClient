@@ -169,35 +169,6 @@ public class SplendorApp extends GameApplication {
                 human_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
             }
         }
-        ///////////////////////////////////////////
-//        var choicebox=getUIFactoryService().newChoiceBox(FXCollections.observableArrayList(
-//                "2 player", "3 player", "4 player"));
-//        choicebox.setLayoutX(700);
-//        choicebox.setLayoutY(850);
-//        choicebox.getSelectionModel().selectedIndexProperty()
-//                .addListener(new ChangeListener<Number>() {
-//                    @Override
-//                    public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1){
-//                        if (!SocketClient.getInstance().login){
-//                            for (int i = 0; i < t1.intValue()+2-1; i++) {
-//                                ai_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
-//                            }
-//                        } else {
-//                            Bundle match = new Bundle("match");
-//                            match.put("mode", Integer.toString(t1.intValue()+2));
-//                            match.put("name", SocketClient.getInstance().name);
-//                            SocketClient.getInstance().send(match);
-//                            getSceneService().pushSubScene(new MatchScene());
-//
-//                            //创建人类player,显示玩家的信息
-//                            for (int i = 0; i < t1.intValue()+2-1; i++) {
-//                                human_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
-//                            }
-//                        }
-//                        getGameScene().removeChild(choicebox);
-//                    }
-//                });
-//        getGameScene().addChild(choicebox);
     }
     boolean ai_round=false;
     @Override
