@@ -16,6 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.MouseButton;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import nz.net.SocketClient;
 
@@ -37,8 +38,6 @@ public class SplendorApp extends GameApplication {
     //鼠标坐标
     double mouse_x;
     double mouse_y;
-    //输出玩家当前的活动
-    Text player_action;
     //ai是否操作
     int round=0;
     //Ai玩家
@@ -155,11 +154,6 @@ public class SplendorApp extends GameApplication {
                 s_card_12.add(getGameWorld().spawn(Config.list_s.get(j),new SpawnData(200*i-100,500-200*j)));
             }
         }
-        player_action = new Text(0,40,"请选择你想游玩的AI人数");
-        player_action.setLayoutX(700);
-        player_action.setLayoutY(750);
-        player_action.setStyle("-fx-font-size: 25;");
-        getGameScene().addChild(player_action);
         if (!SocketClient.getInstance().login){
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
                 ai_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
@@ -182,6 +176,7 @@ public class SplendorApp extends GameApplication {
         vars.put("id", 0);
         vars.put("playersNames", new ArrayList<>());
         vars.put("mode", 0);
+        vars.put("player_action", "选取你想进行的操作");
     }
     @Override
     protected void onUpdate(double tpf) {
@@ -197,7 +192,7 @@ public class SplendorApp extends GameApplication {
         if (!SocketClient.getInstance().login){
             if (ai_player.size()!=0){
                 if (player.call("getActivity")=="" && !ai_round){
-                    player_action.setText("选取你想进行的操作");
+                    set("player_action", "选取你想进行的操作");
                     dealActPlayer(getGameScene());
                 }
                 if (ai_round){
@@ -237,7 +232,7 @@ public class SplendorApp extends GameApplication {
             if (human_player.size()!=0){
                 if (SocketClient.getInstance().isThis && player.call("getActivity")=="") {
                     System.out.println(SocketClient.getInstance().name + "is true");
-                    player_action.setText("选取你想进行的操作");
+                    set("player_action", "选取你想进行的操作");
                     dealActPlayer(getGameScene());
 
 
@@ -273,8 +268,14 @@ public class SplendorApp extends GameApplication {
 
                 }
             }
-
         }
+    }
+
+    @Override
+    protected void initUI() {
+        Text action = addVarText("player_action", 700, 750);
+        action.fontProperty().unbind();
+        action.setFont(Font.font(25));
     }
 
     public static void main(String[] args) {
@@ -460,8 +461,7 @@ public class SplendorApp extends GameApplication {
                     @Override
                     public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
                         player.call("setActivity",act_list.get(t1.intValue()));
-                        player_action.setText(act_list.get(t1.intValue()));
-
+                        set("player_action", act_list.get(t1.intValue()));
                         getGameScene().removeChild(choicebox);
                     }
                 });
