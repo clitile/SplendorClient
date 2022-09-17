@@ -61,12 +61,19 @@ public class PlayerComponent extends Component implements SerializableComponent 
         mapToken.replace(name,n+mapToken.get(name));
 
     }
+
     public HashMap<String,Integer> getMapToken(){
         return this.mapToken;
+    }
+    public HashMap<String,Integer> getMapCoin(){
+        return this.mapCoin;
     }
     public void cutCoin(String name,int n){
         mapCoin.replace(name,mapCoin.get(name)-n);
 
+    }
+    public int getScore(){
+        return mapToken.get("score");
     }
 
     public void setUser_name(String user_name) {

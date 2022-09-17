@@ -17,9 +17,9 @@ public class CoinComponent extends Component {
     public CoinComponent(String coinStyle) {
         style=coinStyle;
         if (coinStyle=="goldToken"){
-            coinNumber=5;
+            coinNumber=6;
         }else {
-            coinNumber=4;
+            coinNumber=5;
         }
 
     }

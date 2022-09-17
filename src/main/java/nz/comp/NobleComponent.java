@@ -57,7 +57,9 @@ public class NobleComponent extends Component {
     public int getScore(){
         return mapToken.get("score");
     }
-
+    public HashMap<String,Integer> getMapToken(){
+        return this.mapToken;
+    }
     public void showInfo(){
         entity.getViewComponent().clearChildren();
         entity.getViewComponent().addChild(at);
