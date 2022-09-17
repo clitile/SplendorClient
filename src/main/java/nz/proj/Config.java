@@ -1,8 +1,5 @@
 package nz.proj;
 
-import com.almasb.fxgl.core.serialization.Bundle;
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.net.Client;
 import javafx.scene.paint.Color;
 
 
@@ -37,4 +34,6 @@ public interface Config {
         add("f_level2");
         add("f_level3");
     }};
+
+    ModeScene MODE_SCENE = new ModeScene();
 }

@@ -24,21 +24,27 @@ public class ModeScene extends SubScene {
 
         two_player.setOnAction(event -> {
             mode = 2;
-            sendMatch(2);
             FXGL.getSceneService().popSubScene();
-            FXGL.getSceneService().pushSubScene(new MatchScene());
+            if (SocketClient.getInstance().login) {
+                sendMatch(2);
+                FXGL.getSceneService().pushSubScene(new MatchScene());
+            }
         });
         three_player.setOnAction(event -> {
             mode = 3;
-            sendMatch(3);
             FXGL.getSceneService().popSubScene();
-            FXGL.getSceneService().pushSubScene(new MatchScene());
+            if (SocketClient.getInstance().login) {
+                sendMatch(3);
+                FXGL.getSceneService().pushSubScene(new MatchScene());
+            }
         });
         four_player.setOnAction(event -> {
             mode = 4;
-            sendMatch(4);
             FXGL.getSceneService().popSubScene();
-            FXGL.getSceneService().pushSubScene(new MatchScene());
+            if (SocketClient.getInstance().login) {
+                sendMatch(4);
+                FXGL.getSceneService().pushSubScene(new MatchScene());
+            }
         });
     }
 

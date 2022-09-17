@@ -1,5 +1,5 @@
 open module SplendorClient {
     requires com.almasb.fxgl.all;
-    requires kotlin.stdlib;
     requires Java.WebSocket;
+    exports nz.proj;
 }
