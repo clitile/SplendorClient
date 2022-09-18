@@ -101,7 +101,13 @@ public class PlayerComponent extends Component implements SerializableComponent 
         }
         return true;
     }
-
+    public int enoughCoinplayer(String a,int b){
+        int k=mapCoin.get(a)+mapToken.get(a)-b;
+        return k;
+    }
+    public int getGoldNum(){
+        return this.mapCoin.get("goldToken");
+    }
     public void setActivity(String activity) {
         this.activity = activity;
     }

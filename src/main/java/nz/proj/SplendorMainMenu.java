@@ -81,9 +81,7 @@ public class SplendorMainMenu extends FXGLMenu {
 
         var menuBox = new VBox(
                 5,
-                new MenuButton("New Game", () -> {
-                    getSceneService().pushSubScene(Config.MODE_SCENE);
-                }),
+                new MenuButton("New Game", () -> getSceneService().pushSubScene(Config.MODE_SCENE)),
                 new MenuButton("Online Game", this::onlineGame),
                 new MenuButton("How to Play", this::instructions),
                 new MenuButton("Exit", () -> {
@@ -103,7 +101,9 @@ public class SplendorMainMenu extends FXGLMenu {
     }
 
     private void loginPane() {
-        SocketClient.getInstance().connect();
+        if (!SocketClient.getInstance().isOpen()) {
+            SocketClient.getInstance().connect();
+        }
         GridPane pane = new GridPane();
         pane.setAlignment(Pos.CENTER);
         DialogService dialogService = getDialogService();
@@ -188,15 +188,6 @@ public class SplendorMainMenu extends FXGLMenu {
                 loginPane();
             }
         }
-//        if (!Config.CONN.isConnected()) {
-//            if (Config.CONN.Connect()) {
-//                loginPane();
-//            } else {
-//                getDialogService().showMessageBox("Network Error");
-//            }
-//        } else {
-//            FXGL.getNotificationService().pushNotification("You have logged in");
-//        }
     }
 
     private void instructions() {
