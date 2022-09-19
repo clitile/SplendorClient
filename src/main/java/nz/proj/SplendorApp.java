@@ -7,6 +7,9 @@ import com.almasb.fxgl.app.scene.GameScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
+import com.almasb.fxgl.dsl.components.OffscreenCleanComponent;
+import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.input.UserAction;
@@ -18,6 +21,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import nz.net.SocketClient;
 
 import java.util.*;
@@ -51,14 +55,15 @@ public class SplendorApp extends GameApplication {
         settings.setTitle("Splendor");
         settings.setVersion("1.0.1");
         settings.setAppIcon("fp_token-1.png");
-        settings.setFullScreenAllowed(true);
-//        settings.setFullScreenFromStart(true);
+//        settings.setFullScreenAllowed(true);
+        settings.setFullScreenFromStart(true);
         settings.setMainMenuEnabled(true);
         settings.setSceneFactory(new SceneFactory(){
             @Override
             public FXGLMenu newMainMenu() {
                 return new SplendorMainMenu();
             }
+
         });
     }
     //用来存储玩家获取的硬币，判断是三个不同的硬币或两个相同的硬币
@@ -118,9 +123,6 @@ public class SplendorApp extends GameApplication {
         getAssetLoader().loadImage("nobles.png");
         getAssetLoader().loadImage("cards_372_172.png");
     }
-
-
-
     @Override
     protected void initGame() {
 
@@ -263,14 +265,12 @@ public class SplendorApp extends GameApplication {
             }
         }
     }
-
     @Override
     protected void initUI() {
         Text action = addVarText("player_action", 700, 750);
         action.fontProperty().unbind();
         action.setFont(Font.font(25));
     }
-
     public static void main(String[] args) {
         System.out.println("main");
         launch(args);
@@ -313,7 +313,17 @@ public class SplendorApp extends GameApplication {
                     act.put("activity", size == 2 ? "getTwoSameCoin" : "getThreeCoin");
                     SocketClient.getInstance().send(act);
                 }
-            }else {
+                //动画
+                double ani_x=player.getX()-entities.getX();
+                double ani_y=player.getY()-entities.getY();
+                Entity bullet=entityBuilder()
+                        .at(entities.getX(),entities.getY())
+                        .viewWithBBox(FXGL.texture(entities.call("getStyle")+".png"))
+                        .with(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)))
+                        .with(new ExpireCleanComponent(Duration.seconds(1)))
+                        .buildAndAttach();
+                getGameWorld().addEntity(bullet);
+            }else if (!ai_round){
                 getNotificationService().pushNotification("大于3才能拿两个一样的硬币，拿三种硬币的话得有三种硬币数量不为0捏");
             }
         }
@@ -369,18 +379,24 @@ public class SplendorApp extends GameApplication {
                 for (String coin : coins) {
                     //扣除玩家的硬币
                     if (hashMap.get(coin)<=tokenMap.get(coin)){
-                        player.call("cutCoin", coin, hashMap.get(coin) - tokenMap.get(coin));
 
                     }else {
-                        int p=hashMap.get(coin) - coinMap.get(coin);
-                        player.call("cutCoin", coin, coinMap.get(coin));
-                        player.call("cutCoin", "goldToken", p);
-                        coinList.get(5).call("addCoin",p);
-                        coinList.get(5).call("showInfo");
+                        int c = player.call("enoughCoinplayer", coin, hashMap.get(coin));
+                        if (c>=0) {
+                            player.call("cutCoin", coin,hashMap.get(coin)-tokenMap.get(coin));
+                            //买卡时还回硬币
+                            coinList.get(Config.list.indexOf(coin)).call("addCoin", hashMap.get(coin) - tokenMap.get(coin));
+                            coinList.get(Config.list.indexOf(coin)).call("showInfo");
+                        }else {
+                            player.call("cutCoin", coin, coinMap.get(coin));
+                            player.call("cutCoin", "goldToken", hashMap.get(coin)-tokenMap.get(coin)-coinMap.get(coin));
+                            coinList.get(5).call("addCoin",hashMap.get(coin)-tokenMap.get(coin)-coinMap.get(coin));
+                            coinList.get(5).call("showInfo");
+                            //买卡时还回硬币
+                            coinList.get(Config.list.indexOf(coin)).call("addCoin", coinMap.get(coin));
+                            coinList.get(Config.list.indexOf(coin)).call("showInfo");
+                        }
                     }
-                    //买卡时还回硬币
-                    coinList.get(Config.list.indexOf(coin)).call("addCoin", hashMap.get(coin) - tokenMap.get(coin));
-                    coinList.get(Config.list.indexOf(coin)).call("showInfo");
                 }
                 //玩家获得分数和宝石
                 player.call("addTokenAndScore","score",hashMap.get("score"));
@@ -388,7 +404,6 @@ public class SplendorApp extends GameApplication {
                 player.call("showInfo");
                 //添加保留卡
                 if (actname.equals("getOneSaveCard")){
-                    System.out.println("111111111111111111");
                     List<Entity> saveList=player.call("getSaveCard");
                     saveList.remove(entities);
                     for (int i = 0; i < saveList.size(); i++) {
@@ -396,7 +411,6 @@ public class SplendorApp extends GameApplication {
                     }player.call("setSaveCard",saveList);
                 }else {
                     //对最左边的三张等级牌操作
-                    System.out.println("222222222222222222");
                     f_card_3.get(hashMap.get("cardLevel")-1).call("cutCardNumber");
                     f_card_3.get(hashMap.get("cardLevel")-1).call("showInfo");
                     //卡片替换成新的同等级的牌
@@ -404,11 +418,17 @@ public class SplendorApp extends GameApplication {
                             getGameWorld().spawn(entities.call("getClevel"),
                                     new SpawnData(entities.getX(),entities.getY())));
                 }
-                entities.removeFromWorld();
+                //动画
+                double ani_x=player.getX()-entities.getX();
+                double ani_y=player.getY()-entities.getY();
+                entities.addComponent(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)/2));
+                entities.addComponent(new ExpireCleanComponent(Duration.seconds(2)));
+
+
                 player.call("setActivity","");
                 ai_round=true;
                 SocketClient.getInstance().isThis=false;
-
+                
                 //对贵族实体操作,贵族自动归入用户
                 for (int i = 0; i < 3; i++) {
                     HashMap<String,Integer> noblieList=nobleList.get(i).call("getMapToken");
@@ -448,7 +468,7 @@ public class SplendorApp extends GameApplication {
                     roundOver.put("activity",mouse_y>=800?"getOneSaveCard":"getOneMidCard");
                     SocketClient.getInstance().send(roundOver);
                 }
-            } else {
+            } else if (!ai_round){
                 getNotificationService().pushNotification("购买失败");
                 dealActPlayer(getGameScene());
             }
@@ -478,6 +498,8 @@ public class SplendorApp extends GameApplication {
             for (int i = 0; i < saveList.size(); i++) {
                 saveList.get(i).setPosition(200*i+100,800);
             }player.call("setSaveCard",saveList);
+
+
         }
         player.call("setActivity","");
         ai_round=true;
@@ -570,7 +592,8 @@ public class SplendorApp extends GameApplication {
                             }else if(act_list.get(t1.intValue()).equals("getSaveCard")){
                                 int u=coinList.get(5).call("getNum");
                                 List<Entity> saveList=player.call("getSaveCard");
-                                if (u>0 && saveList.size()<=3){
+                                System.out.println(saveList.size());
+                                if (u>0 && saveList.size()<3){
                                     deal_once=0;
                                     player.call("setActivity",act_list.get(t1.intValue()));
                                     set("player_action", act_list.get(t1.intValue()));
@@ -592,5 +615,4 @@ public class SplendorApp extends GameApplication {
         }
 
     }
-
 }

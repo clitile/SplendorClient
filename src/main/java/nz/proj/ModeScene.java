@@ -13,14 +13,23 @@ public class ModeScene extends SubScene {
         Button two_player = FXGL.getUIFactoryService().newButton("Two Player");
         Button three_player = FXGL.getUIFactoryService().newButton("Three Player");
         Button four_player = FXGL.getUIFactoryService().newButton("Four Player");
+
+        two_player.setTranslateX(FXGL.getAppWidth() * 0.45);
+        two_player.setTranslateY(FXGL.getAppHeight() * 0.45);
+        three_player.setTranslateX(FXGL.getAppWidth() * 0.45);
+        three_player.setTranslateY(FXGL.getAppHeight() * 0.45);
+        four_player.setTranslateX(FXGL.getAppWidth() * 0.45);
+        four_player.setTranslateY(FXGL.getAppHeight() * 0.45);
+
         VBox pane = new VBox(two_player, three_player, four_player);
         pane.setStyle("-fx-background-image: url('assets/textures/backg_4.png')");
-        pane.setPrefHeight(FXGL.getAppHeight() * 0.6);
-        pane.setPrefWidth(FXGL.getAppWidth() * 0.5);
+        pane.setPrefHeight(FXGL.getAppHeight());
+        pane.setPrefWidth(FXGL.getAppWidth());
 
-        pane.setLayoutX(FXGL.getAppWidth() / 2.0 - pane.getPrefWidth() / 2.0);
-        pane.setLayoutY(FXGL.getAppHeight() / 2.0 - pane.getPrefHeight() / 2.0);
+        pane.setLayoutX(0);
+        pane.setLayoutY(0);
         getContentRoot().getChildren().add(pane);
+
 
         two_player.setOnAction(event -> {
             mode = 2;

@@ -42,7 +42,6 @@ public class CoinComponent extends Component {
         this.coinNumber = this.coinNumber-1;
     }
 
-
     public void addCoin(int i){
         this.coinNumber=coinNumber+i;
 
