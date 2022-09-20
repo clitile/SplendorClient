@@ -1,12 +1,9 @@
 package nz.comp;
 
 import com.almasb.fxgl.core.serialization.Bundle;
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.entity.component.SerializableComponent;
-import com.almasb.fxgl.texture.AnimatedTexture;
-import com.almasb.fxgl.texture.AnimationChannel;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -16,7 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public class PlayerComponent extends Component implements SerializableComponent {
+public class PlayerComponent extends Component {
     //存储玩家持有的宝石和分数
     private HashMap<String,Integer> mapToken;
     //存储玩家持有的硬币
@@ -120,8 +117,7 @@ public class PlayerComponent extends Component implements SerializableComponent 
         entity.getViewComponent().addChild(new Rectangle(300,100, Color.GOLD));
         Iterator<String> it = mapToken.keySet().iterator();
         int its=1;
-        while(it.hasNext())
-        {
+        while(it.hasNext()) {
             String key=it.next();
             Text text = new Text(0,15*its,key+"="+mapToken.get(key));
             text.setStyle("-fx-font-size: 15;");
@@ -131,25 +127,13 @@ public class PlayerComponent extends Component implements SerializableComponent 
 
         Iterator<String> is = mapCoin.keySet().iterator();
         int iss=1;
-        while(is.hasNext())
-        {
+        while(is.hasNext()) {
             String key=is.next();
             Text text = new Text(120,15*iss,key+"Coin="+mapCoin.get(key));
             text.setStyle("-fx-font-size: 15;");
             entity.getViewComponent().addChild(text);
             iss++;
         }
-
-
-    }
-
-    @Override
-    public void read(Bundle bundle) {
-
-    }
-
-    @Override
-    public void write(Bundle bundle) {
 
     }
 }

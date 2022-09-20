@@ -4,13 +4,11 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-import com.almasb.fxgl.entity.component.SerializableComponent;
 import nz.comp.*;
 
 import java.io.FileNotFoundException;
 
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
-import static com.almasb.fxgl.dsl.FXGL.texture;
 
 public class SplendorFactory implements EntityFactory {
     @Spawns("level1,level2,level3")
@@ -48,5 +46,38 @@ public class SplendorFactory implements EntityFactory {
                 .at(data.getX(),data.getY())
                 .build();
     }
+    @Spawns("white_gem")
+    public Entity newWhiteGem(SpawnData data) {
+        return entityBuilder(data)
+                .view("white.png")
+                .build();
+    }
 
+    @Spawns("red_gem")
+    public Entity newRedGem(SpawnData data) {
+        return entityBuilder(data)
+                .view("red.png")
+                .build();
+    }
+
+    @Spawns("green_gem")
+    public Entity newGreenGem(SpawnData data) {
+        return entityBuilder(data)
+                .view("green.png")
+                .build();
+    }
+
+    @Spawns("blue_gem")
+    public Entity newBlueGem(SpawnData data) {
+        return entityBuilder(data)
+                .view("blue.png")
+                .build();
+    }
+
+    @Spawns("black_gem")
+    public Entity newBlackGem(SpawnData data) {
+        return entityBuilder(data)
+                .view("black.png")
+                .build();
+    }
 }
