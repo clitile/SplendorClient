@@ -14,7 +14,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import nz.net.SocketClient;
 
@@ -26,16 +29,20 @@ import java.util.Map;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class SplendorApp extends GameApplication {
-    //玩家1
+    //玩家1 
     Entity player;
+  
+    //玩家1 的内容
+    Entity player_content;
     //最左边的三张标志卡
     List<Entity> f_card_3;
     //中间的12张卡
     List<Entity> s_card_12;
-    //硬币
+    //硬币 
     List<Entity> coinList;
-    //贵族卡
+    //贵族卡 
     List<Entity> nobleList;
+    
     //鼠标坐标
     double mouse_x;
     double mouse_y;
@@ -46,6 +53,11 @@ public class SplendorApp extends GameApplication {
     int round=0;
     //Ai玩家
     List<Entity> ai_player;
+    
+    public static void main(String[] args) {
+        launch(args);
+    }
+    
     @Override
     public void initSettings(GameSettings settings) {
         settings.setHeight(Config.APP_HEIGHT);
@@ -63,7 +75,9 @@ public class SplendorApp extends GameApplication {
             }
         });
     }
+    
     List<Point2D> num=new ArrayList<>();
+    //鼠标对应动作
     @Override
     public void initInput() {
         onBtnDown(MouseButton.PRIMARY,()->{
@@ -115,6 +129,8 @@ public class SplendorApp extends GameApplication {
             }
         });
     }
+    
+    //预先加载
     @Override
     public void onPreInit() {
         getAssetLoader().loadImage("cards_620_860.png");
@@ -133,12 +149,19 @@ public class SplendorApp extends GameApplication {
     public void initGame() {
         getGameScene().setBackgroundRepeat(image("backg (6).png"));
         getGameWorld().addEntityFactory(new SplendorFactory());
+        
+        //最左边的三张标志卡 --- 要把卡片上的数字换成白色圆形底 黑色数字， 图片加上白色边框
         f_card_3=new ArrayList<>();
+        //中间的十二张牌 --- 卡片上需要的不同颜色的宝石用不同颜色的圆形底+数字呈现，最好旁边再加上宝石图片，上方加上有点透明的矩形
         s_card_12=new ArrayList<>();
+        // 硬币 --- 代表 ？？？
         coinList=new ArrayList<>();
+        //贵族卡 --- 代表 右边三张卡，需要换成不同的图片背景
         nobleList=new ArrayList<>();
+        
         ai_player=new ArrayList<>();
-        player = getGameWorld().spawn("player",new SpawnData(1000,750));
+        player = getGameWorld().spawn("player",new SpawnData(150,700));
+        
         for (int i = 0; i < 6; i++) {
             coinList.add(getGameWorld().spawn("coin",new SpawnData(1100,100*(1+i)).put("style",Config.list.get(i))));
             if (i<3){
@@ -154,7 +177,7 @@ public class SplendorApp extends GameApplication {
 
         player_action = new Text(0,40,"选择游戏人数");
         player_action.setLayoutX(700);
-        player_action.setLayoutY(750);
+        player_action.setLayoutY(900);
         player_action.setStyle("-fx-font-size: 25;");
         getGameScene().addChild(player_action);
         ///////////////////////////////////////////
@@ -162,7 +185,7 @@ public class SplendorApp extends GameApplication {
         var choicebox=getUIFactoryService().newChoiceBox(FXCollections.observableArrayList(
                 "2 player", "3 player", "4 player"));
         choicebox.setLayoutX(700);
-        choicebox.setLayoutY(850);
+        choicebox.setLayoutY(950);
         choicebox.getSelectionModel().selectedIndexProperty()
                 .addListener(new ChangeListener<Number>() {
                     @Override
@@ -204,11 +227,6 @@ public class SplendorApp extends GameApplication {
 
         }
     }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
 
 
     //获取一枚硬币

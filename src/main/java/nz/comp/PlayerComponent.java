@@ -3,9 +3,12 @@ package nz.comp;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.texture.AnimatedTexture;
-import com.almasb.fxgl.texture.AnimationChannel;
+import com.almasb.fxgl.texture.Texture;
+
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -91,11 +94,13 @@ public class PlayerComponent extends Component {
 
     public void showInfo(){
         entity.getViewComponent().clearChildren();
-        entity.getViewComponent().addChild(new Rectangle(300,100, Color.GOLD));
+        Texture texture=FXGL.texture("image.png", 1000, 250);
+        entity.getViewComponent().addChild(texture);
+        
+        /*
         Iterator<String> it = mapToken.keySet().iterator();
         int its=1;
-        while(it.hasNext())
-        {
+        while(it.hasNext()){
             String key=it.next();
             Text text = new Text(0,15*its,key+"="+mapToken.get(key));
             text.setStyle("-fx-font-size: 15;");
@@ -105,14 +110,13 @@ public class PlayerComponent extends Component {
 
         Iterator<String> is = mapCoin.keySet().iterator();
         int iss=1;
-        while(is.hasNext())
-        {
+        while(is.hasNext()){
             String key=is.next();
             Text text = new Text(120,15*iss,key+"Coin="+mapCoin.get(key));
             text.setStyle("-fx-font-size: 15;");
             entity.getViewComponent().addChild(text);
             iss++;
-        }
+        }*/
 
 
     }

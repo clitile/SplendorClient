@@ -5,6 +5,8 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.Texture;
+
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -36,7 +38,25 @@ public class CoinComponent extends Component {
     }
 
     public String getCoinName() {
-        return style;
+    	if(style.equals("whiteToken")) {
+    		return "whitecoin";
+    	}
+    	if(style.equals("redToken")) {
+    		return "redcoin";
+    	}
+    	if(style.equals("blueToken")) {
+    		return "bluecoin";
+    	}
+    	if(style.equals("blackToken")) {
+    		return "blackcoin";
+    	}
+    	if(style.equals("greenToken")) {
+    		return "greencoin";
+    	}
+    	if(style.equals("goldToken")) {
+    		return "goldcoin";
+    	}
+        return "oh no ~";
     }
     public void cutcoinNumber() {
         this.coinNumber = this.coinNumber-1;
@@ -56,9 +76,13 @@ public class CoinComponent extends Component {
 
     public void showInfo(){
         entity.getViewComponent().clearChildren();
-        entity.getViewComponent().addChild(FXGL.texture(style+".png"));
+        String coinStyle = getCoinName();
+        entity.getViewComponent().addChild(FXGL.texture(coinStyle+".png", 100, 100));
+        
         Text text = new Text(0,40,String.valueOf(coinNumber));
         text.setStyle("-fx-font-size: 25;");
+        text.setFill(Color.WHITE);
+    	text.setStroke(Color.BLACK);  
         entity.getViewComponent().addChild(text);
     }
 }

@@ -6,13 +6,16 @@ import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.Texture;
+
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import nz.proj.Config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,8 +33,7 @@ public class CardComponent extends Component {
     public CardComponent(String level) {
 
         int RandomFrame= FXGLMath.random(0,24);
-        at=new AnimatedTexture(new AnimationChannel(FXGL.image("cards_620_860.png")
-                ,5,Config.CARD_WID,Config.CARD_HEI, Duration.seconds(1),RandomFrame,RandomFrame));
+        at=new AnimatedTexture(new AnimationChannel(FXGL.image("cards_620_860.png"),5,Config.CARD_WID,Config.CARD_HEI, Duration.seconds(1),RandomFrame,RandomFrame));
         
         int cardLevel;
         cardLevel=Integer.parseInt(level.substring(level.length()-1));
@@ -117,7 +119,22 @@ public class CardComponent extends Component {
 
 
     public String getGiveToken() {
-        return giveToken;
+    	if(giveToken.equals("blackToken")) {
+    		return "black";
+    	}
+    	if(giveToken.equals("whiteToken")) {
+    		return "white";
+    	}
+    	if(giveToken.equals("redToken")) {
+    		return "red";
+    	}
+    	if(giveToken.equals("blueToken")) {
+    		return "blue";
+    	}
+    	if(giveToken.equals("greenToken")) {
+    		return "green";
+    	}
+		return "oh no ~";
     }
     public String getClevel() {
         return clevel;
@@ -132,18 +149,56 @@ public class CardComponent extends Component {
         entity.getViewComponent().clearChildren();
         entity.getViewComponent().addChild(at);
         at.play();
-
-        Texture texture=FXGL.texture(giveToken+".png",50,50);
+        String token = getGiveToken();
+        Texture texture=FXGL.texture(token + ".png", 50,50);
         texture.setTranslateX(70);
         entity.getViewComponent().addChild(texture);
 
         Iterator<String> it = mapToken.keySet().iterator();
         int its=1;
-        while(it.hasNext())
-        {
+        while(it.hasNext()){
             String key=it.next();
-            Text text = new Text(0,20*its,key+"="+mapToken.get(key));
-            text.setStyle("-fx-font-size: 18;");
+            
+            Text text = new Text();
+            if(key.equals("redToken")) {
+            	text = new Text(0,35*its,mapToken.get(key).toString());
+            	text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
+            	text.setFill(Color.RED);
+            	text.setStroke(Color.WHITE);  
+            }
+            if(key.equals("blackToken")) {
+            	text = new Text(0,35*its,mapToken.get(key).toString());
+            	text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
+            	text.setFill(Color.BLACK);
+            	text.setStroke(Color.WHITE);
+            }
+            if(key.equals("greenToken")) {
+            	text = new Text(0,35*its,mapToken.get(key).toString());
+            	text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
+            	text.setFill(Color.GREEN);
+            	text.setStroke(Color.WHITE);
+            }
+            if(key.equals("whiteToken")) {
+            	text = new Text(0,35*its,mapToken.get(key).toString());
+            	text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
+            	text.setFill(Color.WHITE);
+            	text.setStroke(Color.BLACK);
+            }
+            if(key.equals("blueToken")) {
+            	text = new Text(0,35*its,mapToken.get(key).toString());
+            	text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
+            	text.setFill(Color.BLUE);
+            	text.setStroke(Color.WHITE);
+            }
+            if(key.equals("score")){
+            	if(clevel != "level1") {
+                	text = new Text(20,45*its,mapToken.get(key).toString());
+                	text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 45));
+                	text.setFill(Color.WHITE);
+                	text.setStroke(Color.BLACK);
+                }
+            }
+            
             entity.getViewComponent().addChild(text);
             its++;
         }
