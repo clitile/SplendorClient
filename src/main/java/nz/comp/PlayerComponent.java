@@ -120,8 +120,7 @@ public class PlayerComponent extends Component implements SerializableComponent 
         entity.getViewComponent().addChild(new Rectangle(300,100, Color.GOLD));
         Iterator<String> it = mapToken.keySet().iterator();
         int its=1;
-        while(it.hasNext())
-        {
+        while(it.hasNext()) {
             String key=it.next();
             Text text = new Text(0,15*its,key+"="+mapToken.get(key));
             text.setStyle("-fx-font-size: 15;");
@@ -131,8 +130,7 @@ public class PlayerComponent extends Component implements SerializableComponent 
 
         Iterator<String> is = mapCoin.keySet().iterator();
         int iss=1;
-        while(is.hasNext())
-        {
+        while(is.hasNext()) {
             String key=is.next();
             Text text = new Text(120,15*iss,key+"Coin="+mapCoin.get(key));
             text.setStyle("-fx-font-size: 15;");

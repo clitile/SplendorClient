@@ -9,6 +9,7 @@ import nz.net.SocketClient;
 
 public class ModeScene extends SubScene {
     public int mode = 0;
+    public boolean online = false;
     public ModeScene() {
         Button two_player = FXGL.getUIFactoryService().newButton("Two Player");
         Button three_player = FXGL.getUIFactoryService().newButton("Three Player");
@@ -34,7 +35,7 @@ public class ModeScene extends SubScene {
         two_player.setOnAction(event -> {
             mode = 2;
             FXGL.getSceneService().popSubScene();
-            if (SocketClient.getInstance().login) {
+            if (SocketClient.getInstance().login && online) {
                 sendMatch(2);
                 FXGL.getSceneService().pushSubScene(new MatchScene());
             }
@@ -42,7 +43,7 @@ public class ModeScene extends SubScene {
         three_player.setOnAction(event -> {
             mode = 3;
             FXGL.getSceneService().popSubScene();
-            if (SocketClient.getInstance().login) {
+            if (SocketClient.getInstance().login && online) {
                 sendMatch(3);
                 FXGL.getSceneService().pushSubScene(new MatchScene());
             }
@@ -50,7 +51,7 @@ public class ModeScene extends SubScene {
         four_player.setOnAction(event -> {
             mode = 4;
             FXGL.getSceneService().popSubScene();
-            if (SocketClient.getInstance().login) {
+            if (SocketClient.getInstance().login && online) {
                 sendMatch(4);
                 FXGL.getSceneService().pushSubScene(new MatchScene());
             }
