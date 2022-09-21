@@ -139,12 +139,12 @@ public class SplendorApp extends GameApplication {
         nobleList=new ArrayList<>();
         ai_player=new ArrayList<>();
         human_player=new ArrayList<>();
-        player = getGameWorld().spawn("player",new SpawnData(1000,750));
+        player = getGameWorld().spawn("player",new SpawnData(920,700));
         for (int i = 0; i < 6; i++) {
             coinList.add(getGameWorld().spawn("coin",new SpawnData(1100,100*(1+i)).put("style",Config.list.get(i))));
             if (i<3){
                 f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(100,500-200*i)));
-                nobleList.add(getGameWorld().spawn("noble",new SpawnData(1300,100+(i*200))));
+                nobleList.add(getGameWorld().spawn("noble",new SpawnData(190*i+100,800)));
             }
         }
         for (int j = 0; j < 3; j++) {
@@ -154,12 +154,12 @@ public class SplendorApp extends GameApplication {
         }
         if (!SocketClient.getInstance().login){
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
-                ai_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
+                ai_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
             }
         } else {
             //创建人类player,显示玩家的信息
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
-                human_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
+                human_player.add(getGameWorld().spawn("player",new SpawnData(1450,126*(i+1))));
             }
         }
         Config.MODE_SCENE.mode = 0;
@@ -319,7 +319,7 @@ public class SplendorApp extends GameApplication {
                     SocketClient.getInstance().send(act);
                 }
                 //动画
-                double ani_x=player.getX()-entities.getX();
+                double ani_x=player.getX()-entities.getX()+200;
                 double ani_y=player.getY()-entities.getY();
                 Entity bullet=entityBuilder()
                         .at(entities.getX(),entities.getY())
@@ -429,7 +429,7 @@ public class SplendorApp extends GameApplication {
                                     new SpawnData(entities.getX(),entities.getY())));
                 }
                 //动画
-                double ani_x=player.getX()-entities.getX();
+                double ani_x=player.getX()-entities.getX()+200;
                 double ani_y=player.getY()-entities.getY();
                 entities.addComponent(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)/2));
                 entities.addComponent(new ExpireCleanComponent(Duration.seconds(2)));
@@ -457,7 +457,7 @@ public class SplendorApp extends GameApplication {
                         nobleList.remove(nobleList.get(i));
 
                         //动画
-                        double ani_noblex=player.getX()-nobleList.get(i).getX();
+                        double ani_noblex=player.getX()-nobleList.get(i).getX()+200;
                         double ani_nobley=player.getY()-nobleList.get(i).getY();
 
                         nobleList.get(i).addComponent(new ProjectileComponent(new Point2D(ani_noblex,ani_nobley),Math.sqrt(ani_noblex*ani_noblex+ani_nobley*ani_nobley)/2));
@@ -518,7 +518,7 @@ public class SplendorApp extends GameApplication {
             //玩家操作
             saveList.add(entities);
             for (int i = 0; i < saveList.size(); i++) {
-                saveList.get(i).setPosition(200*i+100,800);
+                saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
             }player.call("setSaveCard",saveList);
         } else if (!ai_round){
             getNotificationService().pushNotification("右键拿保留牌");
