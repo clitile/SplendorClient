@@ -1,5 +1,6 @@
 package nz.proj;
 
+import interaction.StartInterface;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
@@ -9,6 +10,8 @@ import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
+
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -55,7 +58,8 @@ public class SplendorApp extends GameApplication {
     List<Entity> ai_player;
     
     public static void main(String[] args) {
-        launch(args);
+    	launch(args);
+		
     }
     
     @Override

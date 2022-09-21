@@ -10,7 +10,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public abstract class StartInterface extends Application{
-	public static void start() throws Exception {
+	
+	public static int start(){
 	    
 		Stage primaryStage = new Stage();
 		
@@ -48,6 +49,9 @@ public abstract class StartInterface extends Application{
 				Register.RegisterInterface();
 			}
 		});
+		
+		return 1;
 	}
+	
 
 }

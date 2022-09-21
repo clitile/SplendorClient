@@ -5,6 +5,9 @@ import com.almasb.fxgl.app.scene.MenuType;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.ui.DialogService;
+
+import interaction.StartInterface;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -78,6 +81,12 @@ public class SplendorMainMenu extends FXGLMenu {
         menuBox.setTranslateX(getAppWidth() / 2.0 - 140);
         menuBox.setTranslateY(getAppHeight() / 2.0 + 200);
         getContentRoot().getChildren().addAll(menuBox);
+        Platform.runLater(new Runnable() {
+        	@Override
+        	public void run() {
+        		int begin = StartInterface.start();
+        	}
+        });
     }
 
     private void loginPane() {
