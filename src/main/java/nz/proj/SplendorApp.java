@@ -28,7 +28,6 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class SplendorApp extends GameApplication {
     //玩家1
     Entity player;
-
     //最左边的三张标志卡
     List<Entity> f_card_3;
     //中间的12张卡
@@ -176,7 +175,6 @@ public class SplendorApp extends GameApplication {
         vars.put("mode", 0);
         vars.put("player_action", "选取你想进行的操作");
     }
-
     @Override
     protected void onUpdate(double tpf) {
         if (SocketClient.getInstance().roomStop) {
@@ -363,7 +361,7 @@ public class SplendorApp extends GameApplication {
                 //中间的12张牌
                 mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI:
                 //坐下的保留牌
-                mouse_x<=500+Config.CARD_WID && mouse_x>=100 && mouse_y>=800 && mouse_y<=800+Config.CARD_HEI;
+                mouse_x<=146*2+player.getX()+20+Config.CARD_WID && mouse_x>=player.getX()+20 && mouse_y>=player.getY()+110 && mouse_y<=player.getY()+110+Config.CARD_HEI;
         if (ra||isAi) {
             HashMap<String,Integer> hashMap=entities.call("getMap");
             List<String> coins=entities.call("getCoins");
@@ -416,7 +414,7 @@ public class SplendorApp extends GameApplication {
                     List<Entity> saveList=player.call("getSaveCard");
                     saveList.remove(entities);
                     for (int i = 0; i < saveList.size(); i++) {
-                        saveList.get(i).setPosition(200*i+100,800);
+                        saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
                     }player.call("setSaveCard",saveList);
                 }else {
                     //对最左边的三张等级牌操作
