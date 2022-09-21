@@ -28,7 +28,6 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class SplendorApp extends GameApplication {
     //玩家1
     Entity player;
-
     //最左边的三张标志卡
     List<Entity> f_card_3;
     //中间的12张卡
@@ -139,12 +138,12 @@ public class SplendorApp extends GameApplication {
         nobleList=new ArrayList<>();
         ai_player=new ArrayList<>();
         human_player=new ArrayList<>();
-        player = getGameWorld().spawn("player",new SpawnData(1000,750));
+        player = getGameWorld().spawn("player",new SpawnData(920,700));
         for (int i = 0; i < 6; i++) {
             coinList.add(getGameWorld().spawn("coin",new SpawnData(1100,100*(1+i)).put("style",Config.list.get(i))));
             if (i<3){
                 f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(100,500-200*i)));
-                nobleList.add(getGameWorld().spawn("noble",new SpawnData(1300,100+(i*200))));
+                nobleList.add(getGameWorld().spawn("noble",new SpawnData(190*i+100,800)));
             }
         }
         for (int j = 0; j < 3; j++) {
@@ -154,12 +153,12 @@ public class SplendorApp extends GameApplication {
         }
         if (!SocketClient.getInstance().login){
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
-                ai_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
+                ai_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
             }
         } else {
             //创建人类player,显示玩家的信息
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
-                human_player.add(getGameWorld().spawn("player",new SpawnData(1500,150*(i+1))));
+                human_player.add(getGameWorld().spawn("player",new SpawnData(1450,126*(i+1))));
             }
         }
         Config.MODE_SCENE.mode = 0;
@@ -176,7 +175,6 @@ public class SplendorApp extends GameApplication {
         vars.put("mode", 0);
         vars.put("player_action", "选取你想进行的操作");
     }
-
     @Override
     protected void onUpdate(double tpf) {
         if (SocketClient.getInstance().roomStop) {
@@ -261,10 +259,9 @@ public class SplendorApp extends GameApplication {
                     }else if (Objects.equals(SocketClient.getInstance().activity, "getOneSaveCard") &&entities.size()!=0){
                         //对左下角的保留牌操作
                         getOneCard("getOneSaveCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x, SocketClient.getInstance().y);
+                    } else if (Objects.equals(SocketClient.getInstance().activity, "getSaveCard") &&entities.size()!=0) {
+                        getSaveCard(entities.get(0),human_player.get(round), SocketClient.getInstance().x, SocketClient.getInstance().y);
                     }
-//                    if (!SocketClient.getInstance().players.get(round).equals(SocketClient.getInstance().playing)) {
-//                        round++;
-//                    }
                     SocketClient.getInstance().activity = "";
                 }
             }
@@ -319,7 +316,7 @@ public class SplendorApp extends GameApplication {
                     SocketClient.getInstance().send(act);
                 }
                 //动画
-                double ani_x=player.getX()-entities.getX();
+                double ani_x=player.getX()-entities.getX()+200;
                 double ani_y=player.getY()-entities.getY();
                 Entity bullet=entityBuilder()
                         .at(entities.getX(),entities.getY())
@@ -364,7 +361,7 @@ public class SplendorApp extends GameApplication {
                 //中间的12张牌
                 mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI:
                 //坐下的保留牌
-                mouse_x<=500+Config.CARD_WID && mouse_x>=100 && mouse_y>=800 && mouse_y<=800+Config.CARD_HEI;
+                mouse_x<=146*2+player.getX()+20+Config.CARD_WID && mouse_x>=player.getX()+20 && mouse_y>=player.getY()+110 && mouse_y<=player.getY()+110+Config.CARD_HEI;
         if (ra||isAi) {
             HashMap<String,Integer> hashMap=entities.call("getMap");
             List<String> coins=entities.call("getCoins");
@@ -417,7 +414,7 @@ public class SplendorApp extends GameApplication {
                     List<Entity> saveList=player.call("getSaveCard");
                     saveList.remove(entities);
                     for (int i = 0; i < saveList.size(); i++) {
-                        saveList.get(i).setPosition(200*i+100,800);
+                        saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
                     }player.call("setSaveCard",saveList);
                 }else {
                     //对最左边的三张等级牌操作
@@ -429,7 +426,7 @@ public class SplendorApp extends GameApplication {
                                     new SpawnData(entities.getX(),entities.getY())));
                 }
                 //动画
-                double ani_x=player.getX()-entities.getX();
+                double ani_x=player.getX()-entities.getX()+200;
                 double ani_y=player.getY()-entities.getY();
                 entities.addComponent(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)/2));
                 entities.addComponent(new ExpireCleanComponent(Duration.seconds(2)));
@@ -457,7 +454,7 @@ public class SplendorApp extends GameApplication {
                         nobleList.remove(nobleList.get(i));
 
                         //动画
-                        double ani_noblex=player.getX()-nobleList.get(i).getX();
+                        double ani_noblex=player.getX()-nobleList.get(i).getX()+200;
                         double ani_nobley=player.getY()-nobleList.get(i).getY();
 
                         nobleList.get(i).addComponent(new ProjectileComponent(new Point2D(ani_noblex,ani_nobley),Math.sqrt(ani_noblex*ani_noblex+ani_nobley*ani_nobley)/2));
@@ -509,17 +506,31 @@ public class SplendorApp extends GameApplication {
             //玩家增加一枚黄金硬币
             player.call("addCoin","goldToken");
             player.call("showInfo");
+            //动画
+            double ani_x=player.getX()-coinList.get(coinList.size() - 1).getX()+200;
+            double ani_y=player.getY()-coinList.get(coinList.size() - 1).getY();
+            Entity bullet=entityBuilder()
+                    .at(coinList.get(coinList.size() - 1).getX(),coinList.get(coinList.size() - 1).getY())
+                    .viewWithBBox(FXGL.texture("goldcoin.png",100,100))
+                    .with(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)))
+                    .with(new ExpireCleanComponent(Duration.seconds(1)))
+                    .buildAndAttach();
+            getGameWorld().addEntity(bullet);
             //对最左边的三张操作
             f_card_3.get(hashMap.get("cardLevel")-1).call("cutCardNumber");
             f_card_3.get(hashMap.get("cardLevel")-1).call("showInfo");
+
+
             //替换成新的
             s_card_12.set(s_card_12.indexOf(entities),
                     getGameWorld().spawn(entities.call("getClevel"),new SpawnData(entities.getX(),entities.getY())));
             //玩家操作
             saveList.add(entities);
             for (int i = 0; i < saveList.size(); i++) {
-                saveList.get(i).setPosition(200*i+100,800);
+                saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
             }player.call("setSaveCard",saveList);
+
+
         } else if (!ai_round){
             getNotificationService().pushNotification("右键拿保留牌");
         }
