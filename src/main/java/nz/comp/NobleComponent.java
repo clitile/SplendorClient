@@ -113,7 +113,7 @@ public class NobleComponent extends Component {
                 text = new Text(120,50*its,mapToken.get(key).toString());
                 text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 45));
                 text.setFill(Color.GOLD);
-                text.setStroke(Color.WHITE);
+                text.setStroke(Color.BLACK);
                 entity.getViewComponent().addChild(text);
             }
 
