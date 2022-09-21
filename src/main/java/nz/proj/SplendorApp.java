@@ -261,10 +261,9 @@ public class SplendorApp extends GameApplication {
                     }else if (Objects.equals(SocketClient.getInstance().activity, "getOneSaveCard") &&entities.size()!=0){
                         //对左下角的保留牌操作
                         getOneCard("getOneSaveCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x, SocketClient.getInstance().y);
+                    } else if (Objects.equals(SocketClient.getInstance().activity, "getSaveCard") &&entities.size()!=0) {
+                        getSaveCard(entities.get(0),human_player.get(round), SocketClient.getInstance().x, SocketClient.getInstance().y);
                     }
-//                    if (!SocketClient.getInstance().players.get(round).equals(SocketClient.getInstance().playing)) {
-//                        round++;
-//                    }
                     SocketClient.getInstance().activity = "";
                 }
             }
@@ -509,9 +508,21 @@ public class SplendorApp extends GameApplication {
             //玩家增加一枚黄金硬币
             player.call("addCoin","goldToken");
             player.call("showInfo");
+            //动画
+            double ani_x=player.getX()-coinList.get(coinList.size() - 1).getX()+200;
+            double ani_y=player.getY()-coinList.get(coinList.size() - 1).getY();
+            Entity bullet=entityBuilder()
+                    .at(coinList.get(coinList.size() - 1).getX(),coinList.get(coinList.size() - 1).getY())
+                    .viewWithBBox(FXGL.texture("goldcoin.png",100,100))
+                    .with(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)))
+                    .with(new ExpireCleanComponent(Duration.seconds(1)))
+                    .buildAndAttach();
+            getGameWorld().addEntity(bullet);
             //对最左边的三张操作
             f_card_3.get(hashMap.get("cardLevel")-1).call("cutCardNumber");
             f_card_3.get(hashMap.get("cardLevel")-1).call("showInfo");
+
+
             //替换成新的
             s_card_12.set(s_card_12.indexOf(entities),
                     getGameWorld().spawn(entities.call("getClevel"),new SpawnData(entities.getX(),entities.getY())));
@@ -520,6 +531,8 @@ public class SplendorApp extends GameApplication {
             for (int i = 0; i < saveList.size(); i++) {
                 saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
             }player.call("setSaveCard",saveList);
+
+
         } else if (!ai_round){
             getNotificationService().pushNotification("右键拿保留牌");
         }

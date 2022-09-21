@@ -1,18 +1,13 @@
 package nz.comp;
 
-import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.entity.component.SerializableComponent;
 import com.almasb.fxgl.texture.Texture;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 public class PlayerComponent extends Component {
@@ -162,7 +157,6 @@ public class PlayerComponent extends Component {
                 iss++;
             }
         }
-
     }
 }
 
