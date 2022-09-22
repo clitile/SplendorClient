@@ -15,6 +15,7 @@ import com.almasb.fxgl.input.UserAction;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -274,7 +275,6 @@ public class SplendorApp extends GameApplication {
         action.setFont(Font.font(25));
     }
     public static void main(String[] args) {
-        System.out.println("main");
         launch(args);
     }
     int three_coin_aleast=0;
@@ -326,7 +326,7 @@ public class SplendorApp extends GameApplication {
                         .buildAndAttach();
                 getGameWorld().addEntity(bullet);
             }else if (!ai_round){
-                getNotificationService().pushNotification("大于3才能拿两个一样的硬币，拿三种硬币的话得有三种硬币数量不为0捏");
+                getNotificationService().pushNotification("Error");
             }
         }
         if (num.size()==size){
@@ -490,7 +490,7 @@ public class SplendorApp extends GameApplication {
                     }
                 }
             } else if (!ai_round || SocketClient.getInstance().round_begin){
-                getNotificationService().pushNotification("购买失败");
+                getNotificationService().pushNotification("Purchase failure");
                 dealActPlayer(getGameScene());
             }
         }
@@ -532,7 +532,7 @@ public class SplendorApp extends GameApplication {
 
 
         } else if (!ai_round){
-            getNotificationService().pushNotification("右键拿保留牌");
+            getNotificationService().pushNotification("Error");
         }
         player.call("setActivity","");
         ai_round=true;
@@ -568,15 +568,26 @@ public class SplendorApp extends GameApplication {
             getGameScene().removeChild(list.get(i));
         }
     }
+    public Button setToolTip(String s,String k){
+        Button button=FXGL.getUIFactoryService().newButton(s);
+        Tooltip tooltip=new Tooltip();
+        tooltip.setText(k);
+        tooltip.setShowDelay(Duration.seconds(0.05));
+        button.setTooltip(tooltip);
+        return button;
+    }
+
     public void dealActPlayer(GameScene gameScene){
         if (deal_once==0){
             deal_once=1;
+
             List<Button> buttonList=new ArrayList<>(){{
-                add(FXGL.getUIFactoryService().newButton("获取三枚不同的硬币"));
-                add(FXGL.getUIFactoryService().newButton("获取两枚相同的硬币"));
-                add(FXGL.getUIFactoryService().newButton("购买中间的牌"));
-                add(FXGL.getUIFactoryService().newButton("购买一张保留牌"));
-                add(FXGL.getUIFactoryService().newButton("获取保留卡和一枚黄金硬"));
+                add(setToolTip("Action 1","Get three different coins(Left Button)"));
+                add(setToolTip("Action 2","Get two identical coins(Left Button)"));
+                add(setToolTip("Action 3","Purchase a card(Left Button)"));
+                add(setToolTip("Action 4","Purchase a development card(Left Button)"));
+                add(setToolTip("Action 5","Reserve a development card(Right Button)"));
+
             }};
             for (int i = 0; i < 5; i++) {
                 buttonList.get(i).setTranslateX(700);
@@ -604,7 +615,7 @@ public class SplendorApp extends GameApplication {
                     set("player_action", act_list.get(0));
                     removeButton(buttonList);
                 }else {
-                    getNotificationService().pushNotification("拿三种硬币的话得有三种硬币数量不为0");
+                    getNotificationService().pushNotification("Coin type less than 3");
                 }
             });
             buttonList.get(1).setOnMouseClicked(mouseEvent -> {
@@ -621,7 +632,7 @@ public class SplendorApp extends GameApplication {
                     set("player_action", act_list.get(1));
                     removeButton(buttonList);
                 }else {
-                    getNotificationService().pushNotification("某种硬币大于4时才能拿两个一样的");
+                    getNotificationService().pushNotification("Number of coins less than 4");
                 }
             });
             buttonList.get(2).setOnMouseClicked(mouseEvent -> {
@@ -638,7 +649,7 @@ public class SplendorApp extends GameApplication {
                     set("player_action", act_list.get(3));
                     removeButton(buttonList);
                 }else {
-                    getNotificationService().pushNotification("目前没有保留卡");
+                    getNotificationService().pushNotification("No development card");
                 }
             });
             buttonList.get(4).setOnMouseClicked(mouseEvent -> {
@@ -649,8 +660,8 @@ public class SplendorApp extends GameApplication {
                     player.call("setActivity",act_list.get(4));
                     set("player_action", act_list.get(4));
                     removeButton(buttonList);
-                }else {
-                    getNotificationService().pushNotification("也没有可能是没有金色硬币或保留卡满3张了呢");
+                } else {
+                    getNotificationService().pushNotification("Error");
                 }
             });
             gameScene.addChild(buttonList.get(0));
@@ -664,7 +675,7 @@ public class SplendorApp extends GameApplication {
     public void player_win(Entity player){
         int the_score=player.call("getScore");
         if (the_score>=15){
-            getNotificationService().pushNotification("你达到了15分，赢得了这场游戏");
+            getNotificationService().pushNotification("Oh~ You win the game");
             Config.MODE_SCENE.mode = 0;
             SocketClient.getInstance().match = false;
             set("match", false);
