@@ -174,7 +174,7 @@ public class SplendorApp extends GameApplication {
         vars.put("id", 0);
         vars.put("playersNames", new ArrayList<>());
         vars.put("mode", 0);
-        vars.put("player_action", "选取你想进行的操作");
+        vars.put("player_action", "Choose one action :)");
     }
     @Override
     protected void onUpdate(double tpf) {
@@ -193,7 +193,7 @@ public class SplendorApp extends GameApplication {
         if (!SocketClient.getInstance().login){
             if (ai_player.size()!=0){
                 if (player.call("getActivity")=="" && !ai_round){
-                    set("player_action", "选取你想进行的操作");
+                    set("player_action", "Choose one action :)");
                     dealActPlayer(getGameScene());
                 }
                 if (ai_round){
@@ -232,7 +232,7 @@ public class SplendorApp extends GameApplication {
         } else {
             if (human_player.size()!=0){
                 if (SocketClient.getInstance().round_begin && player.call("getActivity")=="") {
-                    set("player_action", "选取你想进行的操作");
+                    set("player_action", "Choose one action :)");
                     dealActPlayer(getGameScene());
                 } else if (!SocketClient.getInstance().round_begin && !SocketClient.getInstance().activity.equals("")){
                     if (round>=human_player.size()){

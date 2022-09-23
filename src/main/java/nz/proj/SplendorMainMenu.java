@@ -195,7 +195,7 @@ public class SplendorMainMenu extends FXGLMenu {
     }
 
     private void instructions() {
-        getDialogService().showMessageBox("目前:右键拿牌左键保留牌");
+        getDialogService().showMessageBox("Right now: Use your mouse to choose cards and gems ~");
     }
 
     private static class MenuButton extends Parent {
