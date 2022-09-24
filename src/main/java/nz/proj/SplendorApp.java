@@ -385,9 +385,7 @@ public class SplendorApp extends GameApplication {
                 HashMap<String,Integer> coinMap=player.call("getMapCoin");
                 for (String coin : coins) {
                     //扣除玩家的硬币
-                    if (hashMap.get(coin)<=tokenMap.get(coin)){
-
-                    }else {
+                    if (hashMap.get(coin)>tokenMap.get(coin)){
                         int c = player.call("enoughCoinplayer", coin, hashMap.get(coin));
                         if (c>=0) {
                             player.call("cutCoin", coin,hashMap.get(coin)-tokenMap.get(coin));
