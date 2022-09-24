@@ -12,12 +12,15 @@ import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.ui.FXGLUIFactoryServiceProvider;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import nz.net.SocketClient;
@@ -574,17 +577,28 @@ public class SplendorApp extends GameApplication {
         button.setTooltip(tooltip);
         return button;
     }
+    public Button actionBut(String s){
+        Button b= FXGL.getUIFactoryService().newButton(s);
+        b.fontProperty().unbind();
+        b.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
+        b.setPrefWidth(290);
+        b.setLayoutX(-60);
+        return b;
+    }
 
     public void dealActPlayer(GameScene gameScene){
         if (deal_once==0){
             deal_once=1;
 
+
+
+
             List<Button> buttonList=new ArrayList<>(){{
-                add(setToolTip("Action 1","Get three different coins(Left Button)"));
-                add(setToolTip("Action 2","Get two identical coins(Left Button)"));
-                add(setToolTip("Action 3","Purchase a card(Left Button)"));
-                add(setToolTip("Action 4","Purchase a development card(Left Button)"));
-                add(setToolTip("Action 5","Reserve a development card(Right Button)"));
+                add(actionBut("Get three different coins"));
+                add(actionBut("Get two identical coins"));
+                add(actionBut("Purchase a card"));
+                add(actionBut("Buy a development card"));
+                add(actionBut("Reserve a development card"));
 
             }};
             for (int i = 0; i < 5; i++) {
