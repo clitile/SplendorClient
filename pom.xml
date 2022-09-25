@@ -49,6 +49,26 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>nz.proj.SplendorApp</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>com.gluonhq</groupId>
         <artifactId>gluonfx-maven-plugin</artifactId>
         <version>1.0.15</version>
@@ -60,6 +80,12 @@
             <list>com.almasb.fxgl.app.FXGLApplication</list>
             <list>com.almasb.fxgl.app.ReadOnlyGameSettings</list>
             <list>com.almasb.fxgl.app.GameSettings</list>
+            <list>com.almasb.fxgl.core.serialization</list>
+            <list>com.almasb.fxgl.core.serialization.Bundle</list>
+            <list>com.almasb.fxgl.core.serialization.SerializableType</list>
+            <list>com.almasb.fxgl.dsl.FXGL</list>
+            <list>com.almasb.fxgl.ui</list>
+            <list>com.almasb.fxgl.scene</list>
 
             <!-- Engine services -->
             <list>com.almasb.fxgl.app.services.FXGLDialogService</list>
