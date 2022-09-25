@@ -2,13 +2,8 @@ package nz.comp;
 
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.texture.AnimatedTexture;
-import com.almasb.fxgl.texture.AnimationChannel;
-import com.almasb.fxgl.texture.Texture;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
-
-import java.util.Iterator;
 
 public class CoinComponent extends Component {
 
@@ -17,9 +12,9 @@ public class CoinComponent extends Component {
     public CoinComponent(String coinStyle) {
         style=coinStyle;
         if (coinStyle=="goldToken"){
-            coinNumber=5;
+            coinNumber=6;
         }else {
-            coinNumber=4;
+            coinNumber=5;
         }
 
     }
@@ -35,14 +30,34 @@ public class CoinComponent extends Component {
         super.onRemoved();
     }
 
-    public String getCoinName() {
+    public String getCoinNameAll() {
         return style;
     }
     public void cutcoinNumber() {
         this.coinNumber = this.coinNumber-1;
     }
-
-
+    public String getCoinName() {
+        return this.style.substring(0,this.style.length()-5)+"coin";
+//        if(style.equals("whiteToken")) {
+//            return "whitecoin";
+//        }
+//        if(style.equals("redToken")) {
+//            return "redcoin";
+//        }
+//        if(style.equals("blueToken")) {
+//            return "bluecoin";
+//        }
+//        if(style.equals("blackToken")) {
+//            return "blackcoin";
+//        }
+//        if(style.equals("greenToken")) {
+//            return "greencoin";
+//        }
+//        if(style.equals("goldToken")) {
+//            return "goldcoin";
+//        }
+//        return "oh no ~";
+    }
     public void addCoin(int i){
         this.coinNumber=coinNumber+i;
 
@@ -56,9 +71,13 @@ public class CoinComponent extends Component {
 
     public void showInfo(){
         entity.getViewComponent().clearChildren();
-        entity.getViewComponent().addChild(FXGL.texture(style+".png"));
+        String coinStyle = getCoinNameAll();
+        entity.getViewComponent().addChild(FXGL.texture(getCoinName()+".png", 100, 100));
+
         Text text = new Text(0,40,String.valueOf(coinNumber));
         text.setStyle("-fx-font-size: 25;");
+        text.setFill(Color.WHITE);
+        text.setStroke(Color.BLACK);
         entity.getViewComponent().addChild(text);
     }
 }

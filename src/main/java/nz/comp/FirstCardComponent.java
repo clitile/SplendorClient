@@ -8,6 +8,7 @@ import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.Texture;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -66,6 +67,7 @@ public class FirstCardComponent extends Component {
         at.play();
         Text text = new Text(0,40,String.valueOf(cardNumber));
         text.setStyle("-fx-font-size: 25;");
+        text.setFill(Color.WHITE);
         entity.getViewComponent().addChild(text);
     }
 }

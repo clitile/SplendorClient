@@ -1,22 +1,16 @@
 package nz.comp;
 
-import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.entity.component.SerializableComponent;
-import com.almasb.fxgl.texture.AnimatedTexture;
-import com.almasb.fxgl.texture.AnimationChannel;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import com.almasb.fxgl.texture.Texture;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
-public class PlayerComponent extends Component implements SerializableComponent {
+public class PlayerComponent extends Component {
     //存储玩家持有的宝石和分数
     private HashMap<String,Integer> mapToken;
     //存储玩家持有的硬币
@@ -25,6 +19,8 @@ public class PlayerComponent extends Component implements SerializableComponent 
     private List<Entity> saveCard;
     //存储玩家当前的活动
     private String activity="";
+    //登录用户名称
+    private String user_name="";
     @Override
     public void onAdded() {
         saveCard=new ArrayList<>();
@@ -59,13 +55,29 @@ public class PlayerComponent extends Component implements SerializableComponent 
         mapToken.replace(name,n+mapToken.get(name));
 
     }
+
     public HashMap<String,Integer> getMapToken(){
         return this.mapToken;
+    }
+    public HashMap<String,Integer> getMapCoin(){
+        return this.mapCoin;
     }
     public void cutCoin(String name,int n){
         mapCoin.replace(name,mapCoin.get(name)-n);
 
     }
+    public int getScore(){
+        return mapToken.get("score");
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
     public void addCoin(String name){
         mapCoin.replace(name,1+mapCoin.get(name));
 
@@ -83,7 +95,13 @@ public class PlayerComponent extends Component implements SerializableComponent 
         }
         return true;
     }
-
+    public int enoughCoinplayer(String a,int b){
+        int k=mapCoin.get(a)+mapToken.get(a)-b;
+        return k;
+    }
+    public int getGoldNum(){
+        return this.mapCoin.get("goldToken");
+    }
     public void setActivity(String activity) {
         this.activity = activity;
     }
@@ -93,40 +111,52 @@ public class PlayerComponent extends Component implements SerializableComponent 
 
     public void showInfo(){
         entity.getViewComponent().clearChildren();
-        entity.getViewComponent().addChild(new Rectangle(300,100, Color.GOLD));
-        Iterator<String> it = mapToken.keySet().iterator();
-        int its=1;
-        while(it.hasNext())
-        {
-            String key=it.next();
-            Text text = new Text(0,15*its,key+"="+mapToken.get(key));
-            text.setStyle("-fx-font-size: 15;");
-            entity.getViewComponent().addChild(text);
-            its++;
+        Texture texture= FXGL.texture("images.png", 450,126);
+        entity.getViewComponent().addChild(texture);
+        ArrayList<String> coins = new ArrayList<>(){{
+            add("whiteToken");
+            add("blueToken");
+            add("greenToken");
+            add("redToken");
+            add("blackToken");
+            add("goldToken");
+        }};
+        ArrayList<String> tokens = new ArrayList<>(){{
+            add("whiteToken");
+            add("blueToken");
+            add("greenToken");
+            add("redToken");
+            add("blackToken");
+            add("score");
+        }};
+        int its=0;
+        for (String token :
+                tokens) {
+            if (token.equals("score")) {
+                Text text = new Text(240,43,mapToken.get(token).toString());
+                text.setStyle("-fx-font-size: 20;");
+                entity.getViewComponent().addChild(text);
+            } else {
+                Text text = new Text(40+its*71,79,mapToken.get(token).toString());
+                text.setStyle("-fx-font-size: 20;");
+                entity.getViewComponent().addChild(text);
+                its++;
+            }
         }
-
-        Iterator<String> is = mapCoin.keySet().iterator();
-        int iss=1;
-        while(is.hasNext())
-        {
-            String key=is.next();
-            Text text = new Text(120,15*iss,key+"Coin="+mapCoin.get(key));
-            text.setStyle("-fx-font-size: 15;");
-            entity.getViewComponent().addChild(text);
-            iss++;
+        int iss=0;
+        for (String coin :
+                coins) {
+            if (coin.equals("goldToken")) {
+                Text text = new Text(398,79,mapCoin.get(coin).toString());
+                text.setStyle("-fx-font-size: 20;");
+                entity.getViewComponent().addChild(text);
+            } else {
+                Text text = new Text(67+iss*71,79,mapCoin.get(coin).toString());
+                text.setStyle("-fx-font-size: 20;");
+                entity.getViewComponent().addChild(text);
+                iss++;
+            }
         }
-
-
-    }
-
-    @Override
-    public void read(Bundle bundle) {
-
-    }
-
-    @Override
-    public void write(Bundle bundle) {
-
     }
 }
 
