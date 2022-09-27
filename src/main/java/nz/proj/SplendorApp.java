@@ -681,7 +681,11 @@ public class SplendorApp extends GameApplication {
     }
     public void player_win(Entity player){
         int the_score=player.call("getScore");
-        if (the_score>=15){
+        if (the_score>=5){
+            Bundle win = new Bundle("win");
+            win.put("name", SocketClient.getInstance().name);
+            win.put("id", SocketClient.getInstance().id);
+            SocketClient.getInstance().send(win);
             getNotificationService().pushNotification("Oh~ You win the game");
             Config.MODE_SCENE.mode = 0;
             SocketClient.getInstance().match = false;

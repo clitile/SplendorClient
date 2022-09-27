@@ -35,6 +35,8 @@ public class SplendorMainMenu extends FXGLMenu {
                 b.put("name", SocketClient.getInstance().name);
                 SocketClient.getInstance().send(b);
                 SocketClient.getInstance().close();
+            } else if (SocketClient.getInstance().isOpen()) {
+                SocketClient.getInstance().close();
             }
         });
 //        loopBGM(Config.BackMusic);
@@ -80,7 +82,7 @@ public class SplendorMainMenu extends FXGLMenu {
 
         var menuBox = new VBox(
                 5,
-                new MenuButton("New Game", () -> {
+                new MenuButton("Play with AI", () -> {
                     Config.MODE_SCENE.online = false;
                     getSceneService().pushSubScene(Config.MODE_SCENE);
                 }),
@@ -91,6 +93,8 @@ public class SplendorMainMenu extends FXGLMenu {
                         Bundle b = new Bundle("close");
                         b.put("name", SocketClient.getInstance().name);
                         SocketClient.getInstance().send(b);
+                        SocketClient.getInstance().close();
+                    } else if (SocketClient.getInstance().isOpen()) {
                         SocketClient.getInstance().close();
                     }
                     fireExit();
@@ -227,6 +231,9 @@ public class SplendorMainMenu extends FXGLMenu {
 
     @Override
     protected void onUpdate(double tpf) {
+        if (SocketClient.getInstance().loss) {
+            getNotificationService().pushNotification("You loss the game");
+        }
         if (Config.MODE_SCENE.mode != 0 && !Config.MODE_SCENE.online) {
             fireNewGame();
         } else if (SocketClient.getInstance().login) {

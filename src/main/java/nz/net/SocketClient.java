@@ -30,6 +30,7 @@ public class SocketClient extends WebSocketClient {
     public boolean round_begin = false;
     public String playing = "";
     public ArrayList<String> players;
+    public boolean loss = false;
 
 
     static {
@@ -97,11 +98,14 @@ public class SocketClient extends WebSocketClient {
             playing = mess.get("next");
             isThis = mess.get("next").equals(this.name);
             activity = mess.get("activity");
-        } else if (mess.getName().equals("roomStop")) {
+        } else if (mess.getName().equals("roomStop") || mess.getName().equals("win")) {
             this.roomStop = true;
             id = 0;
             match = false;
             Config.MODE_SCENE.mode = 0;
+            if (mess.getName().equals("win") && !mess.get("name").equals(name)) {
+                loss = true;
+            }
         } else if (mess.getName().equals("false")) {
             info_corr = false;
         }
