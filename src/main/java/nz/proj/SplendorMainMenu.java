@@ -231,9 +231,6 @@ public class SplendorMainMenu extends FXGLMenu {
 
     @Override
     protected void onUpdate(double tpf) {
-        if (SocketClient.getInstance().loss) {
-            getNotificationService().pushNotification("You loss the game");
-        }
         if (Config.MODE_SCENE.mode != 0 && !Config.MODE_SCENE.online) {
             fireNewGame();
         } else if (SocketClient.getInstance().login) {
@@ -247,31 +244,10 @@ public class SplendorMainMenu extends FXGLMenu {
                 fireNewGame();
             }
         }
-//        if (SocketClient.getInstance().login) {
-//            if (temp == 0) {
-//                Config.MODE_SCENE.online = true;
-//                getSceneService().pushSubScene(Config.MODE_SCENE);
-//                FXGL.getNotificationService().pushNotification("Login Successfully");
-//                temp = 1;
-//            }
-//            if (Config.MODE_SCENE.mode != 0 && SocketClient.getInstance().match) {
-//                fireNewGame();
-//            }
-//        } else {
-//            if (Config.MODE_SCENE.mode != 0) {
-//                fireNewGame();
-//            }
-//        }
         if (! SocketClient.getInstance().info_corr) {
             FXGL.getNotificationService().pushNotification("Information Error");
             SocketClient.getInstance().info_corr = true;
         }
-//        if (SocketClient.getInstance().match && ! SocketClient.getInstance().roomStop) {
-//            SocketClient.getInstance().match = false;
-//            Bundle b = new Bundle("roomStop");
-//            b.put("name", SocketClient.getInstance().name);
-//            SocketClient.getInstance().send(b);
-//        }
     }
 
     private boolean isReachable() {

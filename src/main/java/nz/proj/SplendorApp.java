@@ -56,7 +56,7 @@ public class SplendorApp extends GameApplication {
         settings.setVersion("1.0.1");
         settings.setAppIcon("fp_token-1.png");
         settings.setFullScreenAllowed(true);
-        settings.setFullScreenFromStart(true);
+//        settings.setFullScreenFromStart(true);
         settings.setMainMenuEnabled(true);
         settings.setManualResizeEnabled(true);
         settings.setPreserveResizeRatio(true);
@@ -161,7 +161,7 @@ public class SplendorApp extends GameApplication {
         } else {
             //创建人类player,显示玩家的信息
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
-                human_player.add(getGameWorld().spawn("player",new SpawnData(1450,126*(i+1))));
+                human_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
             }
         }
         Config.MODE_SCENE.mode = 0;
@@ -259,9 +259,12 @@ public class SplendorApp extends GameApplication {
                     }else if (Objects.equals(SocketClient.getInstance().activity, "getOneMidCard") &&entities.size()!=0){
                         //判断对中间的12张牌的实体操作
                         getOneCard("getOneMidCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x, SocketClient.getInstance().y);
-                    }else if (Objects.equals(SocketClient.getInstance().activity, "getOneSaveCard") &&entities.size()!=0){
+                    }else if (Objects.equals(SocketClient.getInstance().activity, "getOneSaveCard")){
                         //对左下角的保留牌操作
-                        getOneCard("getOneSaveCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x, SocketClient.getInstance().y);
+                        System.out.println("getOneSaveCard");
+                        entities=getGameWorld().getEntitiesInRange(
+                                new Rectangle2D(SocketClient.getInstance().x-Config.CARD_WID+human_player.get(round).getX(),SocketClient.getInstance().y-Config.CARD_HEI+human_player.get(round).getY(),Config.CARD_WID,Config.CARD_HEI));
+                        getOneCard("getOneSaveCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x + human_player.get(round).getX(), SocketClient.getInstance().y + human_player.get(round).getY());
                     } else if (Objects.equals(SocketClient.getInstance().activity, "getSaveCard") &&entities.size()!=0) {
                         getSaveCard(entities.get(0),human_player.get(round), SocketClient.getInstance().x, SocketClient.getInstance().y);
                     }
@@ -474,10 +477,21 @@ public class SplendorApp extends GameApplication {
                     SocketClient.getInstance().isThis = false;
                     Bundle roundOver = new Bundle("roundOver");
                     roundOver.put("name", SocketClient.getInstance().name);
-                    roundOver.put("x", mouse_x);
-                    roundOver.put("y", mouse_y);
-                    roundOver.put("id", SocketClient.getInstance().id);
-                    roundOver.put("activity",mouse_y>=800?"getOneSaveCard":"getOneMidCard");
+                    if (mouse_y < 800) {
+                        roundOver.put("x", mouse_x);
+                        roundOver.put("y", mouse_y);
+                        roundOver.put("id", SocketClient.getInstance().id);
+                        roundOver.put("activity","getOneMidCard");
+                    } else {
+                        double x = mouse_x - player.getX();
+                        double y = mouse_y - player.getY();
+                        System.out.println(x);
+                        System.out.println(y);
+                        roundOver.put("x", x);
+                        roundOver.put("y", y);
+                        roundOver.put("id", SocketClient.getInstance().id);
+                        roundOver.put("activity","getOneSaveCard");
+                    }
                     SocketClient.getInstance().send(roundOver);
                 }
                 if (SocketClient.getInstance().match) {
@@ -676,17 +690,16 @@ public class SplendorApp extends GameApplication {
             gameScene.addChild(buttonList.get(2));
             gameScene.addChild(buttonList.get(3));
             gameScene.addChild(buttonList.get(4));
-
         }
     }
     public void player_win(Entity player){
         int the_score=player.call("getScore");
-        if (the_score>=5){
-            Bundle win = new Bundle("win");
-            win.put("name", SocketClient.getInstance().name);
-            win.put("id", SocketClient.getInstance().id);
-            SocketClient.getInstance().send(win);
-            getNotificationService().pushNotification("Oh~ You win the game");
+        if (the_score>=15) {
+            if (player.equals(this.player)) {
+                getNotificationService().pushNotification("Oh~ You win the game");
+            } else {
+                getNotificationService().pushNotification("Oh~ You loss the game");
+            }
             Config.MODE_SCENE.mode = 0;
             SocketClient.getInstance().match = false;
             set("match", false);
