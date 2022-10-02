@@ -15,7 +15,6 @@ import com.almasb.fxgl.input.UserAction;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -50,6 +49,7 @@ public class SplendorApp extends GameApplication {
     List<Entity> human_player;
     @Override
     protected void initSettings(GameSettings settings) {
+        SocketClient.getInstance().match = false;
         settings.setHeight(Config.APP_HEIGHT);
         settings.setWidth(Config.APP_WIDTH);
         settings.setTitle("Splendor");
@@ -66,6 +66,10 @@ public class SplendorApp extends GameApplication {
                 return new SplendorMainMenu();
             }
 
+//            @Override
+//            public FXGLMenu newGameMenu() {
+//                return new SplendorGameMenu();
+//            }
         });
     }
     //用来存储玩家获取的硬币，判断是三个不同的硬币或两个相同的硬币
@@ -237,9 +241,6 @@ public class SplendorApp extends GameApplication {
                     set("player_action", "Choose one action :)");
                     dealActPlayer(getGameScene());
                 } else if (!SocketClient.getInstance().round_begin && !SocketClient.getInstance().activity.equals("")){
-                    if (round>=human_player.size()){
-                        round=0;
-                    }
                     List<Entity> entities=getGameWorld().getEntitiesInRange(
                             new Rectangle2D(SocketClient.getInstance().x-Config.CARD_WID,SocketClient.getInstance().y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
                     if (Objects.equals(SocketClient.getInstance().activity, "getThreeCoin")){
@@ -347,6 +348,18 @@ public class SplendorApp extends GameApplication {
                 roundOver.put("y", mouse_y);
                 roundOver.put("id", SocketClient.getInstance().id);
                 roundOver.put("activity", size == 2 ? "getTwoSameCoin" : "getThreeCoin");
+
+                for (int i = 0; i < SocketClient.getInstance().allP.size(); i++) {
+                    System.out.println("round");
+                    if (SocketClient.getInstance().allP.get(i).equals(SocketClient.getInstance().name)) {
+                        if (i == SocketClient.getInstance().allP.size() - 1) {
+                            round = 0;
+                        } else {
+                            round = i;
+                        }
+                        break;
+                    }
+                }
                 SocketClient.getInstance().send(roundOver);
             } else ai_round = true;
             if (SocketClient.getInstance().match) {
@@ -398,9 +411,9 @@ public class SplendorApp extends GameApplication {
                             coinList.get(Config.list.indexOf(coin)).call("addCoin", hashMap.get(coin) - tokenMap.get(coin));
                             coinList.get(Config.list.indexOf(coin)).call("showInfo");
                         }else {
-                            player.call("cutCoin", coin, coinMap.get(coin));
                             player.call("cutCoin", "goldToken", hashMap.get(coin)-tokenMap.get(coin)-coinMap.get(coin));
                             coinList.get(5).call("addCoin",hashMap.get(coin)-tokenMap.get(coin)-coinMap.get(coin));
+                            player.call("cutCoin", coin, coinMap.get(coin));
                             coinList.get(5).call("showInfo");
                             //买卡时还回硬币
                             coinList.get(Config.list.indexOf(coin)).call("addCoin", coinMap.get(coin));
@@ -492,6 +505,17 @@ public class SplendorApp extends GameApplication {
                         roundOver.put("id", SocketClient.getInstance().id);
                         roundOver.put("activity","getOneSaveCard");
                     }
+
+                    for (int i = 0; i < SocketClient.getInstance().allP.size(); i++) {
+                        if (SocketClient.getInstance().allP.get(i).equals(SocketClient.getInstance().name)) {
+                            if (i == SocketClient.getInstance().allP.size() - 1) {
+                                round = 0;
+                            } else {
+                                round = i;
+                            }
+                            break;
+                        }
+                    }
                     SocketClient.getInstance().send(roundOver);
                 }
                 if (SocketClient.getInstance().match) {
@@ -543,8 +567,6 @@ public class SplendorApp extends GameApplication {
             for (int i = 0; i < saveList.size(); i++) {
                 saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
             }player.call("setSaveCard",saveList);
-
-
         } else if (!ai_round){
             getNotificationService().pushNotification("Error");
         }
@@ -562,6 +584,17 @@ public class SplendorApp extends GameApplication {
             roundOver.put("y", mouse_y);
             roundOver.put("id", SocketClient.getInstance().id);
             roundOver.put("activity","getSaveCard");
+
+            for (int i = 0; i < SocketClient.getInstance().allP.size(); i++) {
+                if (SocketClient.getInstance().allP.get(i).equals(SocketClient.getInstance().name)) {
+                    if (i == SocketClient.getInstance().allP.size() - 1) {
+                        round = 0;
+                    } else {
+                        round = i;
+                    }
+                    break;
+                }
+            }
             SocketClient.getInstance().send(roundOver);
         }
         if (SocketClient.getInstance().match) {
@@ -581,14 +614,6 @@ public class SplendorApp extends GameApplication {
         for (int i = 0; i < 5; i++) {
             getGameScene().removeChild(list.get(i));
         }
-    }
-    public Button setToolTip(String s,String k){
-        Button button=FXGL.getUIFactoryService().newButton(s);
-        Tooltip tooltip=new Tooltip();
-        tooltip.setText(k);
-        tooltip.setShowDelay(Duration.seconds(0.05));
-        button.setTooltip(tooltip);
-        return button;
     }
     public Button actionBut(String s){
         Button b= FXGL.getUIFactoryService().newButton(s);

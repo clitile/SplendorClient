@@ -30,6 +30,7 @@ public class SocketClient extends WebSocketClient {
     public boolean round_begin = false;
     public String playing = "";
     public ArrayList<String> players;
+    public ArrayList<String> allP = new ArrayList<>();
     public boolean loss = false;
     public String winner = "";
 
@@ -74,6 +75,7 @@ public class SocketClient extends WebSocketClient {
         } else if (mess.getName().equals("matchFind")) {
             playing = mess.get("next");
             players = mess.get("players");
+            allP.addAll(players);
             for (int i = 0; i < players.size(); i++) {
                 if (players.get(i).equals(name)) {
                     players.remove(i);
