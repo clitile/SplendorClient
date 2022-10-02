@@ -406,17 +406,17 @@ public class SplendorApp extends GameApplication {
                     if (hashMap.get(coin)>tokenMap.get(coin)){
                         int c = player.call("enoughCoinplayer", coin, hashMap.get(coin));
                         if (c>=0) {
-                            player.call("cutCoin", coin,hashMap.get(coin)-tokenMap.get(coin));
                             //买卡时还回硬币
                             coinList.get(Config.list.indexOf(coin)).call("addCoin", hashMap.get(coin) - tokenMap.get(coin));
+                            player.call("cutCoin", coin,hashMap.get(coin)-tokenMap.get(coin));
                             coinList.get(Config.list.indexOf(coin)).call("showInfo");
                         }else {
-                            player.call("cutCoin", "goldToken", hashMap.get(coin)-tokenMap.get(coin)-coinMap.get(coin));
                             coinList.get(5).call("addCoin",hashMap.get(coin)-tokenMap.get(coin)-coinMap.get(coin));
-                            player.call("cutCoin", coin, coinMap.get(coin));
-                            coinList.get(5).call("showInfo");
-                            //买卡时还回硬币
                             coinList.get(Config.list.indexOf(coin)).call("addCoin", coinMap.get(coin));
+                            player.call("cutCoin", "goldToken", hashMap.get(coin)-tokenMap.get(coin)-coinMap.get(coin));
+                            player.call("cutCoin", coin, coinMap.get(coin));
+                            //买卡时还回硬币
+                            coinList.get(5).call("showInfo");
                             coinList.get(Config.list.indexOf(coin)).call("showInfo");
                         }
                     }
@@ -452,7 +452,7 @@ public class SplendorApp extends GameApplication {
                 ai_round=true;
 
                 //对贵族实体操作,贵族自动归入用户
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < nobleList.size(); i++) {
                     HashMap<String,Integer> noblieList=nobleList.get(i).call("getMapToken");
                     HashMap<String,Integer> playerList=player.call("getMapToken");
                     Object[] keys = noblieList.keySet().toArray();
@@ -467,7 +467,7 @@ public class SplendorApp extends GameApplication {
                         player.call("addTokenAndScore","score",noblieList.get("score"));
                         player.call("showInfo");
 
-                        nobleList.remove(nobleList.get(i));
+
 
                         //动画
                         double ani_noblex=player.getX()-nobleList.get(i).getX()+200;
@@ -475,9 +475,10 @@ public class SplendorApp extends GameApplication {
 
                         nobleList.get(i).addComponent(new ProjectileComponent(new Point2D(ani_noblex,ani_nobley),Math.sqrt(ani_noblex*ani_noblex+ani_nobley*ani_nobley)/2));
                         nobleList.get(i).addComponent(new ExpireCleanComponent(Duration.seconds(2)));
-
+                        nobleList.remove(nobleList.get(i));
                         //玩家获得分数分是否胜利
                         player_win(player);
+
                         break;
                     }
                 }
