@@ -37,12 +37,13 @@
     <dependency>
       <groupId>org.java-websocket</groupId>
       <artifactId>Java-WebSocket</artifactId>
-      <version>1.5.2</version>
+      <version>1.5.3</version>
     </dependency>
     <dependency>
-      <groupId>io.vertx</groupId>
-      <artifactId>vertx-core</artifactId>
-      <version>4.3.3</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.25</version>
+      <scope>compile</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.slf4j/log4j-over-slf4j -->
 	<dependency>
@@ -61,6 +62,70 @@
         <artifactId>gluonfx-maven-plugin</artifactId>
         <version>1.0.15</version>
         <configuration>
+          <nativeImageArgs>--allow-incomplete-classpath</nativeImageArgs>
+          <verbose>true</verbose>
+          <reflectionList>
+            <list>com.almasb.fxgl.app.GameApplication</list>
+            <list>com.almasb.fxgl.app.FXGLApplication</list>
+            <list>com.almasb.fxgl.app.ReadOnlyGameSettings</list>
+            <list>com.almasb.fxgl.app.GameSettings</list>
+
+            <!-- Engine services -->
+            <list>com.almasb.fxgl.app.services.FXGLDialogService</list>
+            <list>com.almasb.fxgl.app.services.IOTaskExecutorService</list>
+            <list>com.almasb.fxgl.app.services.SystemBundleService</list>
+            <list>com.almasb.fxgl.app.services.UpdaterService</list>
+            <list>com.almasb.fxgl.app.services.FXGLAssetLoaderService</list>
+            <list>com.almasb.fxgl.core.asset.AssetLoaderService</list>
+            <list>com.almasb.fxgl.cutscene.CutsceneService</list>
+            <list>com.almasb.fxgl.dev.DevService</list>
+            <list>com.almasb.fxgl.dev.profiling.ProfilerService</list>
+            <list>com.almasb.fxgl.io.FileSystemService</list>
+            <list>com.almasb.fxgl.localization.LocalizationService</list>
+            <list>com.almasb.fxgl.minigames.MiniGameService</list>
+            <list>com.almasb.fxgl.net.NetService</list>
+            <list>com.almasb.fxgl.profile.SaveLoadService</list>
+            <list>com.almasb.fxgl.ui.FXGLDialogFactoryServiceProvider</list>
+            <list>com.almasb.fxgl.ui.FXGLUIFactoryServiceProvider</list>
+            <list>com.almasb.fxgl.app.FXGLApplication$GameApplicationService</list>
+            <list>com.almasb.fxgl.audio.AudioPlayer</list>
+            <list>com.almasb.fxgl.notification.impl.NotificationServiceProvider</list>
+            <list>com.almasb.fxgl.notification.view.XboxNotificationView</list>
+            <list>com.almasb.fxgl.achievement.AchievementService</list>
+            <list>com.almasb.fxgl.core.math.Vec2</list>
+            <list>com.almasb.fxgl.particle.Particle</list>
+            <!-- Components -->
+
+            <list>com.almasb.fxgl.entity.components.BoundingBoxComponent</list>
+            <list>com.almasb.fxgl.entity.components.CollidableComponent</list>
+            <list>com.almasb.fxgl.entity.components.IDComponent</list>
+            <list>com.almasb.fxgl.entity.components.IrremovableComponent</list>
+            <list>com.almasb.fxgl.entity.components.TimeComponent</list>
+            <list>com.almasb.fxgl.entity.components.TransformComponent</list>
+            <list>com.almasb.fxgl.entity.components.TypeComponent</list>
+            <list>com.almasb.fxgl.entity.components.ViewComponent</list>
+            <list>com.almasb.fxgl.particle.ParticleComponent</list>
+            <list>com.almasb.fxgl.physics.PhysicsComponent</list>
+            <list>com.almasb.fxgl.dsl.components.AutoRotationComponent</list>
+            <list>com.almasb.fxgl.dsl.components.EffectComponent</list>
+            <list>com.almasb.fxgl.dsl.components.ExpireCleanComponent</list>
+            <list>com.almasb.fxgl.dsl.components.HealthIntComponent</list>
+            <list>com.almasb.fxgl.dsl.components.LiftComponent</list>
+            <list>com.almasb.fxgl.dsl.components.OffscreenCleanComponent</list>
+            <list>com.almasb.fxgl.dsl.components.OffscreenPauseComponent</list>
+            <list>com.almasb.fxgl.dsl.components.ProjectileComponent</list>
+
+            <!--     Custom components                  -->
+
+            <list>nz.comp.CardComponent</list>
+            <list>nz.comp.CoinComponent</list>
+            <list>nz.comp.FirstCardComponent</list>
+            <list>nz.comp.NobleComponent</list>
+            <list>nz.comp.PlayerComponent</list>
+
+            <!-- Factories -->
+            <list>nz.proj.SplendorFactory</list>
+          </reflectionList>
           <mainClass>nz.proj.SplendorApp</mainClass>
         </configuration>
       </plugin>
@@ -140,6 +205,12 @@
       <id>android</id>
       <properties>
         <gluonfx.target>android</gluonfx.target>
+      </properties>
+    </profile>
+    <profile>
+      <id>web</id>
+      <properties>
+        <gluonfx.target>web</gluonfx.target>
       </properties>
     </profile>
   </profiles>

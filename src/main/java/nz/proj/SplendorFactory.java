@@ -69,39 +69,39 @@ public class SplendorFactory implements EntityFactory {
                 .at(data.getX(),data.getY())
                 .build();
     }
-    
+
     @Spawns("white_gem")
     public Entity newWhiteGem(SpawnData data) {
-    	return entityBuilder(data)
-    			.view("gem/white.png")
-    			.build();
+        return entityBuilder(data)
+                .view("white.png")
+                .build();
     }
 
     @Spawns("red_gem")
     public Entity newRedGem(SpawnData data) {
-    	return entityBuilder(data)
-    			.view("gem/red.png")
-    			.build();
+        return entityBuilder(data)
+                .view("red.png")
+                .build();
     }
-    
+
     @Spawns("green_gem")
     public Entity newGreenGem(SpawnData data) {
-    	return entityBuilder(data)
-    			.view("gem/green.png")
-    			.build();
+        return entityBuilder(data)
+                .view("green.png")
+                .build();
     }
-    
+
     @Spawns("blue_gem")
     public Entity newBlueGem(SpawnData data) {
-    	return entityBuilder(data)
-    			.view("gem/blue.png")
-    			.build();
+        return entityBuilder(data)
+                .view("blue.png")
+                .build();
     }
-    
+
     @Spawns("black_gem")
     public Entity newBlackGem(SpawnData data) {
-    	return entityBuilder(data)
-    			.view("gem/black.png")
-    			.build();
+        return entityBuilder(data)
+                .view("black.png")
+                .build();
     }
 }

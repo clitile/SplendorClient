@@ -1,6 +1,6 @@
 package nz.proj;
 
-import interaction.StartInterface;
+
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
@@ -8,26 +8,24 @@ import com.almasb.fxgl.app.scene.GameScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
+import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
-
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
+import com.almasb.fxgl.input.UserAction;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import nz.net.SocketClient;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -49,111 +47,100 @@ public class SplendorApp extends GameApplication {
     //鼠标坐标
     double mouse_x;
     double mouse_y;
-    //输出玩家当前的活动
-    Text player_action;
-
     //ai是否操作
     int round=0;
     //Ai玩家
     List<Entity> ai_player;
-    
-    public static void main(String[] args) {
-    	launch(args);
-		
-    }
-    
+    //真人玩家
+    List<Entity> human_player;
     @Override
-    public void initSettings(GameSettings settings) {
+    protected void initSettings(GameSettings settings) {
         settings.setHeight(Config.APP_HEIGHT);
         settings.setWidth(Config.APP_WIDTH);
         settings.setTitle("Splendor");
         settings.setVersion("1.0.1");
         settings.setAppIcon("fp_token-1.png");
         settings.setFullScreenAllowed(true);
-//        settings.setFullScreenFromStart(true);
+        settings.setFullScreenFromStart(true);
         settings.setMainMenuEnabled(true);
+        settings.setManualResizeEnabled(true);
+        settings.setPreserveResizeRatio(true);
         settings.setSceneFactory(new SceneFactory(){
             @Override
             public FXGLMenu newMainMenu() {
                 return new SplendorMainMenu();
             }
+
         });
     }
-    
+
+    //用来存储玩家获取的硬币，判断是三个不同的硬币或两个相同的硬币
     List<Point2D> num=new ArrayList<>();
     //鼠标对应动作
     @Override
-    public void initInput() {
-        onBtnDown(MouseButton.PRIMARY,()->{
-            List<Entity> entities=getGameWorld().getEntitiesInRange(
-                    new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
-            String activity=player.call("getActivity");
-            if (activity.equals("getThreeCoin")){
-                //获取三枚不同的硬币
-                entities=getGameWorld().getEntitiesInRange(
-                        new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
-                getCoin(3,entities,player);
-            }else if (activity.equals("getTwoSameCoin")){
-                //获取两枚相同的硬币
-                entities=getGameWorld().getEntitiesInRange(
-                        new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
-                getCoin(2,entities,player);
-            }else if (activity.equals("getOneMidCard")){
-                //判断对中间的12张牌的实体操作
-                getOneCard("getOneMidCard",entities,player);
+    protected void initInput() {
+        getInput().addAction(new UserAction("Click") {
+            @Override
+            protected void onActionEnd() {
+                mouse_x =getInput().mouseXWorldProperty().getValue();
+                mouse_y =getInput().mouseYWorldProperty().getValue();
+                List<Entity> entities=getGameWorld().getEntitiesInRange(
+                        new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
+                String activity=player.call("getActivity");
+                if (activity.equals("getThreeCoin")){
+                    //获取三枚不同的硬币
+                    entities=getGameWorld().getEntitiesInRange(
+                            new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
+                    if (entities.size()!=0){
+                        getCoin(3,entities.get(0),player,false,mouse_x,mouse_y);
+                    }
+                }else if (activity.equals("getTwoSameCoin")){
+                    //获取两枚相同的硬币
+                    entities=getGameWorld().getEntitiesInRange(
+                            new Rectangle2D(mouse_x-Config.COIN_WID,mouse_y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
+                    if (entities.size()!=0){
+                        getCoin(2,entities.get(0),player,false,mouse_x,mouse_y);
+                    }
+                }else if (activity.equals("getOneMidCard") &&entities.size()!=0){
+                    //判断对中间的12张牌的实体操作
+                    getOneCard("getOneMidCard",entities.get(0),player,false, mouse_x,mouse_y);
+                }else if (activity.equals("getOneSaveCard") &&entities.size()!=0){
+                    //对左下角的保留牌操作
+                    getOneCard("getOneSaveCard",entities.get(0),player,false,mouse_x,mouse_y);
+                }
 
-            }else if (activity.equals("getOneSaveCard")){
-                //对左下角的保留牌操作
-                getOneCard("getOneSaveCard",entities,player);
             }
-            //对贵族实体操作,贵族自动归入门下
-//            else if (mouse_x<=1300+Config.NOBLE_WID && mouse_x>=1300){
-//                entities=getGameWorld().getEntitiesInRange(new Rectangle2D(mouse_x-Config.NOBLE_WID,mouse_y-Config.NOBLE_HEI,Config.NOBLE_WID,Config.NOBLE_HEI));
-//                if (entities.size()!=0){
-//                    int i=entities.get(0).call("getScore");
-//                    player.call("addTokenAndScore","score",i);
-//                    player.call("showInfo");
-//
-//                    //对贵族操作
-//                    nobleList.remove(entities.get(0));
-//                    entities.get(0).removeFromWorld();
-//                }
-//
-//            }
-
-        });
-        //添加保留卡
-        onBtnDown(MouseButton.SECONDARY,()->{
-            List<Entity> entities=getGameWorld().getEntitiesInRange(
-                    new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
-            String activity=player.call("getActivity");
-            if (activity.equals("getSaveCard")){
-                //获取保留卡和一枚黄金硬币
-                getSaveCard(entities,player);
+        }, MouseButton.PRIMARY);
+        getInput().addAction(new UserAction("Get saved Card") {
+            @Override
+            protected void onActionEnd() {
+                mouse_x =getInput().mouseXWorldProperty().getValue();
+                mouse_y =getInput().mouseYWorldProperty().getValue();
+                List<Entity> entities=getGameWorld().getEntitiesInRange(
+                        new Rectangle2D(mouse_x-Config.CARD_WID,mouse_y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
+                String activity=player.call("getActivity");
+                if (activity.equals("getSaveCard") && entities.size()!=0){
+                    //获取保留卡和一枚黄金硬币
+                    getSaveCard(entities.get(0),player, mouse_x, mouse_y);
+                }
             }
-        });
+        }, MouseButton.SECONDARY);
     }
     
     //预先加载
     @Override
-    public void onPreInit() {
+    protected void onPreInit() {
         getAssetLoader().loadImage("cards_620_860.png");
         getAssetLoader().loadImage("nobles.png");
         getAssetLoader().loadImage("cards_372_172.png");
     }
-
     @Override
-    protected void initGameVars(Map<String, Object> vars) {
-        vars.put("login", false);
-        vars.put("online", false);
-        vars.put("name", "");
-    }
+    protected void initGame() {
 
-    @Override
-    public void initGame() {
         getGameScene().setBackgroundRepeat(image("backg (6).png"));
+
         getGameWorld().addEntityFactory(new SplendorFactory());
-        
+
         //最左边的三张标志卡 --- 要把卡片上的数字换成白色圆形底 黑色数字， 图片加上白色边框
         f_card_3=new ArrayList<>();
         //中间的十二张牌 --- 卡片上需要的不同颜色的宝石用不同颜色的圆形底+数字呈现，最好旁边再加上宝石图片，上方加上有点透明的矩形
@@ -164,13 +151,14 @@ public class SplendorApp extends GameApplication {
         nobleList=new ArrayList<>();
         
         ai_player=new ArrayList<>();
-        player = getGameWorld().spawn("player",new SpawnData(150,700));
-        
+
+        human_player=new ArrayList<>();
+        player = getGameWorld().spawn("player",new SpawnData(920,700));
         for (int i = 0; i < 6; i++) {
             coinList.add(getGameWorld().spawn("coin",new SpawnData(1100,100*(1+i)).put("style",Config.list.get(i))));
             if (i<3){
                 f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(100,500-200*i)));
-                nobleList.add(getGameWorld().spawn("noble",new SpawnData(1300,100+(i*200))));
+                nobleList.add(getGameWorld().spawn("noble",new SpawnData(190*i+100,800)));
             }
         }
         for (int j = 0; j < 3; j++) {
@@ -178,6 +166,8 @@ public class SplendorApp extends GameApplication {
                 s_card_12.add(getGameWorld().spawn(Config.list_s.get(j),new SpawnData(200*i-100,500-200*j)));
             }
         }
+        /*
+<<<<<<< HEAD
 
         player_action = new Text(0,40,"选择游戏人数");
         player_action.setLayoutX(700);
@@ -211,163 +201,545 @@ public class SplendorApp extends GameApplication {
                     }
                 });
         getGameScene().addChild(choicebox);
+=======
+*/
+        if (!SocketClient.getInstance().login){
+            for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
+                ai_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
+            }
+        } else {
+            //创建人类player,显示玩家的信息
+            for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
+                human_player.add(getGameWorld().spawn("player",new SpawnData(1450,126*(i+1))));
+            }
+        }
+        Config.MODE_SCENE.mode = 0;
     }
     boolean ai_round=false;
     @Override
-    public void onUpdate(double tpf) {
-        mouse_x =getInput().mouseXWorldProperty().getValue();
-        mouse_y =getInput().mouseYWorldProperty().getValue();
-        if (round!=0){
-            if (player.call("getActivity")=="" && !ai_round){
-
-                player_action.setText("选取你想进行的操作");
-                dealActPlayer(getGameScene());
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("login", false);
+        vars.put("online", false);
+        vars.put("name", "");
+        vars.put("match", false);
+        vars.put("id", 0);
+        vars.put("playersNames", new ArrayList<>());
+        vars.put("mode", 0);
+        vars.put("player_action", "Choose one action :)");
+    }
+    @Override
+    protected void onUpdate(double tpf) {
+        if (SocketClient.getInstance().roomStop) {
+            Config.MODE_SCENE.mode = 0;
+            SocketClient.getInstance().match = false;
+            set("match", false);
+            FXGL.getGameController().gotoMainMenu();
+            FXGL.getNotificationService().pushNotification("Other Players left the game");
+            SocketClient.getInstance().roomStop = false;
+        }
+        if (SocketClient.getInstance().match && !getb("match")) {
+            getNotificationService().pushNotification("Match Find");
+            set("match", true);
+        }
+        if (!SocketClient.getInstance().login){
+            if (ai_player.size()!=0){
+                if (player.call("getActivity")=="" && !ai_round){
+                    set("player_action", "Choose one action :)");
+                    dealActPlayer(getGameScene());
+                }
+                if (ai_round){
+                    label:
+                    for (Entity entity : ai_player) {
+                        //ai的操作
+                        for (int j = 0; j < 12; j++) {
+                            HashMap<String, Integer> hashMap = s_card_12.get(j).call("getMap");
+                            List<String> coins = s_card_12.get(j).call("getCoins");
+                            boolean numisnull = f_card_3.get(hashMap.get("cardLevel") - 1).call("numIsNull");
+                            boolean jud = true;
+                            for (String coin : coins) {
+                                boolean c = entity.call("enoughCoin", coin, hashMap.get(coin));
+                                if (!c) {
+                                    jud = false;
+                                }
+                            }
+                            //卡片数量不为0，且拥有足够的宝石
+                            if (numisnull && jud) {
+                                getOneCard("", s_card_12.get(j), entity, true, s_card_12.get(j).getX() + 1, s_card_12.get(j).getY() + 1);
+                                break label;
+                            }
+                        }
+                        int lp = 0;
+                        for (int j = 0; j < 5; j++) {
+                            int a = coinList.get(j).call("getNum");
+                            if (a > 0 && lp < 3) {
+                                getCoin(3, coinList.get(j), entity, true, coinList.get(j).getX() + 1, coinList.get(j).getY() + 1);
+                                lp++;
+                            }
+                        }
+                    }
+                    ai_round=false;
+                }
             }
-            if (ai_round){
-                for (int i = 0; i < ai_player.size(); i++) {
-                    System.out.println("i am player"+i);
-                }ai_round=false;
+        } else {
+            if (human_player.size()!=0){
+                if (SocketClient.getInstance().round_begin && player.call("getActivity")=="") {
+                    set("player_action", "Choose one action :)");
+                    dealActPlayer(getGameScene());
+                } else if (!SocketClient.getInstance().round_begin && !SocketClient.getInstance().activity.equals("")){
+                    if (round>=human_player.size()){
+                        round=0;
+                    }
+                    List<Entity> entities=getGameWorld().getEntitiesInRange(
+                            new Rectangle2D(SocketClient.getInstance().x-Config.CARD_WID,SocketClient.getInstance().y-Config.CARD_HEI,Config.CARD_WID,Config.CARD_HEI));
+                    if (Objects.equals(SocketClient.getInstance().activity, "getThreeCoin")){
+                        //获取三枚不同的硬币
+                        entities=getGameWorld().getEntitiesInRange(
+                                new Rectangle2D(SocketClient.getInstance().x-Config.COIN_WID,SocketClient.getInstance().y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
+                        if (entities.size()!=0){
+                            getCoin(3,entities.get(0),human_player.get(round),false,SocketClient.getInstance().x, SocketClient.getInstance().y);
+                        }
+                    } else if (Objects.equals(SocketClient.getInstance().activity, "getTwoSameCoin")){
+                        //获取两枚相同的硬币
+                        entities=getGameWorld().getEntitiesInRange(
+                                new Rectangle2D(SocketClient.getInstance().x-Config.COIN_WID,SocketClient.getInstance().y-Config.COIN_HEI,Config.COIN_WID,Config.COIN_HEI));
+                        if (entities.size()!=0){
+                            getCoin(2,entities.get(0),human_player.get(round),false,SocketClient.getInstance().x, SocketClient.getInstance().y);
+                        }
+                    }else if (Objects.equals(SocketClient.getInstance().activity, "getOneMidCard") &&entities.size()!=0){
+                        //判断对中间的12张牌的实体操作
+                        getOneCard("getOneMidCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x, SocketClient.getInstance().y);
+                    }else if (Objects.equals(SocketClient.getInstance().activity, "getOneSaveCard") &&entities.size()!=0){
+                        //对左下角的保留牌操作
+                        getOneCard("getOneSaveCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x, SocketClient.getInstance().y);
+                    } else if (Objects.equals(SocketClient.getInstance().activity, "getSaveCard") &&entities.size()!=0) {
+                        getSaveCard(entities.get(0),human_player.get(round), SocketClient.getInstance().x, SocketClient.getInstance().y);
+                    }
+                    SocketClient.getInstance().activity = "";
+                }
             }
-
         }
     }
 
-
+    @Override
+    protected void initUI() {
+        Text action = addVarText("player_action", 700, 750);
+        action.fontProperty().unbind();
+        action.setFont(Font.font(25));
+    }
+    public static void main(String[] args) {
+        launch(args);
+    }
+    int three_coin_aleast=0;
     //获取一枚硬币
-    public void getCoin(int size,List<Entity> entities,Entity player){
+    public void getCoin(int size,Entity entities,Entity player,boolean isAi,double mouse_x,double mouse_y){
 
         //获取鼠标点到位置的实体
-        if (mouse_x<=1100+Config.COIN_WID && mouse_x>=1100 && mouse_y>=100 && mouse_y<=500+Config.COIN_HEI&&entities.size()!=0){
-            int a=entities.get(0).call("getNum");
+        if ((mouse_x<=1100+Config.COIN_WID && mouse_x>=1100 && mouse_y>=100 && mouse_y<=500+Config.COIN_HEI || isAi)){
+            int a=entities.call("getNum");
+            for (int i = 0; i < 5; i++) {
+                int o=coinList.get(i).call("getNum");
+                if (o>=1){
+                    three_coin_aleast++;
+                }
+            }
             boolean bool=size==3?
                     //获取三枚不同的硬币
-                    !num.contains(entities.get(0).getPosition())&&a>0:
+                    !num.contains(entities.getPosition())&&a>0&&three_coin_aleast>=3:
                     //获取两枚一样的硬币
-                    (num.contains(entities.get(0).getPosition()) || num.size()==0)&&a+num.size()>=4;
-            if (bool){
+                    (num.contains(entities.getPosition()) || num.size()==0)&&a+num.size()>=4;
+            if (bool) {
                 //玩家添加硬币
-                String s=entities.get(0).call("getCoinName");
+                String s=entities.call("getCoinNameAll");
                 player.call("addCoin",s);
                 player.call("showInfo");
                 //硬币数量减少
-                entities.get(0).call("cutcoinNumber");
-                entities.get(0).call("showInfo");
+                entities.call("cutcoinNumber");
+                entities.call("showInfo");
 
-                num.add(entities.get(0).getPosition());
+                num.add(entities.getPosition());
+
+                if (SocketClient.getInstance().login && num.size()!=size && SocketClient.getInstance().round_begin) {
+                    Bundle act = new Bundle("act");
+                    act.put("name", SocketClient.getInstance().name);
+                    act.put("x", mouse_x);
+                    act.put("y", mouse_y);
+                    act.put("id", SocketClient.getInstance().id);
+                    act.put("activity", size == 2 ? "getTwoSameCoin" : "getThreeCoin");
+                    SocketClient.getInstance().send(act);
+                }
+                //动画
+                double ani_x=player.getX()-entities.getX()+200;
+                double ani_y=player.getY()-entities.getY();
+                Entity bullet=entityBuilder()
+                        .at(entities.getX(),entities.getY())
+                        .viewWithBBox(FXGL.texture(tokenToCoin(entities.call("getStyle"))+".png",100,100))
+                        .with(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)))
+                        .with(new ExpireCleanComponent(Duration.seconds(1)))
+                        .buildAndAttach();
+                getGameWorld().addEntity(bullet);
+            }else if (!ai_round){
+                getNotificationService().pushNotification("Error");
             }
         }
         if (num.size()==size){
             player.call("setActivity","");
             num=new ArrayList<>();
-            ai_round=true;
+            three_coin_aleast=0;
+
+            if (SocketClient.getInstance().login && SocketClient.getInstance().round_begin) {
+                SocketClient.getInstance().isThis = false;
+                Bundle roundOver = new Bundle("roundOver");
+                roundOver.put("name", SocketClient.getInstance().name);
+                roundOver.put("x", mouse_x);
+                roundOver.put("y", mouse_y);
+                roundOver.put("id", SocketClient.getInstance().id);
+                roundOver.put("activity", size == 2 ? "getTwoSameCoin" : "getThreeCoin");
+                SocketClient.getInstance().send(roundOver);
+            } else ai_round = true;
+            if (SocketClient.getInstance().match) {
+                SocketClient.getInstance().round_begin = SocketClient.getInstance().isThis;
+                for (int i = 0; i < SocketClient.getInstance().players.size(); i++) {
+                    if (SocketClient.getInstance().players.get(i).equals(SocketClient.getInstance().playing)) {
+                        round = i;
+                        break;
+                    }
+                }
+            }
         }
     }
     //获取一张卡牌
-    public void getOneCard(String actname,List<Entity> entities,Entity player){
+    public void getOneCard(String actname,Entity entities,Entity player,boolean isAi, double mouse_x, double mouse_y){
         boolean ra= actname.equals("getOneMidCard") ?
                 //中间的12张牌
                 mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI:
                 //坐下的保留牌
-                mouse_x<=500+Config.CARD_WID && mouse_x>=100 && mouse_y>=800 && mouse_y<=800+Config.CARD_HEI;
-        if (ra && entities.size()!=0){
-            HashMap<String,Integer> hashMap=entities.get(0).call("getMap");
-            List<String> coins=entities.get(0).call("getCoins");
+                mouse_x<=146*2+player.getX()+20+Config.CARD_WID && mouse_x>=player.getX()+20 && mouse_y>=player.getY()+110 && mouse_y<=player.getY()+110+Config.CARD_HEI;
+        if (ra||isAi) {
+            HashMap<String,Integer> hashMap=entities.call("getMap");
+            List<String> coins=entities.call("getCoins");
             boolean numisnull=f_card_3.get(hashMap.get("cardLevel")-1).call("numIsNull");
-
             boolean jud=true;
+            int gold_coin=0;
             for (String coin : coins) {
-                boolean c = player.call("enoughCoin", coin, hashMap.get(coin));
-                if (!c) {
-                    jud = false;
+                int c = player.call("enoughCoinplayer", coin, hashMap.get(coin));
+                if (c<0) {
+                    gold_coin=gold_coin+c;
                 }
             }
+            int glod_num=player.call("getGoldNum");
+            if ((gold_coin*-1)>glod_num){
+                jud = false;
+            }
+
             //判断是否点到实体，卡片数量不为0，且拥有足够的宝石
             if (numisnull &&jud){
                 HashMap<String,Integer> tokenMap=player.call("getMapToken");
-
+                HashMap<String,Integer> coinMap=player.call("getMapCoin");
                 for (String coin : coins) {
                     //扣除玩家的硬币
-                    player.call("cutCoin", coin, hashMap.get(coin) - tokenMap.get(coin));
-                    //买卡时还回硬币
-                    coinList.get(Config.list.indexOf(coin)).call("addCoin", hashMap.get(coin) - tokenMap.get(coin));
-                    coinList.get(Config.list.indexOf(coin)).call("showInfo");
+                    if (hashMap.get(coin)>tokenMap.get(coin)){
+                        int c = player.call("enoughCoinplayer", coin, hashMap.get(coin));
+                        if (c>=0) {
+                            player.call("cutCoin", coin,hashMap.get(coin)-tokenMap.get(coin));
+                            //买卡时还回硬币
+                            coinList.get(Config.list.indexOf(coin)).call("addCoin", hashMap.get(coin) - tokenMap.get(coin));
+                            coinList.get(Config.list.indexOf(coin)).call("showInfo");
+                        }else {
+                            player.call("cutCoin", coin, coinMap.get(coin));
+                            player.call("cutCoin", "goldToken", hashMap.get(coin)-tokenMap.get(coin)-coinMap.get(coin));
+                            coinList.get(5).call("addCoin",hashMap.get(coin)-tokenMap.get(coin)-coinMap.get(coin));
+                            coinList.get(5).call("showInfo");
+                            //买卡时还回硬币
+                            coinList.get(Config.list.indexOf(coin)).call("addCoin", coinMap.get(coin));
+                            coinList.get(Config.list.indexOf(coin)).call("showInfo");
+                        }
+                    }
                 }
                 //玩家获得分数和宝石
                 player.call("addTokenAndScore","score",hashMap.get("score"));
-                player.call("addTokenAndScore",entities.get(0).call("getGiveToken"),1);
+                player.call("addTokenAndScore",entities.call("getGiveTokenAll"),1);
                 player.call("showInfo");
                 //添加保留卡
                 if (actname.equals("getOneSaveCard")){
                     List<Entity> saveList=player.call("getSaveCard");
-                    saveList.remove(entities.get(0));
+                    saveList.remove(entities);
                     for (int i = 0; i < saveList.size(); i++) {
-                        saveList.get(i).setPosition(200*i+100,800);
+                        saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
                     }player.call("setSaveCard",saveList);
                 }else {
-                    //对最右边的三张等级牌操作
+                    //对最左边的三张等级牌操作
                     f_card_3.get(hashMap.get("cardLevel")-1).call("cutCardNumber");
                     f_card_3.get(hashMap.get("cardLevel")-1).call("showInfo");
                     //卡片替换成新的同等级的牌
-                    s_card_12.set(s_card_12.indexOf(entities.get(0)),
-                            getGameWorld().spawn(entities.get(0).call("getClevel"),
-                                    new SpawnData(entities.get(0).getX(),entities.get(0).getY())));
+                    s_card_12.set(s_card_12.indexOf(entities),
+                            getGameWorld().spawn(entities.call("getClevel"),
+                                    new SpawnData(entities.getX(),entities.getY())));
                 }
-                entities.get(0).removeFromWorld();
+                //动画
+                double ani_x=player.getX()-entities.getX()+200;
+                double ani_y=player.getY()-entities.getY();
+                entities.addComponent(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)/2));
+                entities.addComponent(new ExpireCleanComponent(Duration.seconds(2)));
+
+
+                player.call("setActivity","");
+                ai_round=true;
+
+                //对贵族实体操作,贵族自动归入用户
+                for (int i = 0; i < 3; i++) {
+                    HashMap<String,Integer> noblieList=nobleList.get(i).call("getMapToken");
+                    HashMap<String,Integer> playerList=player.call("getMapToken");
+                    Object[] keys = noblieList.keySet().toArray();
+
+                    int noble_sp=0;
+                    for (int j = 1; j < 4; j++) {
+                        if (noblieList.get(keys[j])<=playerList.get(keys[j])){
+                            noble_sp++;
+                        }
+                    }if (noble_sp==3){
+                        //玩家获得分数
+                        player.call("addTokenAndScore","score",noblieList.get("score"));
+                        player.call("showInfo");
+
+                        nobleList.remove(nobleList.get(i));
+
+                        //动画
+                        double ani_noblex=player.getX()-nobleList.get(i).getX()+200;
+                        double ani_nobley=player.getY()-nobleList.get(i).getY();
+
+                        nobleList.get(i).addComponent(new ProjectileComponent(new Point2D(ani_noblex,ani_nobley),Math.sqrt(ani_noblex*ani_noblex+ani_nobley*ani_nobley)/2));
+                        nobleList.get(i).addComponent(new ExpireCleanComponent(Duration.seconds(2)));
+
+                        //玩家获得分数分是否胜利
+                        player_win(player);
+                        break;
+                    }
+                }
+
+                //玩家获得分数分是否胜利
+                player_win(player);
+                //发信息，获取一张卡牌
+                //改下一个人操作了
+                if (SocketClient.getInstance().login && SocketClient.getInstance().round_begin) {
+                    SocketClient.getInstance().isThis = false;
+                    Bundle roundOver = new Bundle("roundOver");
+                    roundOver.put("name", SocketClient.getInstance().name);
+                    roundOver.put("x", mouse_x);
+                    roundOver.put("y", mouse_y);
+                    roundOver.put("id", SocketClient.getInstance().id);
+                    roundOver.put("activity",mouse_y>=800?"getOneSaveCard":"getOneMidCard");
+                    SocketClient.getInstance().send(roundOver);
+                }
+                if (SocketClient.getInstance().match) {
+                    SocketClient.getInstance().round_begin = SocketClient.getInstance().isThis;
+                    for (int i = 0; i < SocketClient.getInstance().players.size(); i++) {
+                        if (SocketClient.getInstance().players.get(i).equals(SocketClient.getInstance().playing)) {
+                            round = i;
+                            break;
+                        }
+                    }
+                }
+            } else if (!ai_round || SocketClient.getInstance().round_begin){
+                getNotificationService().pushNotification("Purchase failure");
+                dealActPlayer(getGameScene());
             }
-            player.call("setActivity","");
-            ai_round=true;
         }
     }
     //获取保留卡和一枚黄金硬币
-    public void getSaveCard(List<Entity> entities,Entity player){
+    public void getSaveCard(Entity entities,Entity player, double mouse_x, double mouse_y){
         List<Entity> saveList=player.call("getSaveCard");
-        if (mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI&&
-                entities.size()!=0&&saveList.size()<=2) {
-            HashMap<String,Integer> hashMap=entities.get(0).call("getMap");
+        if (mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI&&saveList.size()<=2) {
+            HashMap<String,Integer> hashMap=entities.call("getMap");
             //黄金硬币减少一枚
             coinList.get(5).call("cutcoinNumber");
             coinList.get(5).call("showInfo");
             //玩家增加一枚黄金硬币
             player.call("addCoin","goldToken");
             player.call("showInfo");
+            //动画
+            double ani_x=player.getX()-coinList.get(coinList.size() - 1).getX()+200;
+            double ani_y=player.getY()-coinList.get(coinList.size() - 1).getY();
+            Entity bullet=entityBuilder()
+                    .at(coinList.get(coinList.size() - 1).getX(),coinList.get(coinList.size() - 1).getY())
+                    .viewWithBBox(FXGL.texture("goldcoin.png",100,100))
+                    .with(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)))
+                    .with(new ExpireCleanComponent(Duration.seconds(1)))
+                    .buildAndAttach();
+            getGameWorld().addEntity(bullet);
             //对最左边的三张操作
             f_card_3.get(hashMap.get("cardLevel")-1).call("cutCardNumber");
             f_card_3.get(hashMap.get("cardLevel")-1).call("showInfo");
+
+
             //替换成新的
-            s_card_12.set(s_card_12.indexOf(entities.get(0)),
-                    getGameWorld().spawn(entities.get(0).call("getClevel"),new SpawnData(entities.get(0).getX(),entities.get(0).getY())));
+            s_card_12.set(s_card_12.indexOf(entities),
+                    getGameWorld().spawn(entities.call("getClevel"),new SpawnData(entities.getX(),entities.getY())));
             //玩家操作
-            saveList.add(entities.get(0));
+            saveList.add(entities);
             for (int i = 0; i < saveList.size(); i++) {
-                saveList.get(i).setPosition(200*i+100,800);
+                saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
             }player.call("setSaveCard",saveList);
+
+
+        } else if (!ai_round){
+            getNotificationService().pushNotification("Error");
         }
         player.call("setActivity","");
         ai_round=true;
-    }
-    //下拉框选择玩家选择的活动
-    public void dealActPlayer(GameScene gameScene){
-        List<String> act_list=new ArrayList<>(){{
-            add("getThreeCoin");
-            add("getTwoSameCoin");
-            add("getOneMidCard");
-            add("getOneSaveCard");
-            add("getSaveCard");
-        }};
 
-        var choicebox=getUIFactoryService().newChoiceBox(FXCollections.observableArrayList(
-                "获取三枚不同的硬币", "获取两枚相同的硬币", "购买中间的牌","购买一张保留牌","获取保留卡和一枚黄金硬币"));
-        choicebox.setLayoutX(700);
-        choicebox.setLayoutY(800);
-        choicebox.getSelectionModel().selectedIndexProperty()
-                .addListener(new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1){
-                        player.call("setActivity",act_list.get(t1.intValue()));
-                        player_action.setText(act_list.get(t1.intValue()));
-                        getGameScene().removeChild(choicebox);
+
+        //发信息，玩家获取保留卡和一枚黄金硬币
+        //改下一个人操作了
+        if (SocketClient.getInstance().login && SocketClient.getInstance().round_begin) {
+            SocketClient.getInstance().isThis = false;
+            Bundle roundOver = new Bundle("roundOver");
+            roundOver.put("name", SocketClient.getInstance().name);
+            roundOver.put("x", mouse_x);
+            roundOver.put("y", mouse_y);
+            roundOver.put("id", SocketClient.getInstance().id);
+            roundOver.put("activity","getSaveCard");
+            SocketClient.getInstance().send(roundOver);
+        }
+        if (SocketClient.getInstance().match) {
+            SocketClient.getInstance().round_begin = SocketClient.getInstance().isThis;
+            for (int i = 0; i < SocketClient.getInstance().players.size(); i++) {
+                if (SocketClient.getInstance().players.get(i).equals(SocketClient.getInstance().playing)) {
+                    round = i;
+                    break;
+                }
+            }
+        }
+    }
+    int deal_activity=0;
+    int deal_once=0;
+    //下拉框选择玩家选择的活动
+    public void removeButton(List<Button> list){
+        for (int i = 0; i < 5; i++) {
+            getGameScene().removeChild(list.get(i));
+        }
+    }
+    public Button setToolTip(String s,String k){
+        Button button=FXGL.getUIFactoryService().newButton(s);
+        Tooltip tooltip=new Tooltip();
+        tooltip.setText(k);
+        tooltip.setShowDelay(Duration.seconds(0.05));
+        button.setTooltip(tooltip);
+        return button;
+    }
+    public Button actionBut(String s){
+        Button b= FXGL.getUIFactoryService().newButton(s);
+        b.fontProperty().unbind();
+        b.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
+        b.setPrefWidth(290);
+        b.setLayoutX(-60);
+        return b;
+    }
+    public void dealActPlayer(GameScene gameScene){
+        if (deal_once==0){
+            deal_once=1;
+
+            List<Button> buttonList=new ArrayList<>(){{
+                add(actionBut("Get three different coins"));
+                add(actionBut("Get two identical coins"));
+                add(actionBut("Purchase a card"));
+                add(actionBut("Buy a development card"));
+                add(actionBut("Reserve a development card"));
+
+            }};
+            for (int i = 0; i < 5; i++) {
+                buttonList.get(i).setTranslateX(700);
+                buttonList.get(i).setTranslateY(750+50*i);
+            }
+            deal_once=1;
+            List<String> act_list=new ArrayList<>(){{
+                add("getThreeCoin");
+                add("getTwoSameCoin");
+                add("getOneMidCard");
+                add("getOneSaveCard");
+                add("getSaveCard");
+            }};
+            buttonList.get(0).setOnMouseClicked(mouseEvent -> {
+                deal_activity=0;
+                for (int i = 0; i < 5; i++) {
+                    int o=coinList.get(i).call("getNum");
+                    if (o>=1){
+                        deal_activity++;
                     }
-                });
-        gameScene.addChild(choicebox);
+                }
+                if (deal_activity>=3){
+                    deal_once=0;
+                    player.call("setActivity",act_list.get(0));
+                    set("player_action", act_list.get(0));
+                    removeButton(buttonList);
+                }else {
+                    getNotificationService().pushNotification("Coin type less than 3");
+                }
+            });
+            buttonList.get(1).setOnMouseClicked(mouseEvent -> {
+                deal_activity=0;
+                for (int i = 0; i < 5; i++) {
+                    int o=coinList.get(i).call("getNum");
+                    if (o>=4){
+                        deal_activity++;
+                    }
+                }
+                if (deal_activity>=1){
+                    deal_once=0;
+                    player.call("setActivity",act_list.get(1));
+                    set("player_action", act_list.get(1));
+                    removeButton(buttonList);
+                }else {
+                    getNotificationService().pushNotification("Number of coins less than 4");
+                }
+            });
+            buttonList.get(2).setOnMouseClicked(mouseEvent -> {
+                deal_once=0;
+                player.call("setActivity",act_list.get(2));
+                set("player_action", act_list.get(2));
+                removeButton(buttonList);
+            });
+            buttonList.get(3).setOnMouseClicked(mouseEvent -> {
+                List<Entity> saveList=player.call("getSaveCard");
+                if (saveList.size()>0){
+                    deal_once=0;
+                    player.call("setActivity",act_list.get(3));
+                    set("player_action", act_list.get(3));
+                    removeButton(buttonList);
+                }else {
+                    getNotificationService().pushNotification("No development card");
+                }
+            });
+            buttonList.get(4).setOnMouseClicked(mouseEvent -> {
+                int u=coinList.get(5).call("getNum");
+                List<Entity> saveList=player.call("getSaveCard");
+                if (u>0 && saveList.size()<3){
+                    deal_once=0;
+                    player.call("setActivity",act_list.get(4));
+                    set("player_action", act_list.get(4));
+                    removeButton(buttonList);
+                } else {
+                    getNotificationService().pushNotification("Error");
+                }
+            });
+            gameScene.addChild(buttonList.get(0));
+            gameScene.addChild(buttonList.get(1));
+            gameScene.addChild(buttonList.get(2));
+            gameScene.addChild(buttonList.get(3));
+            gameScene.addChild(buttonList.get(4));
+
+        }
+    }
+    public void player_win(Entity player){
+        int the_score=player.call("getScore");
+        if (the_score>=15){
+            getNotificationService().pushNotification("Oh~ You win the game");
+            Config.MODE_SCENE.mode = 0;
+            SocketClient.getInstance().match = false;
+            set("match", false);
+            FXGL.getGameController().gotoMainMenu();
+        }
+    }
+    public String tokenToCoin(String s) {
+        return s.substring(0,s.length()-5)+"coin";
     }
 }
