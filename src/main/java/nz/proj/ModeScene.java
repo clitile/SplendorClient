@@ -14,6 +14,7 @@ public class ModeScene extends SubScene {
         Button two_player = FXGL.getUIFactoryService().newButton("Two Player");
         Button three_player = FXGL.getUIFactoryService().newButton("Three Player");
         Button four_player = FXGL.getUIFactoryService().newButton("Four Player");
+        Button cancel = FXGL.getUIFactoryService().newButton("Cancel");
 
         two_player.setTranslateX(FXGL.getAppWidth() * 0.45);
         two_player.setTranslateY(FXGL.getAppHeight() * 0.45);
@@ -21,8 +22,10 @@ public class ModeScene extends SubScene {
         three_player.setTranslateY(FXGL.getAppHeight() * 0.45);
         four_player.setTranslateX(FXGL.getAppWidth() * 0.45);
         four_player.setTranslateY(FXGL.getAppHeight() * 0.45);
+        cancel.setTranslateX(FXGL.getAppWidth() * 0.45);
+        cancel.setTranslateY(FXGL.getAppHeight() * 0.45);
 
-        VBox pane = new VBox(two_player, three_player, four_player);
+        VBox pane = new VBox(two_player, three_player, four_player, cancel);
         pane.setStyle("-fx-background-image: url('assets/textures/backg_4.png')");
         pane.setPrefHeight(FXGL.getAppHeight());
         pane.setPrefWidth(FXGL.getAppWidth());
@@ -56,6 +59,7 @@ public class ModeScene extends SubScene {
                 FXGL.getSceneService().pushSubScene(new MatchScene());
             }
         });
+        cancel.setOnAction(event -> FXGL.getSceneService().popSubScene());
     }
 
     private void sendMatch(int mode) {

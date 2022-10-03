@@ -38,6 +38,8 @@ public class SplendorMainMenu extends FXGLMenu {
                 b.put("name", SocketClient.getInstance().name);
                 SocketClient.getInstance().send(b);
                 SocketClient.getInstance().close();
+            } else if (SocketClient.getInstance().isOpen()) {
+                SocketClient.getInstance().close();
             }
         });
 //        loopBGM(Config.BackMusic);
@@ -83,7 +85,7 @@ public class SplendorMainMenu extends FXGLMenu {
 
         var menuBox = new VBox(
                 5,
-                new MenuButton("New Game", () -> {
+                new MenuButton("Play with AI", () -> {
                     Config.MODE_SCENE.online = false;
                     getSceneService().pushSubScene(Config.MODE_SCENE);
                 }),
@@ -94,6 +96,8 @@ public class SplendorMainMenu extends FXGLMenu {
                         Bundle b = new Bundle("close");
                         b.put("name", SocketClient.getInstance().name);
                         SocketClient.getInstance().send(b);
+                        SocketClient.getInstance().close();
+                    } else if (SocketClient.getInstance().isOpen()) {
                         SocketClient.getInstance().close();
                     }
                     fireExit();
@@ -244,31 +248,10 @@ public class SplendorMainMenu extends FXGLMenu {
                 fireNewGame();
             }
         }
-//        if (SocketClient.getInstance().login) {
-//            if (temp == 0) {
-//                Config.MODE_SCENE.online = true;
-//                getSceneService().pushSubScene(Config.MODE_SCENE);
-//                FXGL.getNotificationService().pushNotification("Login Successfully");
-//                temp = 1;
-//            }
-//            if (Config.MODE_SCENE.mode != 0 && SocketClient.getInstance().match) {
-//                fireNewGame();
-//            }
-//        } else {
-//            if (Config.MODE_SCENE.mode != 0) {
-//                fireNewGame();
-//            }
-//        }
         if (! SocketClient.getInstance().info_corr) {
             FXGL.getNotificationService().pushNotification("Information Error");
             SocketClient.getInstance().info_corr = true;
         }
-//        if (SocketClient.getInstance().match && ! SocketClient.getInstance().roomStop) {
-//            SocketClient.getInstance().match = false;
-//            Bundle b = new Bundle("roomStop");
-//            b.put("name", SocketClient.getInstance().name);
-//            SocketClient.getInstance().send(b);
-//        }
     }
 
     private boolean isReachable() {

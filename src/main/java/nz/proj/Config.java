@@ -38,5 +38,6 @@ public interface Config {
     ModeScene MODE_SCENE = new ModeScene();
 
     String PORT = "10100";
-    String IP = "20.239.88.211";
+    // 20.239.88.211
+    String IP = "101.43.243.37";
 }
