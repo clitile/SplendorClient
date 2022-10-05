@@ -4,6 +4,8 @@ import com.almasb.fxgl.app.scene.FXGLMenu;
 
 import com.almasb.fxgl.app.scene.MenuType;
 import com.almasb.fxgl.core.serialization.Bundle;
+import com.almasb.fxgl.core.util.LazyValue;
+import com.almasb.fxgl.cutscene.Cutscene;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.ui.DialogService;
 
@@ -15,23 +17,34 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.InnerShadow;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import nz.net.SocketClient;
+import nz.ui.Story;
+import nz.ui.UIFactory;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class SplendorMainMenu extends FXGLMenu {
+	
+	private LazyValue<Story> storyLazyValue = new LazyValue<>(() -> {
+		return new Story();
+	});
+	
     int temp = 0;
     public SplendorMainMenu() {
-        super(MenuType.MAIN_MENU);
+    	 super(MenuType.MAIN_MENU);
+    	 
         getPrimaryStage().setOnCloseRequest(event -> {
             if (SocketClient.getInstance().login) {
                 Bundle b = new Bundle("close");
@@ -43,6 +56,7 @@ public class SplendorMainMenu extends FXGLMenu {
             }
         });
 //        loopBGM(Config.BackMusic);
+        
         getContentRoot().getChildren().setAll(texture("backg (2).png",Config.APP_WIDTH,Config.APP_HEIGHT));
         var blocks = new ArrayList<ColorBlock>();
 
@@ -82,15 +96,25 @@ public class SplendorMainMenu extends FXGLMenu {
                     .to(Config.BlockColor.brighter().brighter())
                     .buildAndPlay(this);
         }
-
+        
+        
         var menuBox = new VBox(
                 5,
                 new MenuButton("Play with AI", () -> {
                     Config.MODE_SCENE.online = false;
+                    getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
+                    getSceneService().pushSubScene(storyLazyValue.get());
+                    getSceneService().popSubScene();
                     getSceneService().pushSubScene(Config.MODE_SCENE);
+                    
                 }),
                 new MenuButton("Online Game", this::onlineGame),
-                new MenuButton("How to Play", this::instructions),
+                //new MenuButton("How to Play", this::instructions),
+                new MenuButton("How to Play", () -> {
+                	getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
+                    getSceneService().pushSubScene(storyLazyValue.get());
+                    getSceneService().popSubScene();
+                }),
                 new MenuButton("Exit", () -> {
                     if (SocketClient.getInstance().login) {
                         Bundle b = new Bundle("close");

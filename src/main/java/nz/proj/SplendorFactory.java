@@ -1,34 +1,13 @@
 package nz.proj;
 
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
-
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.shape.StrokeLineJoin;
-import javafx.scene.shape.StrokeType;
-import javafx.stage.Stage;
 import nz.comp.*;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
@@ -104,4 +83,12 @@ public class SplendorFactory implements EntityFactory {
                 .view("black.png")
                 .build();
     }
+
+    @Spawns("back6")
+    public Entity newBack(SpawnData data) {
+    	return FXGL.entityBuilder(data)
+    			.view("backg (6).png")
+    			.build();
+    }
+
 }

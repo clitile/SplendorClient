@@ -2,6 +2,7 @@ package nz.proj;
 
 
 import com.almasb.fxgl.app.GameApplication;
+import javafx.application.Platform;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.GameScene;
@@ -13,22 +14,29 @@ import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.input.UserAction;
+
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import nz.net.SocketClient;
+import nz.ui.UIFactory;
 
 import java.util.*;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class SplendorApp extends GameApplication {
+	
+	
     //玩家1 
     Entity player;
   
@@ -43,6 +51,8 @@ public class SplendorApp extends GameApplication {
     //贵族卡 
     List<Entity> nobleList;
     
+    
+    
     //鼠标坐标
     double mouse_x;
     double mouse_y;
@@ -54,6 +64,7 @@ public class SplendorApp extends GameApplication {
     List<Entity> human_player;
     @Override
     protected void initSettings(GameSettings settings) {
+    	
         SocketClient.getInstance().match = false;
         settings.setHeight(Config.APP_HEIGHT);
         settings.setWidth(Config.APP_WIDTH);
@@ -61,21 +72,20 @@ public class SplendorApp extends GameApplication {
         settings.setVersion("1.0.1");
         settings.setAppIcon("fp_token-1.png");
         settings.setFullScreenAllowed(true);
-//        settings.setFullScreenFromStart(true);
+//      settings.setFullScreenFromStart(true);
         settings.setMainMenuEnabled(true);
         settings.setManualResizeEnabled(true);
         settings.setPreserveResizeRatio(true);
+        
         settings.setSceneFactory(new SceneFactory(){
             @Override
             public FXGLMenu newMainMenu() {
                 return new SplendorMainMenu();
             }
-
-//            @Override
-//            public FXGLMenu newGameMenu() {
-//                return new SplendorGameMenu();
-//            }
         });
+        
+
+       
     }
 
     //用来存储玩家获取的硬币，判断是三个不同的硬币或两个相同的硬币
@@ -137,15 +147,15 @@ public class SplendorApp extends GameApplication {
         getAssetLoader().loadImage("cards_620_860.png");
         getAssetLoader().loadImage("nobles.png");
         getAssetLoader().loadImage("cards_372_172.png");
+        getAssetLoader().loadImage("S-castle.png");
     }
+    
+    
     @Override
     protected void initGame() {
-
-        getGameScene().setBackgroundRepeat(image("backg (6).png"));
-
+    	
         getGameWorld().addEntityFactory(new SplendorFactory());
-
-        //最左边的三张标志卡 --- 要把卡片上的数字换成白色圆形底 黑色数字， 图片加上白色边框
+        
         f_card_3=new ArrayList<>();
         //中间的十二张牌 --- 卡片上需要的不同颜色的宝石用不同颜色的圆形底+数字呈现，最好旁边再加上宝石图片，上方加上有点透明的矩形
         s_card_12=new ArrayList<>();
@@ -157,22 +167,69 @@ public class SplendorApp extends GameApplication {
         ai_player=new ArrayList<>();
 
         human_player=new ArrayList<>();
-        player = getGameWorld().spawn("player",new SpawnData(920,700));
-        for (int i = 0; i < 6; i++) {
-            coinList.add(getGameWorld().spawn("coin",new SpawnData(1100,100*(1+i)).put("style",Config.list.get(i))));
-            if (i<3){
-                f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(100,500-200*i)));
-                nobleList.add(getGameWorld().spawn("noble",new SpawnData(190*i+100,800)));
-            }
-        }
-        for (int j = 0; j < 3; j++) {
-            for (int i = 2; i <= 5; i++) {
-                s_card_12.add(getGameWorld().spawn(Config.list_s.get(j),new SpawnData(200*i-100,500-200*j)));
-            }
-        }
+        Platform.runLater(new Runnable() {
+    		@Override
+        	public void run() {
+    			ingame();
+    		}
+        });
+        
+        
+        
+        
         /*
-<<<<<<< HEAD
+        Platform.runLater(new Runnable() {
+    		@Override
+        	public void run() {
+    			//getSceneService().pushSubScene(Config.MODE_SCENE);
+    			getGameScene().setBackgroundRepeat(image("backg (6).png"));
+    	        //spawn("back6");
+    	        //最左边的三张标志卡 --- 要把卡片上的数字换成白色圆形底 黑色数字， 图片加上白色边框
+    	        f_card_3=new ArrayList<>();
+    	        //中间的十二张牌 --- 卡片上需要的不同颜色的宝石用不同颜色的圆形底+数字呈现，最好旁边再加上宝石图片，上方加上有点透明的矩形
+    	        s_card_12=new ArrayList<>();
+    	        // 硬币 --- 代表 ？？？
+    	        coinList=new ArrayList<>();
+    	        //贵族卡 --- 代表 右边三张卡，需要换成不同的图片背景
+    	        nobleList=new ArrayList<>();
+    	        
+    	        ai_player=new ArrayList<>();
 
+    	        human_player=new ArrayList<>();
+    	        
+    	        player = getGameWorld().spawn("player",new SpawnData(920,700));
+	            for (int i = 0; i < 6; i++) {
+	                coinList.add(getGameWorld().spawn("coin",new SpawnData(1100,100*(1+i)).put("style",Config.list.get(i))));
+	                if (i<3){
+	                    f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(100,500-200*i)));
+	                    nobleList.add(getGameWorld().spawn("noble",new SpawnData(190*i+100,800)));
+	                }
+	            }
+	            for (int j = 0; j < 3; j++) {
+	                for (int i = 2; i <= 5; i++) {
+	                    s_card_12.add(getGameWorld().spawn(Config.list_s.get(j),new SpawnData(200*i-100,500-200*j)));
+	                }
+	            }
+	            if (!SocketClient.getInstance().login){
+	                for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
+	                    ai_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
+	                }
+	            } else {
+	                //创建人类player,显示玩家的信息
+	                for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
+	                    human_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
+	                }
+	            }
+	            Config.MODE_SCENE.mode = 0;
+    	        
+        	}
+    	});*/
+        
+        
+        
+        
+        
+        /*
         player_action = new Text(0,40,"选择游戏人数");
         player_action.setLayoutX(700);
         player_action.setLayoutY(900);
@@ -205,19 +262,9 @@ public class SplendorApp extends GameApplication {
                     }
                 });
         getGameScene().addChild(choicebox);
-=======
+
 */
-        if (!SocketClient.getInstance().login){
-            for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
-                ai_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
-            }
-        } else {
-            //创建人类player,显示玩家的信息
-            for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
-                human_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
-            }
-        }
-        Config.MODE_SCENE.mode = 0;
+        
     }
     boolean ai_round=false;
     @Override
@@ -330,8 +377,40 @@ public class SplendorApp extends GameApplication {
         action.fontProperty().unbind();
         action.setFont(Font.font(25));
     }
+    
     public static void main(String[] args) {
         launch(args);
+    }
+    
+    public void ingame() {
+    	spawn("back6");
+        
+        player = getGameWorld().spawn("player",new SpawnData(920,700));
+        for (int i = 0; i < 6; i++) {
+            coinList.add(getGameWorld().spawn("coin",new SpawnData(1100,100*(1+i)).put("style",Config.list.get(i))));
+            if (i<3){
+                f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(100,500-200*i)));
+                nobleList.add(getGameWorld().spawn("noble",new SpawnData(190*i+100,800)));
+            }
+        }
+        for (int j = 0; j < 3; j++) {
+            for (int i = 2; i <= 5; i++) {
+                s_card_12.add(getGameWorld().spawn(Config.list_s.get(j),new SpawnData(200*i-100,500-200*j)));
+            }
+        }
+        if (!SocketClient.getInstance().login){
+            for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
+                ai_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
+            }
+        } else {
+            //创建人类player,显示玩家的信息
+            for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
+                human_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
+            }
+        }
+        Config.MODE_SCENE.mode = 0;
+        
+	
     }
     int three_coin_aleast=0;
     //获取一枚硬币
