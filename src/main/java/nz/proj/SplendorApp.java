@@ -358,10 +358,11 @@ public class SplendorApp extends GameApplication {
                         getOneCard("getOneMidCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x, SocketClient.getInstance().y);
                     }else if (Objects.equals(SocketClient.getInstance().activity, "getOneSaveCard")){
                         //对左下角的保留牌操作
-                        System.out.println("getOneSaveCard");
                         entities=getGameWorld().getEntitiesInRange(
                                 new Rectangle2D(SocketClient.getInstance().x-Config.CARD_WID+human_player.get(round).getX(),SocketClient.getInstance().y-Config.CARD_HEI+human_player.get(round).getY(),Config.CARD_WID,Config.CARD_HEI));
-                        getOneCard("getOneSaveCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x + human_player.get(round).getX(), SocketClient.getInstance().y + human_player.get(round).getY());
+                        if (entities.size()!=0){
+                            getOneCard("getOneSaveCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x + human_player.get(round).getX(), SocketClient.getInstance().y + human_player.get(round).getY());
+                        }
                     } else if (Objects.equals(SocketClient.getInstance().activity, "getSaveCard") &&entities.size()!=0) {
                         getSaveCard(entities.get(0),human_player.get(round), SocketClient.getInstance().x, SocketClient.getInstance().y);
                     }
@@ -456,8 +457,8 @@ public class SplendorApp extends GameApplication {
                 Entity bullet=entityBuilder()
                         .at(entities.getX(),entities.getY())
                         .viewWithBBox(FXGL.texture(tokenToCoin(entities.call("getStyle"))+".png",100,100))
-                        .with(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)))
-                        .with(new ExpireCleanComponent(Duration.seconds(1)))
+                        .with(new ProjectileComponent(new Point2D(ani_x,ani_y),Math.sqrt(ani_x*ani_x+ani_y*ani_y)*2))
+                        .with(new ExpireCleanComponent(Duration.seconds(0.5)))
                         .buildAndAttach();
                 getGameWorld().addEntity(bullet);
             }else if (!ai_round){
@@ -595,9 +596,6 @@ public class SplendorApp extends GameApplication {
                         //玩家获得分数
                         player.call("addTokenAndScore","score",noblieList.get("score"));
                         player.call("showInfo");
-
-
-
                         //动画
                         double ani_noblex=player.getX()-nobleList.get(i).getX()+200;
                         double ani_nobley=player.getY()-nobleList.get(i).getY();
