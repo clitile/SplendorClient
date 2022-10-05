@@ -42,20 +42,9 @@ public class PlayerComponent extends Component {
         }};
         showInfo();
     }
-    @Override
-    public void onUpdate(double tpf) {
-    }
-    @Override
-    public void onRemoved() {
-        super.onRemoved();
-    }
-
-
     public void addTokenAndScore(String name,int n) {
         mapToken.replace(name,n+mapToken.get(name));
-
     }
-
     public HashMap<String,Integer> getMapToken(){
         return this.mapToken;
     }
@@ -64,25 +53,19 @@ public class PlayerComponent extends Component {
     }
     public void cutCoin(String name,int n){
         mapCoin.replace(name,mapCoin.get(name)-n);
-
     }
     public int getScore(){
         return mapToken.get("score");
     }
-
     public void setUser_name(String user_name) {
         this.user_name = user_name;
     }
-
     public String getUser_name() {
         return user_name;
     }
-
     public void addCoin(String name){
         mapCoin.replace(name,1+mapCoin.get(name));
-
     }
-
     public List<Entity> getSaveCard() {
         return saveCard;
     }
@@ -108,7 +91,6 @@ public class PlayerComponent extends Component {
     public String getActivity() {
         return activity;
     }
-
     public void showInfo(){
         entity.getViewComponent().clearChildren();
         Texture texture= FXGL.texture("images.png", 450,126);
@@ -130,8 +112,7 @@ public class PlayerComponent extends Component {
             add("score");
         }};
         int its=0;
-        for (String token :
-                tokens) {
+        for (String token : tokens) {
             if (token.equals("score")) {
                 Text text = new Text(240,43,mapToken.get(token).toString());
                 text.setStyle("-fx-font-size: 20;");
@@ -144,8 +125,7 @@ public class PlayerComponent extends Component {
             }
         }
         int iss=0;
-        for (String coin :
-                coins) {
+        for (String coin : coins) {
             if (coin.equals("goldToken")) {
                 Text text = new Text(398,79,mapCoin.get(coin).toString());
                 text.setStyle("-fx-font-size: 20;");
