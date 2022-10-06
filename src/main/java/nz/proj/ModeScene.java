@@ -4,37 +4,62 @@ import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.scene.SubScene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import nz.net.SocketClient;
 
 public class ModeScene extends SubScene {
     public int mode = 0;
     public boolean online = false;
     public ModeScene() {
-        Button two_player = FXGL.getUIFactoryService().newButton("Two Player");
+    	
+    	Pane pane = new Pane();
+    	
+    	Button two_player = FXGL.getUIFactoryService().newButton("Two Player");
         Button three_player = FXGL.getUIFactoryService().newButton("Three Player");
         Button four_player = FXGL.getUIFactoryService().newButton("Four Player");
-        Button cancel = FXGL.getUIFactoryService().newButton("Cancel");
-
-        two_player.setTranslateX(FXGL.getAppWidth() * 0.45);
-        two_player.setTranslateY(FXGL.getAppHeight() * 0.45);
-        three_player.setTranslateX(FXGL.getAppWidth() * 0.45);
-        three_player.setTranslateY(FXGL.getAppHeight() * 0.45);
-        four_player.setTranslateX(FXGL.getAppWidth() * 0.45);
-        four_player.setTranslateY(FXGL.getAppHeight() * 0.45);
-        cancel.setTranslateX(FXGL.getAppWidth() * 0.45);
-        cancel.setTranslateY(FXGL.getAppHeight() * 0.45);
-
-        VBox pane = new VBox(two_player, three_player, four_player, cancel);
-        pane.setStyle("-fx-background-image: url('assets/textures/backg_4.png')");
-        pane.setPrefHeight(FXGL.getAppHeight());
-        pane.setPrefWidth(FXGL.getAppWidth());
+        Button cancel = FXGL.getUIFactoryService().newButton("Return");
+        
+        
+        two_player.setLayoutX(600);
+        two_player.setLayoutY(240);
+        two_player.setMinSize(600, 91);
+        two_player.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
+        
+        
+        three_player.setLayoutX(620);
+        three_player.setLayoutY(440);
+        three_player.setMinSize(600, 91);
+        three_player.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
+       
+        four_player.setLayoutX(640);
+        four_player.setLayoutY(640);
+        four_player.setMinSize(600,91);
+        four_player.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
+        
+        cancel.setLayoutX(660);
+        cancel.setLayoutY(840);
+        cancel.setMinSize(600, 91);
+        cancel.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
+        
+        pane.getChildren().add(two_player);
+        pane.getChildren().add(three_player);
+        pane.getChildren().add(four_player);
+        pane.getChildren().add(cancel);
+        
+        pane.setStyle("-fx-background-image: url('assets/textures/S-mc.png')");
+        pane.setPrefHeight(1080);
+        pane.setPrefWidth(1920);
 
         pane.setLayoutX(0);
         pane.setLayoutY(0);
+        
         getContentRoot().getChildren().add(pane);
 
 
+        
         two_player.setOnAction(event -> {
             mode = 2;
             FXGL.getSceneService().popSubScene();

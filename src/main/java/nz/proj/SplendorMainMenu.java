@@ -109,12 +109,8 @@ public class SplendorMainMenu extends FXGLMenu {
                     
                 }),
                 new MenuButton("Online Game", this::onlineGame),
-                //new MenuButton("How to Play", this::instructions),
-                new MenuButton("How to Play", () -> {
-                	getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
-                    getSceneService().pushSubScene(storyLazyValue.get());
-                    getSceneService().popSubScene();
-                }),
+                new MenuButton("How to Play", this::instructions),
+                
                 new MenuButton("Exit", () -> {
                     if (SocketClient.getInstance().login) {
                         Bundle b = new Bundle("close");
@@ -226,9 +222,13 @@ public class SplendorMainMenu extends FXGLMenu {
             }
         }
     }
-
+    
+    //展示游戏规则，还需要改进
     private void instructions() {
-        getDialogService().showMessageBox("Right now: Use your mouse to choose cards and gems ~");
+        //getDialogService().showMessageBox("Right now: Use your mouse to choose cards and gems ~");
+        //getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
+        //getSceneService().pushSubScene(storyLazyValue.get());
+        //getSceneService().popSubScene();
     }
 
     private static class MenuButton extends Parent {
