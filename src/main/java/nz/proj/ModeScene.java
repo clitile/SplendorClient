@@ -48,18 +48,18 @@ public class ModeScene extends SubScene {
         
         
         two_player.setLayoutX(1100);
-        two_player.setLayoutY(240);
+        two_player.setLayoutY(140);
         two_player.setMinSize(600, 91);
         two_player.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
         
         
         three_player.setLayoutX(1140);
-        three_player.setLayoutY(440);
+        three_player.setLayoutY(340);
         three_player.setMinSize(600, 91);
         three_player.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
        
         four_player.setLayoutX(1180);
-        four_player.setLayoutY(640);
+        four_player.setLayoutY(540);
         four_player.setMinSize(600,91);
         four_player.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
         
@@ -95,8 +95,8 @@ public class ModeScene extends SubScene {
         
         Button next = new Button(" ");
         next.setMinSize(26, 44);
-        next.setLayoutX(700);
-        next.setLayoutY(445);
+        next.setLayoutX(600);
+        next.setLayoutY(645);
         next.setStyle("-fx-background-image: url('assets/textures/S-arrow.png')");
         next.setOnAction(new EventHandler<ActionEvent>() {
         	@Override
@@ -115,17 +115,30 @@ public class ModeScene extends SubScene {
         borderpane.setMinSize(418, 530);
         borderpane.setStyle("-fx-background-image: url('assets/textures/S-cha.png')");
         borderpane.setCenter(imageview);
-        borderpane.setLayoutX(300);
-        borderpane.setLayoutY(230);
+        borderpane.setLayoutX(200);
+        borderpane.setLayoutY(430);
         showNext();
         
+        //Titles:
+        BorderPane borderpanet1 = new BorderPane();
+        borderpanet1.setMinSize(800, 338);
+        borderpanet1.setStyle("-fx-background-image: url('assets/textures/title1.png')");
+        borderpanet1.setLayoutX(50);
+        borderpanet1.setLayoutY(0);
         
+        BorderPane borderpanet2 = new BorderPane();
+        borderpanet2.setMinSize(800, 264);
+        borderpanet2.setStyle("-fx-background-image: url('assets/textures/title2.png')");
+        borderpanet2.setLayoutX(1150);
+        borderpanet2.setLayoutY(800);
         
         pane.getChildren().add(two_player);
         pane.getChildren().add(three_player);
         pane.getChildren().add(four_player);
         pane.getChildren().add(borderpane);
         pane.getChildren().add(next);
+        pane.getChildren().add(borderpanet1);
+        pane.getChildren().add(borderpanet2);
         
         
         pane.setStyle("-fx-background-image: url('assets/textures/modescene.png')");
