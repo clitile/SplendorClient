@@ -101,10 +101,11 @@ public class SplendorMainMenu extends FXGLMenu {
         var menuBox = new VBox(
                 5,
                 new MenuButton("Play with AI", () -> {
+                	
+                	getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
+                	getSceneService().pushSubScene(storyLazyValue.get());
+                	getSceneService().popSubScene();
                     Config.MODE_SCENE.online = false;
-                    getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
-                    getSceneService().pushSubScene(storyLazyValue.get());
-                    getSceneService().popSubScene();
                     getSceneService().pushSubScene(Config.MODE_SCENE);
                     
                 }),
@@ -225,10 +226,9 @@ public class SplendorMainMenu extends FXGLMenu {
     
     //展示游戏规则，还需要改进
     private void instructions() {
+    	//做成一个面板上面有左右两侧按钮，点击后更换带有游戏解释的图片。
         //getDialogService().showMessageBox("Right now: Use your mouse to choose cards and gems ~");
-        //getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
-        //getSceneService().pushSubScene(storyLazyValue.get());
-        //getSceneService().popSubScene();
+        
     }
 
     private static class MenuButton extends Parent {
