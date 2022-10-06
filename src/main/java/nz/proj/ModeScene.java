@@ -7,7 +7,12 @@ import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.scene.SubScene;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -23,6 +28,15 @@ public class ModeScene extends SubScene {
     
     public static boolean online = false;
     
+    String[] imageURLs = {"assets/textures/p1.png", "assets/textures/p2.png", "assets/textures/p3.png", "assets/textures/p4.png",
+    		"assets/textures/p5.png", "assets/textures/p6.png", "assets/textures/p7.png", "assets/textures/p8.png",};
+    
+    Image[] images = new Image[8];
+    
+    ImageView imageview = new ImageView();
+    
+    int current = 0;
+    
     public ModeScene() {
     	//这个面板做一个斜线，右侧放游戏人数的选择，左侧放玩家头像的的选择。
     	
@@ -31,7 +45,6 @@ public class ModeScene extends SubScene {
     	Button two_player = FXGL.getUIFactoryService().newButton("Two Player");
         Button three_player = FXGL.getUIFactoryService().newButton("Three Player");
         Button four_player = FXGL.getUIFactoryService().newButton("Four Player");
-        //Button cancel = FXGL.getUIFactoryService().newButton("Return");
         
         
         two_player.setLayoutX(1100);
@@ -49,29 +62,6 @@ public class ModeScene extends SubScene {
         four_player.setLayoutY(640);
         four_player.setMinSize(600,91);
         four_player.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
-        
-        //加一个玩家头像选择的区域。
-        
-        //cancel.setLayoutX(320);
-        //cancel.setLayoutY(840);
-        //cancel.setMinSize(600, 91);
-        //cancel.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
-        
-        pane.getChildren().add(two_player);
-        pane.getChildren().add(three_player);
-        pane.getChildren().add(four_player);
-        //pane.getChildren().add(cancel);
-        
-        pane.setStyle("-fx-background-image: url('assets/textures/S-mc.png')");
-        pane.setPrefHeight(1080);
-        pane.setPrefWidth(1920);
-
-        pane.setLayoutX(0);
-        pane.setLayoutY(0);
-        
-        getContentRoot().getChildren().add(pane);
-
-
         
         two_player.setOnAction(event -> {
             mode = 2;
@@ -99,6 +89,61 @@ public class ModeScene extends SubScene {
             }
         });
         
+        
+        //加一个玩家头像选择的区域。
+        BorderPane borderpane = new BorderPane();
+        
+        Button next = new Button(" ");
+        next.setMinSize(26, 44);
+        next.setLayoutX(700);
+        next.setLayoutY(445);
+        next.setStyle("-fx-background-image: url('assets/textures/S-arrow.png')");
+        next.setOnAction(new EventHandler<ActionEvent>() {
+        	@Override
+        	public void handle(ActionEvent actionEvent) {
+        		showNext();
+        	}
+        });
+        
+        for(int i=0; i<images.length; i++) {
+        	images[i] = new Image(imageURLs[i]);
+        }
+        imageview.setPreserveRatio(true);
+        imageview.setFitWidth(330);
+        imageview.setFitHeight(460);
+        
+        borderpane.setMinSize(418, 530);
+        borderpane.setStyle("-fx-background-image: url('assets/textures/S-cha.png')");
+        borderpane.setCenter(imageview);
+        borderpane.setLayoutX(300);
+        borderpane.setLayoutY(230);
+        showNext();
+        
+        
+        
+        pane.getChildren().add(two_player);
+        pane.getChildren().add(three_player);
+        pane.getChildren().add(four_player);
+        pane.getChildren().add(borderpane);
+        pane.getChildren().add(next);
+        
+        
+        pane.setStyle("-fx-background-image: url('assets/textures/modescene.png')");
+        pane.setPrefHeight(1080);
+        pane.setPrefWidth(1920);
+
+        pane.setLayoutX(0);
+        pane.setLayoutY(0);
+        
+        getContentRoot().getChildren().add(pane);
+
+
+        //Button cancel = FXGL.getUIFactoryService().newButton("Return");
+        //pane.getChildren().add(cancel);
+        //cancel.setLayoutX(320);
+        //cancel.setLayoutY(840);
+        //cancel.setMinSize(600, 91);
+        //cancel.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
         //cancel.setOnAction(event -> FXGL.getSceneService().popSubScene());
         
         
@@ -111,6 +156,14 @@ public class ModeScene extends SubScene {
         match.put("mode", Integer.toString(mode));
         match.put("name", SocketClient.getInstance().name);
         SocketClient.getInstance().send(match);
+    }
+    
+    private void showNext() {
+    	current ++;
+    	if(current >= 8) {
+    		current = 0;
+    	}
+    	imageview.setImage(images[current]);
     }
     
 }
