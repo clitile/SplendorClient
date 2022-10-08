@@ -9,9 +9,15 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.texture.Texture;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import nz.proj.ModeScene;
 
 public class OtherPlayersComponent extends Component{
+	String[] nameCards = {"assets/textures/nameCard1.png", "assets/textures/nameCard2.png", "assets/textures/nameCard3.png",
+	"assets/textures/nameCard4.png"};
+	
 	//存储玩家持有的宝石和分数
     private HashMap<String,Integer> mapToken;
     //存储玩家持有的硬币
@@ -94,11 +100,55 @@ public class OtherPlayersComponent extends Component{
         return activity;
     }
     public void showInfo(){
+    	int[] y = {50, 300, 550};
+    	int i = 0;
+    	
         entity.getViewComponent().clearChildren();
         Texture texture= FXGL.texture("emm1.png", 200, 215);
-        
-        
         entity.getViewComponent().addChild(texture);
+        
+        if(entity.getY() == 50) {
+        	i = 0;
+        }
+        if(entity.getY() == 300) {
+        	i = 1;
+        }
+        if(entity.getY() == 550) {
+        	i = 2;
+        }
+        
+        int imageContent = ModeScene.current;
+        int[] index = {0, 1, 2, 3, 4, 5, 6, 7};
+        List<Integer> indexList = new ArrayList<Integer>();
+        for(int j = 0; j< 8; j++) {
+        	if(index[j] != imageContent) {
+        		indexList.add(index[j]);
+        	}
+        	
+        }
+        
+        
+        String[] imageURLs = ModeScene.imageURLs;
+        int position = indexList.get(i);
+        ImageView headview = new ImageView();
+        Image head = new Image(imageURLs[position]);
+        headview.setImage(head);
+        headview.setFitWidth(120);
+        headview.setFitHeight(160);
+        headview.setLayoutX(40);
+        headview.setLayoutY(250*i+50+30);
+        FXGL.addUINode(headview);
+        
+        ImageView nameview = new ImageView();
+        Image imagename = new Image(nameCards[i]);
+        nameview.setImage(imagename);
+        nameview.setFitWidth(207);
+        nameview.setFitHeight(60);
+        nameview.setLayoutX(0);
+        nameview.setLayoutY(250*i+50+175);
+        FXGL.addUINode(nameview);
+        
+        
         ArrayList<String> coins = new ArrayList<>(){{
             add("whiteToken");
             add("blueToken");

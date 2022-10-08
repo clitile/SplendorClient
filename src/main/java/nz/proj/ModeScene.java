@@ -29,7 +29,7 @@ public class ModeScene extends SubScene {
     public static boolean online = false;
     
     public static String[] imageURLs = {"assets/textures/p1.png", "assets/textures/p2.png", "assets/textures/p3.png", "assets/textures/p4.png",
-    		"assets/textures/p5.png", "assets/textures/p6.png", "assets/textures/p7.png", "assets/textures/p8.png",};
+    		"assets/textures/p5.png", "assets/textures/p6.png", "assets/textures/p7.png", "assets/textures/p8.png"};
     
     Image[] images = new Image[8];
     

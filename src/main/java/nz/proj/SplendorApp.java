@@ -391,12 +391,8 @@ public class SplendorApp extends GameApplication {
         
         player = getGameWorld().spawn("player",new SpawnData(400,950));
         
-
-        
-        
         BorderPane borderpane = new BorderPane();
         
-        //borderpane.setMaxSize(200,215);
         borderpane.setPrefHeight(215);
         borderpane.setPrefWidth(200);
         borderpane.setStyle("-fx-background-image: url('assets/textures/emm1.png')");
@@ -414,26 +410,38 @@ public class SplendorApp extends GameApplication {
         
         FXGL.addUINode(borderpane);
         
+        BorderPane namepane = new BorderPane();
+        namepane.setPrefHeight(61);
+        namepane.setPrefWidth(101);
+        namepane.setStyle("-fx-background-image: url('assets/textures/nameCard-you.png')");
+        namepane.setLayoutX(50);
+        namepane.setLayoutY(975);
+        FXGL.addUINode(namepane);
+        
+        
         for (int i = 0; i < 6; i++) {
-            coinList.add(getGameWorld().spawn("coin",new SpawnData(1100,100*(1+i)).put("style",Config.list.get(i))));
+            coinList.add(getGameWorld().spawn("coin",new SpawnData(1500,100*(1+i)).put("style",Config.list.get(i))));
             if (i<3){
-                f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(100,500-200*i)));
-                nobleList.add(getGameWorld().spawn("noble",new SpawnData(1390,200*i+100)));
+                f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(450,500-200*i)));
+                nobleList.add(getGameWorld().spawn("noble",new SpawnData(1700,200*i+100)));
             }
         }
         for (int j = 0; j < 3; j++) {
             for (int i = 2; i <= 5; i++) {
-                s_card_12.add(getGameWorld().spawn(Config.list_s.get(j),new SpawnData(200*i-100,500-200*j)));
+                s_card_12.add(getGameWorld().spawn(Config.list_s.get(j),new SpawnData(300+194*i,500-200*j)));
             }
         }
+        
+        
         if (!SocketClient.getInstance().login){
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
                 ai_player.add(getGameWorld().spawn("otherPlayers",new SpawnData(0,250*i+50)));
+                
             }
         } else {
             //创建人类player,显示玩家的信息
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
-                human_player.add(getGameWorld().spawn("otherPlayers",new SpawnData(0,250*i+20)));
+                human_player.add(getGameWorld().spawn("otherPlayers",new SpawnData(0,250*i+50)));
             }
         }
         Config.MODE_SCENE.mode = 0;
