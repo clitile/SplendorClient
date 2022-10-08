@@ -1,24 +1,18 @@
 package nz.comp;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.texture.Texture;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-public class PlayerComponent extends Component {
-    //存储玩家持有的宝石和分数
+public class OtherPlayersComponent extends Component{
+	//存储玩家持有的宝石和分数
     private HashMap<String,Integer> mapToken;
     //存储玩家持有的硬币
     private HashMap<String,Integer> mapCoin;
@@ -28,6 +22,7 @@ public class PlayerComponent extends Component {
     private String activity="";
     //登录用户名称
     private String user_name="";
+    
     @Override
     public void onAdded() {
         saveCard=new ArrayList<>();
@@ -100,13 +95,10 @@ public class PlayerComponent extends Component {
     }
     public void showInfo(){
         entity.getViewComponent().clearChildren();
-
- 
-        Texture texture= FXGL.texture("ima.png", 1034,112);
+        Texture texture= FXGL.texture("emm1.png", 200, 215);
+        
         
         entity.getViewComponent().addChild(texture);
-        
-        
         ArrayList<String> coins = new ArrayList<>(){{
             add("whiteToken");
             add("blueToken");
@@ -124,6 +116,7 @@ public class PlayerComponent extends Component {
             add("score");
         }};
         int its=0;
+        /*
         for (String token : tokens) {
             if (token.equals("score")) {
                 Text text = new Text(240,43,mapToken.get(token).toString());
@@ -148,9 +141,6 @@ public class PlayerComponent extends Component {
                 entity.getViewComponent().addChild(text);
                 iss++;
             }
-        }
+        }*/
     }
 }
-
-
-

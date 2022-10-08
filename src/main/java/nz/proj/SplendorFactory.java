@@ -34,6 +34,14 @@ public class SplendorFactory implements EntityFactory {
                 .build();
     }
     
+    @Spawns("otherPlayers")
+    public Entity newOtherPlayers(SpawnData data) {
+    	return entityBuilder(data)
+    			.with(new OtherPlayersComponent())
+    			.at(data.getX(), data.getY())
+    			.build();
+    }
+    
     @Spawns("coin")
     public Entity newCoin(SpawnData data){
         return entityBuilder(data)
@@ -84,10 +92,11 @@ public class SplendorFactory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("back6")
+    //@Spawns("back6")
+    @Spawns("back-ingame")
     public Entity newBack(SpawnData data) {
     	return FXGL.entityBuilder(data)
-    			.view("backg (6).png")
+    			.view("back-ingame.png")
     			.build();
     }
 

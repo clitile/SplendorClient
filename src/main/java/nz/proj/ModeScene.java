@@ -28,14 +28,14 @@ public class ModeScene extends SubScene {
     
     public static boolean online = false;
     
-    String[] imageURLs = {"assets/textures/p1.png", "assets/textures/p2.png", "assets/textures/p3.png", "assets/textures/p4.png",
+    public static String[] imageURLs = {"assets/textures/p1.png", "assets/textures/p2.png", "assets/textures/p3.png", "assets/textures/p4.png",
     		"assets/textures/p5.png", "assets/textures/p6.png", "assets/textures/p7.png", "assets/textures/p8.png",};
     
     Image[] images = new Image[8];
     
     ImageView imageview = new ImageView();
     
-    int current = 0;
+    public static int current = 0;
     
     public ModeScene() {
     	//这个面板做一个斜线，右侧放游戏人数的选择，左侧放玩家头像的的选择。
