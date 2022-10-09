@@ -422,7 +422,7 @@ public class SplendorApp extends GameApplication {
         for (int i = 0; i < 6; i++) {
             coinList.add(getGameWorld().spawn("coin",new SpawnData(1500,100*(1+i)).put("style",Config.list.get(i))));
             if (i<3){
-                f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(450,500-200*i)));
+                f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(450,470-200*i)));
                 nobleList.add(getGameWorld().spawn("noble",new SpawnData(1700,200*i+100)));
             }
         }
