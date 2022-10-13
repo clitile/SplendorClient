@@ -21,7 +21,13 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import nz.ai.Context;
+import nz.ai.Event;
+import nz.ai.State;
+import nz.ai.StateMachine;
 import nz.net.SocketClient;
+import org.squirrelframework.foundation.fsm.StateMachineBuilder;
+import org.squirrelframework.foundation.fsm.StateMachineBuilderFactory;
 
 import java.util.*;
 
@@ -47,6 +53,8 @@ public class SplendorApp extends GameApplication {
     List<Entity> ai_player;
     //真人玩家
     List<Entity> human_player;
+    StateMachineBuilder<StateMachine, State, Event, Context> builder;
+    StateMachine machine;
     @Override
     protected void initSettings(GameSettings settings) {
         SocketClient.getInstance().match = false;
@@ -105,7 +113,6 @@ public class SplendorApp extends GameApplication {
                     //对左下角的保留牌操作
                     getOneCard("getOneSaveCard",entities.get(0),player,false,mouse_x,mouse_y);
                 }
-
             }
         }, MouseButton.PRIMARY);
         getInput().addAction(new UserAction("Get saved Card") {
@@ -161,7 +168,20 @@ public class SplendorApp extends GameApplication {
         if (!SocketClient.getInstance().login){
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
                 ai_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
-            }
+            }builder = StateMachineBuilderFactory.create(StateMachine.class, State.class, Event.class, Context.class);
+            builder.externalTransition().from(State.NotTurn).to(State.YourTurn).on(Event.ThreeCoin).callMethod("getThreeCoin");
+
+            builder.externalTransition().from(State.NotTurn).to(State.YourTurn).on(Event.TwoCoin).callMethod("getTwoSameCoin");
+
+            builder.externalTransition().from(State.NotTurn).to(State.YourTurn).on(Event.MidCard).callMethod("getOneMidCard");
+
+            builder.externalTransition().from(State.NotTurn).to(State.YourTurn).on(Event.DevCard).callMethod("getOneSaveCard");
+
+            builder.externalTransition().from(State.NotTurn).to(State.YourTurn).on(Event.ResCard).callMethod("getSaveCard");
+
+            builder.externalTransition().from(State.YourTurn).to(State.NotTurn).on(Event.ToNot).callMethod("toNotAction");
+            machine = builder.newStateMachine(State.NotTurn);
+            machine.start();
         } else {
             //创建人类player,显示玩家的信息
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
@@ -203,6 +223,7 @@ public class SplendorApp extends GameApplication {
                     dealActPlayer(getGameScene());
                 }
                 if (ai_round){
+
                     label:
                     for (Entity entity : ai_player) {
                         //ai的操作
@@ -232,6 +253,11 @@ public class SplendorApp extends GameApplication {
                             }
                         }
                     }
+//                    for (Entity entity : ai_player) {
+//                        Context aiplayer = new Context(entity);
+//                        machine.fire(Event.ThreeCoin,aiplayer);
+//                        machine.fire(Event.ToNot,aiplayer);
+//                    }
                     ai_round=false;
                 }
             }
@@ -733,4 +759,14 @@ public class SplendorApp extends GameApplication {
     public String tokenToCoin(String s) {
         return s.substring(0,s.length()-5)+"coin";
     }
+    public ArrayList<Integer> enCoin(int coinnum){
+        ArrayList<Integer> an=new ArrayList();
+        for (int i = 0; i < 5; i++) {
+            int o=coinList.get(i).call("getNum");
+            if (o>coinnum){
+                an.add(i);
+            }
+        }return an;
+    }
+
 }

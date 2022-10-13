@@ -18,6 +18,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.squirrelframework</groupId>
+      <artifactId>squirrel-foundation</artifactId>
+      <version>0.3.10</version>
+    </dependency>
+
+    <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>8.0.28</version>

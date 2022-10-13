@@ -109,6 +109,7 @@ public class SplendorMainMenu extends FXGLMenu {
     private void loginPane() {
         if (!SocketClient.getInstance().isOpen()) {
             SocketClient.getInstance().connect();
+
             GridPane pane = new GridPane();
             pane.setAlignment(Pos.CENTER);
             DialogService dialogService = getDialogService();
