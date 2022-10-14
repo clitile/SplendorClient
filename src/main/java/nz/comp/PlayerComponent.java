@@ -7,10 +7,14 @@ import com.almasb.fxgl.texture.Texture;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -28,6 +32,12 @@ public class PlayerComponent extends Component {
     private String activity="";
     //登录用户名称
     private String user_name="";
+    
+    String[] number2 = CardComponent.number2;
+    Image[] imagesNumber2 = new Image[10];
+	
+	ImageView imageview = new ImageView();
+    
     @Override
     public void onAdded() {
         saveCard=new ArrayList<>();
@@ -127,11 +137,18 @@ public class PlayerComponent extends Component {
         for (String token : tokens) {
             if (token.equals("score")) {
                 Text text = new Text(240,43,mapToken.get(token).toString());
-                text.setStyle("-fx-font-size: 20;");
+                //text.setStyle("-fx-font-size: 20;");
+                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
+                text.setFill(Color.WHITE);
+                text.setStroke(Color.BLACK);
                 entity.getViewComponent().addChild(text);
             } else {
                 Text text = new Text(40+its*71,79,mapToken.get(token).toString());
-                text.setStyle("-fx-font-size: 20;");
+                //text.setStyle("-fx-font-size: 20;");
+                //text.setStyle("-fx-font-size: 20;");
+                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
+                text.setFill(Color.WHITE);
+                text.setStroke(Color.BLACK);
                 entity.getViewComponent().addChild(text);
                 its++;
             }
@@ -140,12 +157,20 @@ public class PlayerComponent extends Component {
         for (String coin : coins) {
             if (coin.equals("goldToken")) {
                 Text text = new Text(398,79,mapCoin.get(coin).toString());
-                text.setStyle("-fx-font-size: 20;");
+                //text.setStyle("-fx-font-size: 20;");
+                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
+                text.setFill(Color.WHITE);
+                text.setStroke(Color.BLACK);
                 entity.getViewComponent().addChild(text);
+                //text.setStyle("-fx-font-size: 20;");
             } else {
                 Text text = new Text(67+iss*71,79,mapCoin.get(coin).toString());
-                text.setStyle("-fx-font-size: 20;");
+                //text.setStyle("-fx-font-size: 20;");
+                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
+                text.setFill(Color.WHITE);
+                text.setStroke(Color.BLACK);
                 entity.getViewComponent().addChild(text);
+                //text.setStyle("-fx-font-size: 20;");
                 iss++;
             }
         }

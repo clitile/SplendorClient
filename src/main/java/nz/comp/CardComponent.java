@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CardComponent extends Component {
-	String[] number2 = {"assets/textures/num2-0.png", "assets/textures/num2-1.png", "assets/textures/num2-2.png",
+	public static String[] number2 = {"assets/textures/num2-0.png", "assets/textures/num2-1.png", "assets/textures/num2-2.png",
 			"assets/textures/num2-3.png","assets/textures/num2-4.png", "assets/textures/num2-5.png", 
 			"assets/textures/num2-6.png", "assets/textures/num2-7.png","assets/textures/num2-8.png", "assets/textures/num2-9.png"};
 	String[] number1 = FirstCardComponent.number1;
@@ -84,7 +84,7 @@ public class CardComponent extends Component {
         }
         
         
-        for(int i=0; i<images.length; i++) {
+        for(int i=0; i<imagesNumber1.length; i++) {
         	imagesNumber1[i] = new Image(number1[i]);
         }
         

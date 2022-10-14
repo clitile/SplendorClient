@@ -453,7 +453,7 @@ public class SplendorApp extends GameApplication {
     public void getCoin(int size,Entity entities,Entity player,boolean isAi,double mouse_x,double mouse_y){
 
         //获取鼠标点到位置的实体
-        if ((mouse_x<=1100+Config.COIN_WID && mouse_x>=1100 && mouse_y>=100 && mouse_y<=500+Config.COIN_HEI || isAi)){
+        if ((mouse_x<=1500+Config.COIN_WID && mouse_x>=1500 && mouse_y>=100 && mouse_y<=500+Config.COIN_HEI || isAi)){
             int a=entities.call("getNum");
             for (int i = 0; i < 5; i++) {
                 int o=coinList.get(i).call("getNum");
