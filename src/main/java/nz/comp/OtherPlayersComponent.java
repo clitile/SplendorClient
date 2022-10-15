@@ -1,18 +1,25 @@
 package nz.comp;
 
+import static com.almasb.fxgl.dsl.FXGL.getSceneService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.almasb.fxgl.core.util.LazyValue;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.texture.Texture;
 
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import nz.net.SocketClient;
+import nz.proj.MatchScene;
 import nz.proj.ModeScene;
+import nz.ui.OtherPlayersInfo;
 
 public class OtherPlayersComponent extends Component{
 	String[] nameCards = {"assets/textures/nameCard1.png", "assets/textures/nameCard2.png", "assets/textures/nameCard3.png",
@@ -28,6 +35,11 @@ public class OtherPlayersComponent extends Component{
     private String activity="";
     //登录用户名称
     private String user_name="";
+    
+    //private OtherPlayersInfo subScene = new OtherPlayersInfo();
+    private LazyValue<OtherPlayersInfo> subscene = new LazyValue<>(() -> {
+    	return new OtherPlayersInfo();
+    });
     
     @Override
     public void onAdded() {
@@ -104,8 +116,22 @@ public class OtherPlayersComponent extends Component{
     	int i = 0;
     	
         entity.getViewComponent().clearChildren();
+        
+        Button button = FXGL.getUIFactoryService().newButton("");
+        button.setMaxSize(30, 30);
+        button.setStyle("-fx-background-image: url('assets/textures/hit5.png')");
+        button.setTranslateX(146);
+        button.setTranslateY(18);
+        button.setOnAction(event -> {
+            getSceneService().pushSubScene(subscene.get());
+        });
+        
+        
+        
         Texture texture= FXGL.texture("emm1.png", 200, 215);
+        
         entity.getViewComponent().addChild(texture);
+        entity.getViewComponent().addChild(button);
         
         if(entity.getY() == 50) {
         	i = 0;

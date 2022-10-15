@@ -437,7 +437,6 @@ public class SplendorApp extends GameApplication {
         if (!SocketClient.getInstance().login){
             for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
                 ai_player.add(getGameWorld().spawn("otherPlayers",new SpawnData(0,250*i+50)));
-                
             }
         } else {
             //创建人类player,显示玩家的信息
@@ -447,7 +446,7 @@ public class SplendorApp extends GameApplication {
         }
         Config.MODE_SCENE.mode = 0;
         
-	
+        
     }
     int three_coin_aleast=0;
     //获取一枚硬币
