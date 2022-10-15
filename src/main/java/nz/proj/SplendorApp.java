@@ -299,6 +299,7 @@ public class SplendorApp extends GameApplication {
             if (ai_player.size()!=0){
                 if (player.call("getActivity")=="" && !ai_round){
                     set("player_action", "Choose one action :)");
+                   
                     dealActPlayer(getGameScene());
                 }
                 if (ai_round){
@@ -377,7 +378,7 @@ public class SplendorApp extends GameApplication {
 
     @Override
     protected void initUI() {
-        Text action = addVarText("player_action", 700, 750);
+        Text action = addVarText("player_action", 1570, 780);
         action.fontProperty().unbind();
         action.setFont(Font.font(25));
     }
@@ -542,9 +543,9 @@ public class SplendorApp extends GameApplication {
     public void getOneCard(String actname,Entity entities,Entity player,boolean isAi, double mouse_x, double mouse_y){
         boolean ra= actname.equals("getOneMidCard") ?
                 //中间的12张牌
-                mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI:
-                //坐下的保留牌
-                mouse_x<=146*2+player.getX()+20+Config.CARD_WID && mouse_x>=player.getX()+20 && mouse_y>=player.getY()+110 && mouse_y<=player.getY()+110+Config.CARD_HEI;
+                mouse_x<=1270+Config.CARD_WID && mouse_x>=688 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI:
+                //坐下的保留牌 ---- ??? 208*i+player.getX()+205,player.getY()-195
+                mouse_x<=208*2+player.getX()+205+Config.CARD_WID && mouse_x>=player.getX()+205 && mouse_y>=player.getY()-195 && mouse_y<=player.getY()-195+Config.CARD_HEI;
         if (ra||isAi) {
             HashMap<String,Integer> hashMap=entities.call("getMap");
             List<String> coins=entities.call("getCoins");
@@ -594,8 +595,8 @@ public class SplendorApp extends GameApplication {
                 if (actname.equals("getOneSaveCard")){
                     List<Entity> saveList=player.call("getSaveCard");
                     saveList.remove(entities);
-                    for (int i = 0; i < saveList.size(); i++) {
-                        saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
+                    for (int i = 0; i < saveList.size(); i++) { //208*i+player.getX()+205,player.getY()-195
+                        saveList.get(i).setPosition(208*i+player.getX()+205,player.getY()-195);
                     }player.call("setSaveCard",saveList);
                 }else {
                     //对最左边的三张等级牌操作
@@ -699,7 +700,7 @@ public class SplendorApp extends GameApplication {
     //获取保留卡和一枚黄金硬币
     public void getSaveCard(Entity entities,Entity player, double mouse_x, double mouse_y){
         List<Entity> saveList=player.call("getSaveCard");
-        if (mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI&&saveList.size()<=2) {
+        if (mouse_x<=1270+Config.CARD_WID && mouse_x>=688 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI&&saveList.size()<=2) {
             HashMap<String,Integer> hashMap=entities.call("getMap");
             //黄金硬币减少一枚
             coinList.get(5).call("cutcoinNumber");
@@ -728,7 +729,7 @@ public class SplendorApp extends GameApplication {
             //玩家操作
             saveList.add(entities);
             for (int i = 0; i < saveList.size(); i++) {
-                saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
+                saveList.get(i).setPosition(208*i+player.getX()+205,player.getY()-195);
             }player.call("setSaveCard",saveList);
         } else if (!ai_round){
             getNotificationService().pushNotification("Error");
@@ -782,8 +783,10 @@ public class SplendorApp extends GameApplication {
         Button b= FXGL.getUIFactoryService().newButton(s);
         b.fontProperty().unbind();
         b.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
+        b.setStyle("-fx-background-image: url('assets/textures/ac1.png')");
         b.setPrefWidth(290);
-        b.setLayoutX(-60);
+        b.setPrefHeight(30);
+        b.setLayoutX(800);
         return b;
     }
     public void dealActPlayer(GameScene gameScene){
@@ -799,8 +802,9 @@ public class SplendorApp extends GameApplication {
 
             }};
             for (int i = 0; i < 5; i++) {
-                buttonList.get(i).setTranslateX(700);
-                buttonList.get(i).setTranslateY(750+50*i);
+            	//----------
+                buttonList.get(i).setTranslateX(750);
+                buttonList.get(i).setTranslateY(820+50*i);
             }
             deal_once=1;
             List<String> act_list=new ArrayList<>(){{
