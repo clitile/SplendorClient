@@ -39,5 +39,5 @@ public interface Config {
 
     String PORT = "10100";
     // 20.239.88.211
-    String IP = "101.43.243.37";
+    String IP = "20.239.88.211";
 }

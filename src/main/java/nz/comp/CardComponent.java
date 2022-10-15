@@ -126,14 +126,14 @@ public class CardComponent extends Component {
     }
     private void setCoinValue(int leng,List<String> lists,int lev){
         if (leng==1){
-            mapToken.put(lists.get(0),3*lev+1);
+            mapToken.put(lists.get(0),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev*2, 3*lev) : FXGLMath.random(lev*2, 3*lev));
         }else if (leng==2){
-            mapToken.put(lists.get(0),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev+1, 3*lev) : FXGLMath.random(lev+1, 3*lev+1));
-            mapToken.put(lists.get(1),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev+1, 3*lev) : FXGLMath.random(lev+1, 3*lev+1));
+            mapToken.put(lists.get(0),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev*2-1, 3*lev) : FXGLMath.random(lev*2, 3*lev));
+            mapToken.put(lists.get(1),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev*2-1, 3*lev) : FXGLMath.random(lev*2, 3*lev));
         }else {
-            mapToken.put(lists.get(0),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev, 3*lev) : FXGLMath.random(lev, 3*lev));
-            mapToken.put(lists.get(1),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev, 3*lev) : FXGLMath.random(lev, 3*lev));
-            mapToken.put(lists.get(2),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev, 3*lev) : FXGLMath.random(lev, 3*lev));
+            mapToken.put(lists.get(0),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev+1-1, 2*lev+1) : FXGLMath.random(lev+1, 2*lev+1));
+            mapToken.put(lists.get(1),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev+1-1, 2*lev+1) : FXGLMath.random(lev+1, 2*lev+1));
+            mapToken.put(lists.get(2),SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt(lev+1-1, 2*lev+1) : FXGLMath.random(lev+1, 2*lev+1));
         }
     }
 }
