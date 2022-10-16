@@ -117,6 +117,7 @@ public class OtherPlayersComponent extends Component{
         return activity;
     }
     public void showInfo(){
+    	System.out.println(getSaveCard());
     	int[] y = {50, 300, 550};
     	int i = 0;
     	

@@ -99,5 +99,12 @@ public class SplendorFactory implements EntityFactory {
     			.view("back-ingame.png")
     			.build();
     }
+    
+    @Spawns("cutscene")
+    public Entity newCut(SpawnData data) {
+    	return FXGL.entityBuilder(data)
+    			.view("S-castle.png")
+    			.build();
+    }
 
 }

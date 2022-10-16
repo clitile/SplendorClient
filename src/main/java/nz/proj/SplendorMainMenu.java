@@ -102,9 +102,11 @@ public class SplendorMainMenu extends FXGLMenu {
                 5,
                 new MenuButton("Play with AI", () -> {
                 	
-                	getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
-                	getSceneService().pushSubScene(storyLazyValue.get());
-                	getSceneService().popSubScene();
+                	//getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
+                	//getGameWorld().addEntityFactory(new SplendorFactory());
+                	//spawn("cutscene");
+                	//getSceneService().pushSubScene(storyLazyValue.get());
+                	//getSceneService().popSubScene();
                     Config.MODE_SCENE.online = false;
                     getSceneService().pushSubScene(Config.MODE_SCENE);
                     
