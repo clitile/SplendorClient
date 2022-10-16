@@ -50,18 +50,18 @@ public class ModeScene extends SubScene {
         two_player.setLayoutX(1100);
         two_player.setLayoutY(140);
         two_player.setMinSize(600, 91);
-        two_player.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
+        two_player.setStyle("-fx-background-image: url('assets/textures/butt.png')");
         
         
         three_player.setLayoutX(1140);
         three_player.setLayoutY(340);
         three_player.setMinSize(600, 91);
-        three_player.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
+        three_player.setStyle("-fx-background-image: url('assets/textures/butt.png')");
        
         four_player.setLayoutX(1180);
         four_player.setLayoutY(540);
         four_player.setMinSize(600,91);
-        four_player.setStyle("-fx-background-image: url('assets/textures/S-butt.png')");
+        four_player.setStyle("-fx-background-image: url('assets/textures/butt.png')");
         
         two_player.setOnAction(event -> {
             mode = 2;
@@ -121,15 +121,15 @@ public class ModeScene extends SubScene {
         
         //Titles:
         BorderPane borderpanet1 = new BorderPane();
-        borderpanet1.setMinSize(800, 338);
-        borderpanet1.setStyle("-fx-background-image: url('assets/textures/title1.png')");
+        borderpanet1.setMinSize(800, 264);
+        borderpanet1.setStyle("-fx-background-image: url('assets/textures/tit1.png')");
         borderpanet1.setLayoutX(50);
         borderpanet1.setLayoutY(0);
         
         BorderPane borderpanet2 = new BorderPane();
         borderpanet2.setMinSize(800, 264);
-        borderpanet2.setStyle("-fx-background-image: url('assets/textures/title2.png')");
-        borderpanet2.setLayoutX(1150);
+        borderpanet2.setStyle("-fx-background-image: url('assets/textures/tit2.png')");
+        borderpanet2.setLayoutX(1080);
         borderpanet2.setLayoutY(800);
         
         pane.getChildren().add(two_player);
@@ -141,7 +141,7 @@ public class ModeScene extends SubScene {
         pane.getChildren().add(borderpanet2);
         
         
-        pane.setStyle("-fx-background-image: url('assets/textures/modescene.png')");
+        pane.setStyle("-fx-background-image: url('assets/textures/modescene2.png')");
         pane.setPrefHeight(1080);
         pane.setPrefWidth(1920);
 

@@ -9,6 +9,9 @@ import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.texture.Texture;
 
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class CoinComponent extends Component {
@@ -52,7 +55,8 @@ public class CoinComponent extends Component {
 
         entity.getViewComponent().addChild(FXGL.texture(getCoinName()+".png", 100, 100));
         Text text = new Text(0,40,String.valueOf(coinNumber));
-        text.setStyle("-fx-font-size: 25;");
+        
+        text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
         text.setFill(Color.WHITE);
         text.setStroke(Color.BLACK);
         entity.getViewComponent().addChild(text);
