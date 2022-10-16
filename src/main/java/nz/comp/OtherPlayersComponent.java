@@ -1,28 +1,31 @@
 package nz.comp;
 
-import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.texture.Texture;
-
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import static com.almasb.fxgl.dsl.FXGL.getSceneService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class PlayerComponent extends Component {
-    //存储玩家持有的宝石和分数
+import com.almasb.fxgl.core.util.LazyValue;
+import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.texture.Texture;
+
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
+import nz.net.SocketClient;
+import nz.proj.MatchScene;
+import nz.proj.ModeScene;
+import nz.ui.OtherPlayersInfo;
+
+public class OtherPlayersComponent extends Component{
+	String[] nameCards = {"assets/textures/nameCard1.png", "assets/textures/nameCard2.png", "assets/textures/nameCard3.png",
+	"assets/textures/nameCard4.png"};
+	
+	//存储玩家持有的宝石和分数
     private HashMap<String,Integer> mapToken;
     //存储玩家持有的硬币
     private HashMap<String,Integer> mapCoin;
@@ -33,10 +36,15 @@ public class PlayerComponent extends Component {
     //登录用户名称
     private String user_name="";
     
-    String[] number2 = CardComponent.number2;
-    Image[] imagesNumber2 = new Image[10];
-	
-	ImageView imageview = new ImageView();
+    //private OtherPlayersInfo subScene = new OtherPlayersInfo();
+    private LazyValue<OtherPlayersInfo> subscene = new LazyValue<>(() -> {
+    	return new OtherPlayersInfo();
+    });
+    
+    public static String score = "0";
+    public static String goldcoin = "0";
+    public static String[] othercoins = {"0", "0", "0", "0", "0"};
+    public static String[] gems = {"0", "0", "0", "0", "0"};
     
     @Override
     public void onAdded() {
@@ -109,23 +117,67 @@ public class PlayerComponent extends Component {
         return activity;
     }
     public void showInfo(){
+    	int[] y = {50, 300, 550};
+    	int i = 0;
+    	
         entity.getViewComponent().clearChildren();
-        Texture texture = FXGL.texture("savebg.png", 1625, 370);
-        texture.setTranslateX(-113);
-        texture.setTranslateY(-230);
-        Rectangle rect = new Rectangle(-113, -210, 1625, 350);
-        Color c = Color.web("grey", 0.4);
-        rect.setFill(c);
-        Texture texture1= FXGL.texture("record9.png", 1200, 148);
-        texture1.setTranslateX(-100);
-        texture1.setTranslateY(0);
-        Texture texture2 = FXGL.texture("saveboard.png", 570, 200);
-        texture2.setTranslateX(200);
-        texture2.setTranslateY(-200);
-        entity.getViewComponent().addChild(rect);
+        
+        Button button = FXGL.getUIFactoryService().newButton("");
+        button.setMaxSize(30, 30);
+        button.setStyle("-fx-background-image: url('assets/textures/hit5.png')");
+        button.setTranslateX(146);
+        button.setTranslateY(18);
+        button.setOnAction(event -> {
+            getSceneService().pushSubScene(new OtherPlayersInfo());
+        });
+        
+        
+        
+        Texture texture= FXGL.texture("emm1.png", 200, 215);
+        
         entity.getViewComponent().addChild(texture);
-        entity.getViewComponent().addChild(texture1);
-        entity.getViewComponent().addChild(texture2);
+        entity.getViewComponent().addChild(button);
+        
+        if(entity.getY() == 50) {
+        	i = 0;
+        }
+        if(entity.getY() == 300) {
+        	i = 1;
+        }
+        if(entity.getY() == 550) {
+        	i = 2;
+        }
+        
+        int imageContent = ModeScene.current;
+        int[] index = {0, 1, 2, 3, 4, 5, 6, 7};
+        List<Integer> indexList = new ArrayList<Integer>();
+        for(int j = 0; j< 8; j++) {
+        	if(index[j] != imageContent) {
+        		indexList.add(index[j]);
+        	}
+        	
+        }
+        
+        
+        String[] imageURLs = ModeScene.imageURLs;
+        int position = indexList.get(i);
+        ImageView headview = new ImageView();
+        Image head = new Image(imageURLs[position]);
+        headview.setImage(head);
+        headview.setFitWidth(120);
+        headview.setFitHeight(160);
+        headview.setLayoutX(40);
+        headview.setLayoutY(250*i+50+30);
+        FXGL.addUINode(headview);
+        
+        ImageView nameview = new ImageView();
+        Image imagename = new Image(nameCards[i]);
+        nameview.setImage(imagename);
+        nameview.setFitWidth(207);
+        nameview.setFitHeight(60);
+        nameview.setLayoutX(0);
+        nameview.setLayoutY(250*i+50+175);
+        FXGL.addUINode(nameview);
         
         
         ArrayList<String> coins = new ArrayList<>(){{
@@ -145,48 +197,36 @@ public class PlayerComponent extends Component {
             add("score");
         }};
         int its=0;
+        
+        
         for (String token : tokens) {
             if (token.equals("score")) {
-                Text text = new Text(95,80,mapToken.get(token).toString());
+            	score = mapToken.get(token).toString();
+                //Text text = new Text(240,43,mapToken.get(token).toString());
                 //text.setStyle("-fx-font-size: 20;");
-                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
-                text.setFill(Color.GOLD);
-                text.setStroke(Color.BLACK);
-                entity.getViewComponent().addChild(text);
+                //entity.getViewComponent().addChild(text);
             } else {
-                Text text = new Text(215+its*125,50,mapToken.get(token).toString());
+                //Text text = new Text(40+its*71,79,mapToken.get(token).toString());
                 //text.setStyle("-fx-font-size: 20;");
-                //text.setStyle("-fx-font-size: 20;");
-                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
-                text.setFill(Color.YELLOW);
-                text.setStroke(Color.BLACK);
-                entity.getViewComponent().addChild(text);
+                //entity.getViewComponent().addChild(text);
+            	gems[its] = mapToken.get(token).toString();
                 its++;
             }
         }
         int iss=0;
         for (String coin : coins) {
             if (coin.equals("goldToken")) {
-                Text text = new Text(840,75,mapCoin.get(coin).toString());
+                //Text text = new Text(398,79,mapCoin.get(coin).toString());
                 //text.setStyle("-fx-font-size: 20;");
-                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
-                text.setFill(Color.YELLOW);
-                text.setStroke(Color.BLACK);
-                entity.getViewComponent().addChild(text);
-                //text.setStyle("-fx-font-size: 20;");
+                //entity.getViewComponent().addChild(text);
+            	goldcoin = mapCoin.get(coin).toString();
             } else {
-                Text text = new Text(230+iss*125,105,mapCoin.get(coin).toString());
+                //Text text = new Text(67+iss*71,79,mapCoin.get(coin).toString());
                 //text.setStyle("-fx-font-size: 20;");
-                text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
-                text.setFill(Color.WHITE);
-                text.setStroke(Color.BLACK);
-                entity.getViewComponent().addChild(text);
-                //text.setStyle("-fx-font-size: 20;");
+                //entity.getViewComponent().addChild(text);
+            	othercoins[iss] = mapCoin.get(coin).toString();
                 iss++;
             }
         }
     }
 }
-
-
-

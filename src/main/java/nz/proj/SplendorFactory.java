@@ -1,5 +1,6 @@
 package nz.proj;
 
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
@@ -32,6 +33,15 @@ public class SplendorFactory implements EntityFactory {
                 .at(data.getX(),data.getY())
                 .build();
     }
+    
+    @Spawns("otherPlayers")
+    public Entity newOtherPlayers(SpawnData data) {
+    	return entityBuilder(data)
+    			.with(new OtherPlayersComponent())
+    			.at(data.getX(), data.getY())
+    			.build();
+    }
+    
     @Spawns("coin")
     public Entity newCoin(SpawnData data){
         return entityBuilder(data)
@@ -46,6 +56,7 @@ public class SplendorFactory implements EntityFactory {
                 .at(data.getX(),data.getY())
                 .build();
     }
+
     @Spawns("white_gem")
     public Entity newWhiteGem(SpawnData data) {
         return entityBuilder(data)
@@ -80,4 +91,13 @@ public class SplendorFactory implements EntityFactory {
                 .view("black.png")
                 .build();
     }
+
+    //@Spawns("back6")
+    @Spawns("back-ingame")
+    public Entity newBack(SpawnData data) {
+    	return FXGL.entityBuilder(data)
+    			.view("back-ingame.png")
+    			.build();
+    }
+
 }

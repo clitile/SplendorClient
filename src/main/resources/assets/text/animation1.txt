@@ -1,0 +1,14 @@
+Bob.name = Bob 
+Bob.image = S-bu.png
+Rose.name = Rose
+Rose.image = S-ro.png
+Jack.name = Jack
+Jack.image = S-em.png
+
+Bob: OMG, am I an rich businessmen now?
+Rose: Yeah, you are now in the Renaissance.
+Bob: What?!!!
+Rose: You can only return to your time by providing gems to nobles to gain prestige.
+Bob: ...
+Jack: You as the gem supplier, either provide us with an endless supply of gems or die!
+Bob: All right! All right! I'm on my way!

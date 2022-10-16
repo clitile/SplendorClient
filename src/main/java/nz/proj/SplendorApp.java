@@ -1,6 +1,7 @@
 package nz.proj;
 
 import com.almasb.fxgl.app.GameApplication;
+import javafx.application.Platform;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.GameScene;
@@ -12,16 +13,25 @@ import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.input.UserAction;
+import com.almasb.fxgl.texture.Texture;
+
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import nz.net.SocketClient;
+import nz.ui.UIFactory;
+
 import java.util.*;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
@@ -29,6 +39,9 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class SplendorApp extends GameApplication {
     //玩家1
     Entity player;
+
+    //玩家1 的内容
+    Entity player_content;
     //最左边的三张标志卡
     List<Entity> f_card_3;
     //中间的12张卡
@@ -48,7 +61,6 @@ public class SplendorApp extends GameApplication {
     List<Entity> human_player;
     @Override
     protected void initSettings(GameSettings settings) {
-
         SocketClient.getInstance().match = false;
         settings.setHeight(Config.APP_HEIGHT);
         settings.setWidth(Config.APP_WIDTH);
@@ -65,6 +77,7 @@ public class SplendorApp extends GameApplication {
             public FXGLMenu newMainMenu() {
                 return new SplendorMainMenu();
             }
+
 //            @Override
 //            public FXGLMenu newGameMenu() {
 //                return new SplendorGameMenu();
@@ -73,6 +86,7 @@ public class SplendorApp extends GameApplication {
     }
     //用来存储玩家获取的硬币，判断是三个不同的硬币或两个相同的硬币
     List<Point2D> num=new ArrayList<>();
+    //鼠标对应动作
     @Override
     protected void initInput() {
         getInput().addAction(new UserAction("Click") {
@@ -121,20 +135,20 @@ public class SplendorApp extends GameApplication {
             }
         }, MouseButton.SECONDARY);
     }
+
+    //预先加载
     @Override
     protected void onPreInit() {
         getAssetLoader().loadImage("cards_620_860.png");
         getAssetLoader().loadImage("nobles.png");
         getAssetLoader().loadImage("cards_372_172.png");
+        getAssetLoader().loadImage("S-castle.png");
     }
-
     @Override
     protected void initGame() {
 
-        getGameScene().setBackgroundRepeat(image("backg (6).png"));
-
         getGameWorld().addEntityFactory(new SplendorFactory());
-        //最左边的三张标志卡 --- 要把卡片上的数字换成白色圆形底 黑色数字， 图片加上白色边框
+
         f_card_3=new ArrayList<>();
         //中间的十二张牌 --- 卡片上需要的不同颜色的宝石用不同颜色的圆形底+数字呈现，最好旁边再加上宝石图片，上方加上有点透明的矩形
         s_card_12=new ArrayList<>();
@@ -142,32 +156,18 @@ public class SplendorApp extends GameApplication {
         coinList=new ArrayList<>();
         //贵族卡 --- 代表 右边三张卡，需要换成不同的图片背景
         nobleList=new ArrayList<>();
+
         ai_player=new ArrayList<>();
+
         human_player=new ArrayList<>();
-        player = getGameWorld().spawn("player",new SpawnData(920,700));
-        for (int i = 0; i < 6; i++) {
-            coinList.add(getGameWorld().spawn("coin",new SpawnData(1100,100*(1+i)).put("style",Config.list.get(i))));
-            if (i<3){
-                f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(100,500-200*i)));
-                nobleList.add(getGameWorld().spawn("noble",new SpawnData(190*i+100,800)));
-            }
-        }
-        for (int j = 0; j < 3; j++) {
-            for (int i = 2; i <= 5; i++) {
-                s_card_12.add(getGameWorld().spawn(Config.list_s.get(j),new SpawnData(200*i-100,500-200*j)));
-            }
-        }
-        if (!SocketClient.getInstance().login){
-            for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
-                ai_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
-            }
-        } else {
-            //创建人类player,显示玩家的信息
-            for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
-                human_player.add(getGameWorld().spawn("player",new SpawnData(1450,305*i+50)));
-            }
-        }
-        Config.MODE_SCENE.mode = 0;
+        Platform.runLater(new Runnable() {
+    		@Override
+        	public void run() {
+    			ingame();
+    		}
+        });
+
+
     }
     boolean ai_round=false;
     @Override
@@ -276,7 +276,7 @@ public class SplendorApp extends GameApplication {
                         //判断对中间的12张牌的实体操作
                         getOneCard("getOneMidCard",entities.get(0),human_player.get(round),false, SocketClient.getInstance().x, SocketClient.getInstance().y);
                     }else if (Objects.equals(SocketClient.getInstance().activity, "getOneSaveCard")){
-                        //购买自己的保留牌
+                        //对左下角的保留牌操作
                         entities=getGameWorld().getEntitiesInRange(
                                 new Rectangle2D(SocketClient.getInstance().x-Config.CARD_WID+human_player.get(round).getX(),SocketClient.getInstance().y-Config.CARD_HEI+human_player.get(round).getY(),Config.CARD_WID,Config.CARD_HEI));
                         if (entities.size()!=0){
@@ -292,19 +292,81 @@ public class SplendorApp extends GameApplication {
     }
     @Override
     protected void initUI() {
-        Text action = addVarText("player_action", 700, 750);
+        Text action = addVarText("player_action", 1570, 780);
         action.fontProperty().unbind();
         action.setFont(Font.font(25));
     }
     public static void main(String[] args) {
         launch(args);
     }
+
+    public void ingame() {
+    	spawn("back-ingame");
+
+        player = getGameWorld().spawn("player",new SpawnData(400,950));
+
+        BorderPane borderpane = new BorderPane();
+
+        borderpane.setPrefHeight(215);
+        borderpane.setPrefWidth(200);
+        borderpane.setStyle("-fx-background-image: url('assets/textures/emm1.png')");
+        borderpane.setLayoutX(0);
+        borderpane.setLayoutY(800);
+
+        int imageContent = ModeScene.current;
+        String[] imageURLs = ModeScene.imageURLs;
+        ImageView imageview = new ImageView();
+        Image image = new Image(imageURLs[imageContent]);
+        imageview.setImage(image);
+        imageview.setFitWidth(120);
+        imageview.setFitHeight(160);
+        borderpane.setCenter(imageview);
+
+        FXGL.addUINode(borderpane);
+
+        BorderPane namepane = new BorderPane();
+        namepane.setPrefHeight(61);
+        namepane.setPrefWidth(101);
+        namepane.setStyle("-fx-background-image: url('assets/textures/nameCard-you.png')");
+        namepane.setLayoutX(50);
+        namepane.setLayoutY(975);
+        FXGL.addUINode(namepane);
+
+
+        for (int i = 0; i < 6; i++) {
+            coinList.add(getGameWorld().spawn("coin",new SpawnData(1500,100*(1+i)).put("style",Config.list.get(i))));
+            if (i<3){
+                f_card_3.add(getGameWorld().spawn(Config.list_f.get(i),new SpawnData(450,470-200*i)));
+                nobleList.add(getGameWorld().spawn("noble",new SpawnData(1700,200*i+100)));
+            }
+        }
+        for (int j = 0; j < 3; j++) {
+            for (int i = 2; i <= 5; i++) {
+                s_card_12.add(getGameWorld().spawn(Config.list_s.get(j),new SpawnData(300+194*i,500-200*j)));
+            }
+        }
+
+
+        if (!SocketClient.getInstance().login){
+            for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
+                ai_player.add(getGameWorld().spawn("otherPlayers",new SpawnData(0,250*i+50)));
+            }
+        } else {
+            //创建人类player,显示玩家的信息
+            for (int i = 0; i < Config.MODE_SCENE.mode - 1; i++) {
+                human_player.add(getGameWorld().spawn("otherPlayers",new SpawnData(0,250*i+50)));
+            }
+        }
+        Config.MODE_SCENE.mode = 0;
+
+
+    }
     int three_coin_aleast=0;
     //获取一枚硬币
     public void getCoin(int size,Entity entities,Entity player,boolean isAi,double mouse_x,double mouse_y){
 
         //获取鼠标点到位置的实体
-        if ((mouse_x<=1100+Config.COIN_WID && mouse_x>=1100 && mouse_y>=100 && mouse_y<=500+Config.COIN_HEI || isAi)){
+        if ((mouse_x<=1500+Config.COIN_WID && mouse_x>=1500 && mouse_y>=100 && mouse_y<=500+Config.COIN_HEI || isAi)){
             int a=entities.call("getNum");
             for (int i = 0; i < 5; i++) {
                 int o=coinList.get(i).call("getNum");
@@ -393,9 +455,9 @@ public class SplendorApp extends GameApplication {
     public void getOneCard(String actname,Entity entities,Entity player,boolean isAi, double mouse_x, double mouse_y){
         boolean ra= actname.equals("getOneMidCard") ?
                 //中间的12张牌
-                mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI:
-                //坐下的保留牌
-                mouse_x<=146*2+player.getX()+20+Config.CARD_WID && mouse_x>=player.getX()+20 && mouse_y>=player.getY()+110 && mouse_y<=player.getY()+110+Config.CARD_HEI;
+                mouse_x<=1270+Config.CARD_WID && mouse_x>=688 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI:
+                //坐下的保留牌 ---- ??? 208*i+player.getX()+205,player.getY()-195
+                mouse_x<=208*2+player.getX()+205+Config.CARD_WID && mouse_x>=player.getX()+205 && mouse_y>=player.getY()-195 && mouse_y<=player.getY()-195+Config.CARD_HEI;
         if (ra||isAi) {
             HashMap<String,Integer> hashMap=entities.call("getMap");
             List<String> coins=entities.call("getCoins");
@@ -445,8 +507,8 @@ public class SplendorApp extends GameApplication {
                 if (actname.equals("getOneSaveCard")){
                     List<Entity> saveList=player.call("getSaveCard");
                     saveList.remove(entities);
-                    for (int i = 0; i < saveList.size(); i++) {
-                        saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
+                    for (int i = 0; i < saveList.size(); i++) { //208*i+player.getX()+205,player.getY()-195
+                        saveList.get(i).setPosition(208*i+player.getX()+205,player.getY()-195);
                     }player.call("setSaveCard",saveList);
                 }else {
                     //对最左边的三张等级牌操作
@@ -495,6 +557,7 @@ public class SplendorApp extends GameApplication {
                         break;
                     }
                 }
+
                 //玩家获得分数分是否胜利
                 player_win(player);
                 //发信息，获取一张卡牌
@@ -549,7 +612,7 @@ public class SplendorApp extends GameApplication {
     //获取保留卡和一枚黄金硬币
     public void getSaveCard(Entity entities,Entity player, double mouse_x, double mouse_y){
         List<Entity> saveList=player.call("getSaveCard");
-        if (mouse_x<=900+Config.CARD_WID && mouse_x>=300 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI&&saveList.size()<=2) {
+        if (mouse_x<=1270+Config.CARD_WID && mouse_x>=688 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI&&saveList.size()<=2) {
             HashMap<String,Integer> hashMap=entities.call("getMap");
             //黄金硬币减少一枚
             coinList.get(5).call("cutcoinNumber");
@@ -578,7 +641,7 @@ public class SplendorApp extends GameApplication {
             //玩家操作
             saveList.add(entities);
             for (int i = 0; i < saveList.size(); i++) {
-                saveList.get(i).setPosition(146*i+player.getX()+20,player.getY()+110);
+                saveList.get(i).setPosition(208*i+player.getX()+205,player.getY()-195);
             }player.call("setSaveCard",saveList);
         } else if (!ai_round){
             getNotificationService().pushNotification("Error");
@@ -632,8 +695,10 @@ public class SplendorApp extends GameApplication {
         Button b= FXGL.getUIFactoryService().newButton(s);
         b.fontProperty().unbind();
         b.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 15));
+        b.setStyle("-fx-background-image: url('assets/textures/ac1.png')");
         b.setPrefWidth(290);
-        b.setLayoutX(-60);
+        b.setPrefHeight(30);
+        b.setLayoutX(800);
         return b;
     }
     public void dealActPlayer(GameScene gameScene){
@@ -649,8 +714,9 @@ public class SplendorApp extends GameApplication {
 
             }};
             for (int i = 0; i < 5; i++) {
-                buttonList.get(i).setTranslateX(700);
-                buttonList.get(i).setTranslateY(750+50*i);
+            	//----------
+                buttonList.get(i).setTranslateX(750);
+                buttonList.get(i).setTranslateY(820+50*i);
             }
             deal_once=1;
             List<String> act_list=new ArrayList<>(){{
