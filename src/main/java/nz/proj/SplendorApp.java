@@ -202,49 +202,22 @@ public class SplendorApp extends GameApplication {
                     dealActPlayer(getGameScene());
                 }
                 if (ai_round){
-//                    label:
-//                    for (Entity entity : ai_player) {
-//                        //ai的操作
-//                        for (int j = 0; j < 12; j++) {
-//                            HashMap<String, Integer> hashMap = s_card_12.get(j).call("getMap");
-//                            List<String> coins = s_card_12.get(j).call("getCoins");
-//                            boolean numisnull = f_card_3.get(hashMap.get("cardLevel") - 1).call("numIsNull");
-//                            boolean jud = true;
-//                            for (String coin : coins) {
-//                                boolean c = entity.call("enoughCoin", coin, hashMap.get(coin));
-//                                if (!c) {
-//                                    jud = false;
-//                                }
-//                            }
-//                            //卡片数量不为0，且拥有足够的宝石
-//                            if (numisnull && jud) {
-//                                getOneCard("", s_card_12.get(j), entity, true, s_card_12.get(j).getX() + 1, s_card_12.get(j).getY() + 1);
-//                                break label;
-//                            }
-//                        }
-//                        int lp = 0;
-//                        for (int j = 0; j < 5; j++) {
-//                            int a = coinList.get(j).call("getNum");
-//                            if (a > 0 && lp < 3) {
-//                                getCoin(3, coinList.get(j), entity, true, coinList.get(j).getX() + 1, coinList.get(j).getY() + 1);
-//                                lp++;
-//                            }
-//                        }
-//                    }
                     for (Entity entity : ai_player) {
                         Random random=new Random();
                         ArrayList<String> ranlist=ranList(entity);
-                        String s=ranlist.get(random.nextInt(ranlist.size()));
-                        if (s=="getThreeCoin"){
-                            ai_getThreeCoin(entity);
-                        }else if (s=="getTwoSameCoin"){
-                            ai_getTwoSameCoin(entity);
-                        }else if (s=="getOneMidCard"){
-                            ai_getOneMidCard(entity);
-                        }else if (s=="getOneSaveCard"){
-                            ai_getOneSaveCard(entity);
-                        }else {
-                            ai_getSaveCard(entity);
+                        if (ranlist.size()>0){
+                            String s=ranlist.get(random.nextInt(ranlist.size()));
+                            if (s=="getThreeCoin"){
+                                ai_getThreeCoin(entity);
+                            }else if (s=="getTwoSameCoin"){
+                                ai_getTwoSameCoin(entity);
+                            }else if (s=="getOneMidCard"){
+                                ai_getOneMidCard(entity);
+                            }else if (s=="getOneSaveCard"){
+                                ai_getOneSaveCard(entity);
+                            }else {
+                                ai_getSaveCard(entity);
+                            }
                         }
                     }
                     ai_round=false;
@@ -852,11 +825,14 @@ public class SplendorApp extends GameApplication {
         if (threelist.size()>=3){
             list.add("getThreeCoin");
             list.add("getThreeCoin");
+            list.add("getThreeCoin");
         }if (twolist.size()>0){
+            list.add("getTwoSameCoin");
             list.add("getTwoSameCoin");
         }
         for (int i = 0; i < 12; i++) {
             if (enCoin(s_card_12.get(i),ap)){
+                list.add("getOneMidCard");
                 list.add("getOneMidCard");
                 list.add("getOneMidCard");
                 list.add("getOneMidCard");
@@ -871,6 +847,7 @@ public class SplendorApp extends GameApplication {
         if (saveList.size()>0){
             for (Entity entity:saveList){
                 if (enCoin(entity,ap)){
+                    list.add("getOneSaveCard");
                     list.add("getOneSaveCard");
                     list.add("getOneSaveCard");
                     list.add("getOneSaveCard");

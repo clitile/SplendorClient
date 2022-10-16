@@ -73,8 +73,13 @@ public class CardComponent extends Component {
 
         int lev=Integer.parseInt(String.valueOf(level.charAt(5)));
         setCoinValue(length,lists,lev);
+        if (lev==1){
+            mapToken.put("score",0);
+        }else {
+            mapToken.put("score",SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt((lev-1)*2, (lev-1)*4) : FXGLMath.random((lev-1)*2, (lev-1)*4));
+        }
 
-        mapToken.put("score",SocketClient.getInstance().match ? SocketClient.getInstance().r.nextInt((lev-1)*2, (lev-1)*4) : FXGLMath.random((lev-1)*2, (lev-1)*4));
+
         for (int i = 0; i < length; i++) {
             coins.add(lists.get(i));
         }

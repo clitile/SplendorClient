@@ -111,7 +111,7 @@ public class SplendorMainMenu extends FXGLMenu {
                 }),
                 new MenuButton("Online Game", this::onlineGame),
                 new MenuButton("How to Play", this::instructions),
-                
+                new MenuButton("Settings", () -> FXGL.getGameController().gotoGameMenu()),
                 new MenuButton("Exit", () -> {
                     if (SocketClient.getInstance().login) {
                         Bundle b = new Bundle("close");
@@ -132,8 +132,10 @@ public class SplendorMainMenu extends FXGLMenu {
     }
 
     private void loginPane() {
-        if (!SocketClient.getInstance().isOpen()) {
-            SocketClient.getInstance().connect();
+        if (!SocketClient.getInstance().login) {
+            if (!SocketClient.getInstance().isOpen()) {
+                SocketClient.getInstance().connect();
+            }
 
             GridPane pane = new GridPane();
             pane.setAlignment(Pos.CENTER);
