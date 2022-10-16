@@ -50,6 +50,9 @@ public class SplendorApp extends GameApplication {
     List<Entity> coinList;
     //贵族卡
     List<Entity> nobleList;
+    
+    public static int[] aisavecard = {0, 0, 0, 0, 0, 0};
+    
     //鼠标坐标
     double mouse_x;
     double mouse_y;
@@ -654,6 +657,8 @@ public class SplendorApp extends GameApplication {
             	if(player.isType(ai_player)){
                 	for (int i = 0; i < saveList.size(); i++) { // ai-players
                         saveList.get(i).setPosition(20*i+650,675);
+                        aisavecard[i] = 20*i+650 ;
+                        aisavecard[i] = 675 ;
                     }
                 }else {
                 	for (int i = 0; i < saveList.size(); i++) {
@@ -833,6 +838,7 @@ public class SplendorApp extends GameApplication {
             } else {
                 getNotificationService().pushNotification("Oh~ You loss the game");
             }
+            // 添加一个动画效果，效果结束后再返回主菜单。
             //Config.MODE_SCENE.mode = 0;
             //SocketClient.getInstance().match = false;
             //set("match", false);
@@ -961,7 +967,7 @@ public class SplendorApp extends GameApplication {
     
     public void ai_getSaveCard(Entity aplayer){
         Entity en=s_card_12.get(0);
-        getSaveCard(en,aplayer, en.getX()+1, en.getX()+1);
+        getSaveCard(en,aplayer, en.getX()+1, en.getX()+1); //这是什么意思呢？？？？？？
         getNotificationService().pushNotification("AI has got a saved card");
         System.out.println("ai_getSaveCard");
     }
