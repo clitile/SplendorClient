@@ -383,7 +383,6 @@ public class SplendorApp extends GameApplication {
             }
         }
         if (num.size()==size){
-            getNotificationService().pushNotification("The other player has got"+ size +"different coins");
             player.call("setActivity","");
             num=new ArrayList<>();
             three_coin_aleast=0;
@@ -546,13 +545,11 @@ public class SplendorApp extends GameApplication {
                     Bundle roundOver = new Bundle("roundOver");
                     roundOver.put("name", SocketClient.getInstance().name);
                     if (mouse_y < 800) {
-                        getNotificationService().pushNotification("The other player has bought a card");
                         roundOver.put("x", mouse_x);
                         roundOver.put("y", mouse_y);
                         roundOver.put("id", SocketClient.getInstance().id);
                         roundOver.put("activity","getOneMidCard");
                     } else {
-                        getNotificationService().pushNotification("The other player has bought a saved card");
                         double x = mouse_x - player.getX();
                         double y = mouse_y - player.getY();
                         System.out.println(x);
@@ -880,7 +877,7 @@ public class SplendorApp extends GameApplication {
             }
         }
         int u=coinList.get(5).call("getNum");
-        List<Entity> saveList=player.call("getSaveCard");
+        List<Entity> saveList=ap.call("getSaveCard");
         if (u>0 && saveList.size()<3) {
             list.add("getSaveCard");
         }
