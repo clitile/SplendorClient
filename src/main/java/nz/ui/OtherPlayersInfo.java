@@ -16,6 +16,7 @@ import nz.comp.CardComponent;
 import nz.comp.FirstCardComponent;
 import nz.comp.OtherPlayersComponent;
 import nz.proj.Config;
+import nz.proj.SplendorApp;
 
 public class OtherPlayersInfo extends SubScene {
 	
@@ -29,7 +30,7 @@ public class OtherPlayersInfo extends SubScene {
 	Text[] gemsText = new Text[5];
 	Text[] othercoinsText = new Text[5];
 	
-	
+	int[] savecards = SplendorApp.aisavecard;
 	
 	public OtherPlayersInfo() {
 		Button exit = FXGL.getUIFactoryService().newButton("");

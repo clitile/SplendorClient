@@ -22,8 +22,6 @@ import nz.ui.Story;
 
 public class ModeScene extends SubScene {
 	
-	
-	
     public static int mode;
     
     public static boolean online = false;

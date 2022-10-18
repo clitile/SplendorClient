@@ -25,6 +25,8 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import nz.net.SocketClient;
+import nz.ui.Instruction;
+import nz.ui.OtherPlayersInfo;
 import nz.ui.Story;
 import nz.ui.UIFactory;
 
@@ -102,6 +104,7 @@ public class SplendorMainMenu extends FXGLMenu {
                 5,
                 new MenuButton("Play with AI", () -> {
                 	
+                	//现在先把动画去掉了，需要换一种方式。
                 	//getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
                 	//getGameWorld().addEntityFactory(new SplendorFactory());
                 	//spawn("cutscene");
@@ -112,7 +115,10 @@ public class SplendorMainMenu extends FXGLMenu {
                     
                 }),
                 new MenuButton("Online Game", this::onlineGame),
-                new MenuButton("How to Play", this::instructions),
+                //new MenuButton("How to Play", this::instructions),
+                new MenuButton("How to Play", () -> {
+                	getSceneService().pushSubScene(new Instruction());
+                }),
                 new MenuButton("Settings", () -> FXGL.getGameController().gotoGameMenu()),
                 new MenuButton("Exit", () -> {
                     if (SocketClient.getInstance().login) {
@@ -233,6 +239,7 @@ public class SplendorMainMenu extends FXGLMenu {
     private void instructions() {
     	//做成一个面板上面有左右两侧按钮，点击后更换带有游戏解释的图片。
         //getDialogService().showMessageBox("Right now: Use your mouse to choose cards and gems ~");
+    	
         
     }
 
