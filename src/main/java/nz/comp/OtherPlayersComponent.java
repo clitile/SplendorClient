@@ -129,6 +129,7 @@ public class OtherPlayersComponent extends Component{
         button.setTranslateX(146);
         button.setTranslateY(18);
         button.setOnAction(event -> {
+        	FXGL.play("button.wav");
             getSceneService().pushSubScene(new OtherPlayersInfo());
         });
         

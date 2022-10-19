@@ -34,7 +34,10 @@ public class OtherPlayersInfo extends SubScene {
 	
 	public OtherPlayersInfo() {
 		Button exit = FXGL.getUIFactoryService().newButton("");
-		exit.setOnAction(event -> FXGL.getSceneService().popSubScene());
+		exit.setOnAction(event -> {
+			FXGL.play("button.wav");
+			FXGL.getSceneService().popSubScene();
+		});
 		exit.setTranslateX(1500);
 		exit.setTranslateY(90);
 		exit.setMinHeight(65);

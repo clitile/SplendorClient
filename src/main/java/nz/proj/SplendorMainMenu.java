@@ -110,6 +110,8 @@ public class SplendorMainMenu extends FXGLMenu {
                 	//spawn("cutscene");
                 	//getSceneService().pushSubScene(storyLazyValue.get());
                 	//getSceneService().popSubScene();
+                	FXGL.play("bu.wav");
+                	
                     Config.MODE_SCENE.online = false;
                     getSceneService().pushSubScene(Config.MODE_SCENE);
                     
@@ -117,10 +119,16 @@ public class SplendorMainMenu extends FXGLMenu {
                 new MenuButton("Online Game", this::onlineGame),
                 //new MenuButton("How to Play", this::instructions),
                 new MenuButton("How to Play", () -> {
+                	FXGL.play("bu.wav");
                 	getSceneService().pushSubScene(new Instruction());
                 }),
-                new MenuButton("Settings", () -> FXGL.getGameController().gotoGameMenu()),
+                new MenuButton("Settings", () -> {
+                	FXGL.play("button.wav");
+                	FXGL.getGameController().gotoGameMenu();
+                }),
+                
                 new MenuButton("Exit", () -> {
+                	FXGL.play("bu.wav");
                     if (SocketClient.getInstance().login) {
                         Bundle b = new Bundle("close");
                         b.put("name", SocketClient.getInstance().name);
@@ -161,6 +169,7 @@ public class SplendorMainMenu extends FXGLMenu {
             Button retrieve = getUIFactoryService().newButton("Retrieve pwd");
 
             ack.setOnAction(actionEvent -> {
+            	FXGL.play("bu.wav");
                 if (! SocketClient.getInstance().login) {
                     String name = name_inp.getText();
                     String pwd = password_inp.getText();
@@ -174,6 +183,7 @@ public class SplendorMainMenu extends FXGLMenu {
             });
 
             signup.setOnAction(actionEvent -> {
+            	FXGL.play("bu.wav");
                 GridPane signup_pane = new GridPane();
                 signup_pane.setAlignment(Pos.CENTER);
                 signup_pane.setHgap(20);
@@ -184,6 +194,7 @@ public class SplendorMainMenu extends FXGLMenu {
 
                 Button ok = getUIFactoryService().newButton("SignUp");
                 ok.setOnAction(event -> {
+                	FXGL.play("bu.wav");
                     Bundle sign_up = new Bundle("signup");
                     sign_up.put("name", newName.getText());
                     sign_up.put("pwd", newPwd.getText());
@@ -223,6 +234,7 @@ public class SplendorMainMenu extends FXGLMenu {
     }
 
     private void onlineGame() {
+    	FXGL.play("bu.wav");
         if (!isReachable()) {
             getDialogService().showMessageBox("Server Error");
         } else {

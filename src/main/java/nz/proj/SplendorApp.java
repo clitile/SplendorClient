@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.GameScene;
+import com.almasb.fxgl.app.scene.LoadingScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
@@ -26,6 +27,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import nz.net.SocketClient;
+import nz.ui.OtherPlayersInfo;
+import nz.ui.WinInterface;
+
 import java.util.*;
 import static com.almasb.fxgl.dsl.FXGL.*;
 public class SplendorApp extends GameApplication {
@@ -72,10 +76,10 @@ public class SplendorApp extends GameApplication {
                 return new SplendorMainMenu();
             }
 
-//            @Override
-//            public FXGLMenu newGameMenu() {
-//                return new SplendorGameMenu();
-//            }
+            @Override
+            public LoadingScene newLoadingScene() {
+            	return new nz.ui.Loadingscene();
+            }
         });
     }
     //鼠标对应动作
@@ -134,9 +138,20 @@ public class SplendorApp extends GameApplication {
         getAssetLoader().loadImage("nobles.png");
         getAssetLoader().loadImage("cards_372_172.png");
         getAssetLoader().loadImage("S-castle.png");
+        
+        //音效音量大小
+        FXGL.getSettings().setGlobalMusicVolume(0.5);
+        FXGL.getSettings().setGlobalSoundVolume(0.8);
     }
+    
+    
     @Override
     protected void initGame() {
+    	//背景音乐
+    	FXGL.loopBGM("ba.mp3");
+    	
+    	
+    	
         getGameWorld().addEntityFactory(new SplendorFactory());
         f_card_3=new ArrayList<>();
         //中间的十二张牌 --- 卡片上需要的不同颜色的宝石用不同颜色的圆形底+数字呈现，最好旁边再加上宝石图片，上方加上有点透明的矩形
@@ -326,10 +341,11 @@ public class SplendorApp extends GameApplication {
 
         //获取鼠标点到位置的实体
         if ((mouse_x<=1500+Config.COIN_WID && mouse_x>=1500 && mouse_y>=100 && mouse_y<=500+Config.COIN_HEI)){
-        	
-        	
-        	if(player.isType(this.player)) {
-        		getNotificationService().pushNotification("You have get coins");
+        	if(player.isType(ai_player) || player.isType(human_player)) {
+        		System.out.println("not you");
+        	}else {
+        		FXGL.play("button.wav");
+        		
         	}
         	
         	
@@ -430,6 +446,13 @@ public class SplendorApp extends GameApplication {
                 
                 
         if (ra) {
+        	if(player.isType(ai_player) || player.isType(human_player)) {
+        		System.out.println("not you");
+        	}else {
+        		FXGL.play("button.wav");
+        		
+        	}
+        	
             HashMap<String,Integer> hashMap=entities.call("getMap");
             List<String> coins=entities.call("getCoins");
             boolean numisnull=f_card_3.get(hashMap.get("cardLevel")-1).call("numIsNull");
@@ -535,9 +558,11 @@ public class SplendorApp extends GameApplication {
                 //玩家获得分数分是否胜利
                 player_win(player);
                 //发信息，获取一张卡牌
-                if(player.isType(this.player)) {
-                	getNotificationService().pushNotification("You have bought one card");
-                }
+                if(player.isType(ai_player) || player.isType(human_player)) {
+            		
+            	}else {
+            		
+            	}
                 
                 //改下一个人操作了
                 if (SocketClient.getInstance().login && SocketClient.getInstance().round_begin) {
@@ -592,6 +617,13 @@ public class SplendorApp extends GameApplication {
     public void getSaveCard(Entity entities,Entity player, double mouse_x, double mouse_y){
         List<Entity> saveList=player.call("getSaveCard");
         if (mouse_x<=1270+Config.CARD_WID && mouse_x>=688 && mouse_y>=100 && mouse_y<=500+Config.CARD_HEI&&saveList.size()<=2) {
+        	
+        	if(player.isType(ai_player) || player.isType(human_player)) {
+        		System.out.println("not you");
+        	}else {
+        		FXGL.play("button.wav");
+        		
+        	}
             HashMap<String,Integer> hashMap=entities.call("getMap");
             //黄金硬币减少一枚
             coinList.get(5).call("cutcoinNumber");
@@ -620,23 +652,20 @@ public class SplendorApp extends GameApplication {
             //玩家操作
             saveList.add(entities);
             
-            if(player.isType(human_player)) {
-            	for (int i = 0; i < saveList.size(); i++) { //  other players
-                    saveList.get(i).setPosition(20*i+player.getX()+205,player.getY()-195);
-                }
-            }else {
-            	if(player.isType(ai_player)){
-                	for (int i = 0; i < saveList.size(); i++) { // ai-players
-                        saveList.get(i).setPosition(20*i+650,675);
-                        aisavecard[i] = 20*i+650 ;
-                        aisavecard[i] = 675 ;
+            if(player.isType(ai_player) || player.isType(human_player)) {
+            	for (int i = 0; i < saveList.size(); i++) { // ai-players & human players
+                    saveList.get(i).setPosition(20*i+650,675);
+                    aisavecard[i] = 20*i+650 ;
+                    aisavecard[i] = 675 ;
+                    for (int a=0; a<5; a++) {
+                    	System.out.println("1111111");
                     }
-                }else {
-                	for (int i = 0; i < saveList.size(); i++) {
-                        saveList.get(i).setPosition(208*i+player.getX()+205,player.getY()-195);
-                    }
+            	}
+        	}else {
+        		for (int i = 0; i < saveList.size(); i++) {
+                    saveList.get(i).setPosition(208*i+player.getX()+205,player.getY()-195);
                 }
-            }
+        	}
             
             player.call("setSaveCard",saveList);
             
@@ -647,10 +676,8 @@ public class SplendorApp extends GameApplication {
         ai_round=true;
 
 
-        //发信息，玩家获取保留卡和一枚黄金硬币
-        if(player.isType(this.player)) {
-        	getNotificationService().pushNotification("You have git one saved card and one gold coin");
-        }
+        //发信息，玩家获取保留卡和一枚黄金硬
+        
         
         //改下一个人操作了
         if (SocketClient.getInstance().login && SocketClient.getInstance().round_begin) {
@@ -731,6 +758,8 @@ public class SplendorApp extends GameApplication {
                 add("getSaveCard");
             }};
             buttonList.get(0).setOnMouseClicked(mouseEvent -> {
+            	FXGL.play("button.wav");
+            	
                 deal_activity=0;
                 for (int i = 0; i < 5; i++) {
                     int o=coinList.get(i).call("getNum");
@@ -739,6 +768,7 @@ public class SplendorApp extends GameApplication {
                     }
                 }
                 if (deal_activity>=3){
+                	
                     deal_once=0;
                     player.call("setActivity",act_list.get(0));
                     set("player_action", act_list.get(0));
@@ -748,6 +778,8 @@ public class SplendorApp extends GameApplication {
                 }
             });
             buttonList.get(1).setOnMouseClicked(mouseEvent -> {
+            	FXGL.play("button.wav");
+            	
                 deal_activity=0;
                 for (int i = 0; i < 5; i++) {
                     int o=coinList.get(i).call("getNum");
@@ -765,12 +797,16 @@ public class SplendorApp extends GameApplication {
                 }
             });
             buttonList.get(2).setOnMouseClicked(mouseEvent -> {
+            	FXGL.play("button.wav");
+            	
                 deal_once=0;
                 player.call("setActivity",act_list.get(2));
                 set("player_action", act_list.get(2));
                 removeButton(buttonList);
             });
             buttonList.get(3).setOnMouseClicked(mouseEvent -> {
+            	FXGL.play("button.wav");
+            	
                 List<Entity> saveList=player.call("getSaveCard");
                 if (saveList.size()>0){
                     deal_once=0;
@@ -782,6 +818,8 @@ public class SplendorApp extends GameApplication {
                 }
             });
             buttonList.get(4).setOnMouseClicked(mouseEvent -> {
+            	FXGL.play("button.wav");
+            	
                 int u=coinList.get(5).call("getNum");
                 List<Entity> saveList=player.call("getSaveCard");
                 if (u>0 && saveList.size()<3){
@@ -806,6 +844,7 @@ public class SplendorApp extends GameApplication {
         if (the_score>=15) {
             if (player.equals(this.player)) {
                 getNotificationService().pushNotification("Oh~ You win the game");
+                getSceneService().pushSubScene(new WinInterface());
             } else {
                 getNotificationService().pushNotification("Oh~ You loss the game");
             }

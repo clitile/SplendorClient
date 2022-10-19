@@ -5,9 +5,15 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
+import com.almasb.fxgl.texture.AnimatedTexture;
+import com.almasb.fxgl.texture.AnimationChannel;
+
+import javafx.scene.image.Image;
+import javafx.util.Duration;
 import nz.comp.*;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 
@@ -105,6 +111,25 @@ public class SplendorFactory implements EntityFactory {
     	return FXGL.entityBuilder(data)
     			.view("S-castle.png")
     			.build();
+    }
+    
+    @Spawns("matching")
+    public Entity newMat(SpawnData data) {
+    	
+    	ArrayList<Image> imgList = new ArrayList<>();
+    	for (int i=0; i<5; i++) {
+    		imgList.add(FXGL.image(String.format("gem/gem_%02d.png", i)));
+    	}
+    	
+    	
+    	AnimationChannel ac = new AnimationChannel(imgList, Duration.seconds(0.5));
+    	AnimatedTexture at = new AnimatedTexture(ac);
+    	at.loop();
+    	
+		return FXGL.entityBuilder(data)
+				.view(at)
+				.build();
+    	
     }
 
 }

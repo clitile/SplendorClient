@@ -62,6 +62,8 @@ public class ModeScene extends SubScene {
         four_player.setStyle("-fx-background-image: url('assets/textures/butt.png')");
         
         two_player.setOnAction(event -> {
+        	FXGL.play("bu.wav");
+        	
             mode = 2;
             getSceneService().popSubScene();
             
@@ -71,6 +73,8 @@ public class ModeScene extends SubScene {
             }
         });
         three_player.setOnAction(event -> {
+        	FXGL.play("bu.wav");
+        	
             mode = 3;
             FXGL.getSceneService().popSubScene();
             if (SocketClient.getInstance().login && online) {
@@ -79,6 +83,8 @@ public class ModeScene extends SubScene {
             }
         });
         four_player.setOnAction(event -> {
+        	FXGL.play("bu.wav");
+        	
             mode = 4;
             FXGL.getSceneService().popSubScene();
             if (SocketClient.getInstance().login && online) {
@@ -97,8 +103,10 @@ public class ModeScene extends SubScene {
         next.setLayoutY(645);
         next.setStyle("-fx-background-image: url('assets/textures/S-arrow.png')");
         next.setOnAction(new EventHandler<ActionEvent>() {
+        	
         	@Override
         	public void handle(ActionEvent actionEvent) {
+        		FXGL.play("bu.wav");
         		showNext();
         	}
         });

@@ -69,13 +69,16 @@ public class Instruction extends SubScene {
         exit.setStyle("-fx-background-image: url('assets/textures/exit.png')");
         
         right.setOnAction(event -> {
+        	FXGL.play("bu.wav");
         	shownext();
         });
         left.setOnAction(event -> {
+        	FXGL.play("bu.wav");
         	showlast();
         });
         
         exit.setOnAction(event -> {
+        	FXGL.play("bu.wav");
             FXGL.getSceneService().popSubScene();
         });
         
