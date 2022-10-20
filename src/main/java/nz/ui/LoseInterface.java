@@ -11,7 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
@@ -20,15 +19,14 @@ import javafx.util.Duration;
 import nz.net.SocketClient;
 import nz.proj.Config;
 
-public class WinInterface extends SubScene{
-	
+public class LoseInterface extends SubScene{
 	private final PathTransition pt1;
 	private final PathTransition pt2;
 	private final PathTransition pt3;
 	private final PathTransition pt4;
 	private final PathTransition pt5;
 	
-	public WinInterface() {
+	public LoseInterface() {
 		Button exit = FXGL.getUIFactoryService().newButton("Return to Menu");
 		exit.setOnAction(event -> {
 			FXGL.play("button.wav");
@@ -45,25 +43,25 @@ public class WinInterface extends SubScene{
 		exit.setStyle("-fx-background-image: url('assets/textures/butt.png')");
 		
 		BorderPane borderpane = new BorderPane();
-		Image image = new Image("assets/textures/win2.png");
+		Image image = new Image("assets/textures/lose.png");
 		ImageView imageview = new ImageView(image);
 		borderpane.setCenter(imageview);
 		borderpane.setLayoutX(700);
 		borderpane.setLayoutY(10);
 		
-		Image image1 = new Image("assets/textures/gem/gem_00.png");
+		Image image1 = new Image("assets/textures/gem/gem_10.png");
 		ImageView imageview1 = new ImageView(image1);
 		
-		Image image2 = new Image("assets/textures/gem/gem_01.png");
+		Image image2 = new Image("assets/textures/gem/gem_11.png");
 		ImageView imageview2 = new ImageView(image2);
 		
-		Image image3 = new Image("assets/textures/gem/gem_02.png");
+		Image image3 = new Image("assets/textures/gem/gem_12.png");
 		ImageView imageview3 = new ImageView(image3);
 		
-		Image image4 = new Image("assets/textures/gem/gem_03.png");
+		Image image4 = new Image("assets/textures/gem/gem_13.png");
 		ImageView imageview4 = new ImageView(image4);
 		
-		Image image5 = new Image("assets/textures/gem/gem_04.png");
+		Image image5 = new Image("assets/textures/gem/gem_14.png");
 		ImageView imageview5 = new ImageView(image5);
 		
 		
@@ -172,3 +170,4 @@ public class WinInterface extends SubScene{
 	}
 
 }
+

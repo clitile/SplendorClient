@@ -27,6 +27,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import nz.net.SocketClient;
+import nz.ui.LoseInterface;
 import nz.ui.OtherPlayersInfo;
 import nz.ui.WinInterface;
 
@@ -843,15 +844,15 @@ public class SplendorApp extends GameApplication {
         int the_score=player.call("getScore");
         if (the_score>=15) {
             if (player.equals(this.player)) {
-                getNotificationService().pushNotification("Oh~ You win the game");
+                //getNotificationService().pushNotification("Oh~ You win the game");
                 getSceneService().pushSubScene(new WinInterface());
+            	
             } else {
-                getNotificationService().pushNotification("Oh~ You loss the game");
+                //getNotificationService().pushNotification("Oh~ You loss the game");
+            	getSceneService().pushSubScene(new LoseInterface());
             }
             // 添加一个动画效果，效果结束后再返回主菜单。
-            //Config.MODE_SCENE.mode = 0;
-            //SocketClient.getInstance().match = false;
-            //set("match", false);
+            
             //FXGL.getGameController().gotoMainMenu();
         }
     }
