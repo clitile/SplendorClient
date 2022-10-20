@@ -31,8 +31,6 @@ public class SocketClient extends WebSocketClient {
     public String playing = "";
     public ArrayList<String> players;
     public ArrayList<String> allP = new ArrayList<>();
-    public boolean loss = false;
-    public String winner = "";
 
 
     static {

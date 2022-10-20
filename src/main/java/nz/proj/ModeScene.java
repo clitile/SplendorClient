@@ -40,9 +40,9 @@ public class ModeScene extends SubScene {
     	
     	Pane pane = new Pane();
     	
-    	Button two_player = FXGL.getUIFactoryService().newButton("Two Player");
-        Button three_player = FXGL.getUIFactoryService().newButton("Three Player");
-        Button four_player = FXGL.getUIFactoryService().newButton("Four Player");
+    	Button two_player = FXGL.getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Two Player" : "Pūpāpāho Rua");
+        Button three_player = FXGL.getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Three Player" : "Pūpāpāho Toru");
+        Button four_player = FXGL.getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Four Player" : "Pūpāpāho Whā");
         
         
         two_player.setLayoutX(1100);

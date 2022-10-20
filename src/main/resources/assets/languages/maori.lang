@@ -1,0 +1,96 @@
+#
+# Dialog text
+#
+
+dialog.exitGame = Puta atu i te keemu?
+dialog.yes = āe
+dialog.no = Kāore
+dialog.ok = pai
+
+#
+# Menu text
+#
+
+menu.language = Reo
+menu.continue = Haere tonu
+menu.resume = Hoki Atu
+menu.newGame = Hoki Atu
+menu.save = Tiaki
+menu.load = [L]
+menu.extra = tāpiri
+menu.online = Tuihono
+menu.video = Ataata
+menu.audio = Puoro & Oro
+menu.credits = hua
+menu.options = Ngā Kōwhiringa
+menu.logout = Takiputa
+menu.exit = E puta
+menu.mainMenu = Tahua matua
+menu.restore = whakaora
+menu.gameplay = Tākaro Kēmu
+menu.controls = Ngā Mana
+menu.trophies = tohu
+menu.feedback = Whakahoki kōrero
+menu.back = Whakamuri
+menu.delete = Whakakore
+menu.difficulty = Te Uaua
+menu.playtime = wā tākaro
+menu.music.volume = Rōrahi Pūoro
+menu.sound.volume = Kahaoro
+menu.fullscreen = Mata Whānui
+menu.fixRatio = ōwehenga whakatika
+menu.settingsRestore = Ka whakaoratia ngā tautuhinga hei taunoa
+menu.exitMainMenu = Waiho ki te tahua Matua?
+menu.logOut = Taki puta?
+menu.unsavedProgress = Ka ngaro te kaunuku kāore anō kia tiakina!
+menu.chooseFeedback = Kōwhiria tō aratuka urupare
+menu.pressAnyKey = pēhia tētahi kī
+menu.loadSave = Utaina te tiaki
+menu.loading = Kei te tāuta
+menu.loadingSaveFiles = Uta ana i ngā kōnae tiaki
+menu.loadingLast = Uta ana i te kōnae tiaki whakamutunga
+menu.deleteSave = Mukua te tiaki
+menu.deleting = Muku ana
+menu.overwrite = Me tuhirua te tiaki
+menu.enterSaveName = Tāurutia te ingoa kōnae tiaki
+menu.savingData = Tiaki raraunga ana
+menu.Settings = 000
+#
+# Multiplayer text
+#
+
+multiplayer.new = Hōu
+multiplayer.select = Kōwhiria
+multiplayer.options = Ngā Kōwhiringa Kaipureimaha
+multiplayer.connect = Hono...
+multiplayer.connecting = Hono ana ki te Kēmu
+multiplayer.host = Pūtaurima
+multiplayer.hosting = Kēmu Kaihautū
+multiplayer.enterIp = Tāuru Tūmau IP
+
+#
+# Profile text
+#
+
+profile.profile = Pūkete
+profile.selectOrCreate = Tīpako kōtaha, waihanga rānei i te hōu
+profile.loadingProfile = Uta ana i te kōtaha
+profile.loadingProfiles = Uta kōtaha ana
+profile.deletingProfile = Muku ana i te kōtaha
+profile.corrupted = Kua hāmate te kōtaha
+profile.new = Kōtaha hōu
+
+#
+# Development text
+#
+
+dev.screenshotSaved = Tirohangamata kua tiakina
+dev.screenshotFailed = I rahua te matamata
+
+#
+# Achievement text
+#
+
+achievement.achievement = Tutukitanga
+achievement.progress = Kaunuku
+achievement.receive = I whiwhi koe i tētahi whakatutukitanga!
