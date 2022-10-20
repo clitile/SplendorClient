@@ -34,6 +34,7 @@ import nz.ui.WinInterface;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import static com.almasb.fxgl.dsl.FXGL.*;
 public class SplendorApp extends GameApplication {
@@ -64,7 +65,7 @@ public class SplendorApp extends GameApplication {
     public static String lang = "english";
     @Override
     protected void initSettings(GameSettings settings) {
-        try (FileReader reader = new FileReader("src/main/java/language.txt");
+        try (InputStreamReader reader = new InputStreamReader(getClass().getResourceAsStream("/assets/languages/language.txt"));
              BufferedReader br = new BufferedReader(reader)
         ) {
             lang = br.readLine();
