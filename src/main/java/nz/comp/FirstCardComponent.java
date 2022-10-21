@@ -22,8 +22,8 @@ public class FirstCardComponent extends Component {
     ImageView shiview = new ImageView();
     
     private AnimatedTexture at;
-	//Texture texture; 
     private int cardNumber;
+    
     public FirstCardComponent(String level) {
         if (level=="f_level1"){
             at=new AnimatedTexture(new AnimationChannel(FXGL.image("levelcard.png"),3,124,230, Duration.seconds(1),0,0));
@@ -77,9 +77,6 @@ public class FirstCardComponent extends Component {
         shiview.setLayoutX(60);
         shiview.setLayoutY(160);
                
-        //Text text = new Text(0,40,String.valueOf(cardNumber));
-        //text.setStyle("-fx-font-size: 25;");
-        //text.setFill(Color.WHITE);
         entity.getViewComponent().addChild(geview);
         entity.getViewComponent().addChild(shiview);
     }

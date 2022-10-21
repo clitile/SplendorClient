@@ -209,6 +209,7 @@ public class SplendorMainMenu extends FXGLMenu {
             });
 
             retrieve.setOnAction(actionEvent -> {
+            	FXGL.play("bu.wav");
                 GridPane reset_pane = new GridPane();
                 reset_pane.setAlignment(Pos.CENTER);
                 reset_pane.setHgap(20);
@@ -218,6 +219,7 @@ public class SplendorMainMenu extends FXGLMenu {
 
                 Button ok = getUIFactoryService().newButton("Reset");
                 ok.setOnAction(event -> {
+                	FXGL.play("bu.wav");
                     Bundle re = new Bundle("reset");
                     re.put("name", re_name.getText());
                     re.put("pwd", re_pwd.getText());
