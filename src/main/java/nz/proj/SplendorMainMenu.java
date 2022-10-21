@@ -5,11 +5,8 @@ import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.core.util.LazyValue;
-import com.almasb.fxgl.cutscene.Cutscene;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.ui.DialogService;
-
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -17,27 +14,28 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.InnerShadow;
-import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import nz.net.SocketClient;
 import nz.ui.Instruction;
-import nz.ui.OtherPlayersInfo;
 import nz.ui.Story;
-import nz.ui.UIFactory;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class SplendorMainMenu extends FXGLMenu {
+
+    int t = 0;
 	
 	private LazyValue<Story> storyLazyValue = new LazyValue<>(() -> {
 		return new Story();
@@ -45,8 +43,7 @@ public class SplendorMainMenu extends FXGLMenu {
 	
     int temp = 0;
     public SplendorMainMenu() {
-    	 super(MenuType.MAIN_MENU);
-    	 
+        super(MenuType.MAIN_MENU);
         getPrimaryStage().setOnCloseRequest(event -> {
             if (SocketClient.getInstance().login) {
                 Bundle b = new Bundle("close");
@@ -58,7 +55,7 @@ public class SplendorMainMenu extends FXGLMenu {
             }
         });
 //        loopBGM(Config.BackMusic);
-        
+
         getContentRoot().getChildren().setAll(texture("backg (2).png",Config.APP_WIDTH,Config.APP_HEIGHT));
         var blocks = new ArrayList<ColorBlock>();
 
@@ -98,11 +95,10 @@ public class SplendorMainMenu extends FXGLMenu {
                     .to(Config.BlockColor.brighter().brighter())
                     .buildAndPlay(this);
         }
-        
-        
+
         var menuBox = new VBox(
                 5,
-                new MenuButton("Play with AI", () -> {
+                new MenuButton(SplendorApp.lang.equals("english") ? "Play with AI" : "Purei me AI", () -> {
                 	
                 	//现在先把动画去掉了，需要换一种方式。
                 	//getContentRoot().getChildren().setAll(texture("S-castle.png",Config.APP_WIDTH,Config.APP_HEIGHT));
@@ -114,20 +110,19 @@ public class SplendorMainMenu extends FXGLMenu {
                 	
                     Config.MODE_SCENE.online = false;
                     getSceneService().pushSubScene(Config.MODE_SCENE);
-                    
                 }),
-                new MenuButton("Online Game", this::onlineGame),
+                new MenuButton(SplendorApp.lang.equals("english") ? "Online Game" : "Kēmu Tuihono", this::onlineGame),
                 //new MenuButton("How to Play", this::instructions),
-                new MenuButton("How to Play", () -> {
+                new MenuButton(SplendorApp.lang.equals("english") ? "How to Play" : "Me Pēhea te Tākaro", () -> {
                 	FXGL.play("bu.wav");
                 	getSceneService().pushSubScene(new Instruction());
                 }),
-                new MenuButton("Settings", () -> {
+                new MenuButton(SplendorApp.lang.equals("english") ? "Settings" : "Ngā Tautuhinga", () -> {
                 	FXGL.play("button.wav");
                 	FXGL.getGameController().gotoGameMenu();
                 }),
                 
-                new MenuButton("Exit", () -> {
+                new MenuButton(SplendorApp.lang.equals("english") ? "Exit" : "E puta", () -> {
                 	FXGL.play("bu.wav");
                     if (SocketClient.getInstance().login) {
                         Bundle b = new Bundle("close");
@@ -161,12 +156,12 @@ public class SplendorMainMenu extends FXGLMenu {
 
             TextField name_inp = new TextField();
             PasswordField password_inp = new PasswordField();
-            pane.addRow(0, getUIFactoryService().newText("Name"), name_inp);
-            pane.addRow(1, getUIFactoryService().newText("Password"), password_inp);
+            pane.addRow(0, getUIFactoryService().newText(SplendorApp.lang.equals("english") ? "Name" : "Ingoa"), name_inp);
+            pane.addRow(1, getUIFactoryService().newText(SplendorApp.lang.equals("english") ? "Password" : "Kupuhipa"), password_inp);
 
-            Button ack = getUIFactoryService().newButton("SignIn");
-            Button signup = getUIFactoryService().newButton("SignUp");
-            Button retrieve = getUIFactoryService().newButton("Retrieve pwd");
+            Button ack = getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "SignIn" : "Takiuru");
+            Button signup = getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "SignUp" : "whakauru");
+            Button retrieve = getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Retrieve pwd" : "Tautuhi anō i tō kupuhipa");
 
             ack.setOnAction(actionEvent -> {
             	FXGL.play("bu.wav");
@@ -192,7 +187,7 @@ public class SplendorMainMenu extends FXGLMenu {
                 TextField newAcc = new TextField();
                 PasswordField newPwd = new PasswordField();
 
-                Button ok = getUIFactoryService().newButton("SignUp");
+                Button ok = getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "SignUp" : "whakauru");
                 ok.setOnAction(event -> {
                 	FXGL.play("bu.wav");
                     Bundle sign_up = new Bundle("signup");
@@ -202,10 +197,10 @@ public class SplendorMainMenu extends FXGLMenu {
                     SocketClient.getInstance().send(sign_up);
                 });
 
-                signup_pane.addRow(0, getUIFactoryService().newText("Set Username"), newName);
-                signup_pane.addRow(1, getUIFactoryService().newText("Set Account"), newAcc);
-                signup_pane.addRow(2, getUIFactoryService().newText("Set Password"), newPwd);
-                dialogService.showBox("Login", signup_pane, ok, getUIFactoryService().newButton("Cancel"));
+                signup_pane.addRow(0, getUIFactoryService().newText(SplendorApp.lang.equals("english") ? "Set Username" : "Tautuhi Ingoa Kaiwhakamahi"), newName);
+                signup_pane.addRow(1, getUIFactoryService().newText(SplendorApp.lang.equals("english") ? "Set Account" : "Tautuhi Pūkete"), newAcc);
+                signup_pane.addRow(2, getUIFactoryService().newText(SplendorApp.lang.equals("english") ? "Set Password" : "Tautuhi Kupuhipa"), newPwd);
+                dialogService.showBox("Login", signup_pane, ok, getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Cancel" : "Whakakore"));
             });
 
             retrieve.setOnAction(actionEvent -> {
@@ -238,7 +233,7 @@ public class SplendorMainMenu extends FXGLMenu {
     private void onlineGame() {
     	FXGL.play("bu.wav");
         if (!isReachable()) {
-            getDialogService().showMessageBox("Server Error");
+            getDialogService().showMessageBox(SplendorApp.lang.equals("english") ? "Server Error" : "Hapa Tūmau");
         } else {
             if (!SocketClient.getInstance().login) {
                 loginPane();
@@ -285,13 +280,29 @@ public class SplendorMainMenu extends FXGLMenu {
 
     @Override
     protected void onUpdate(double tpf) {
+        if (t == 0 && !getSettings().getLanguage().get().getName().toLowerCase().equals(SplendorApp.lang)) {
+            getDialogService().showMessageBox(SplendorApp.lang.equals("english") ? "You should restart the game after changing language!" : "Me tīmata anō te kēmu i muri i te huri reo");
+            t = 1;
+            try {
+                File writeName = new File("src/main/java/language.txt");
+                writeName.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
+                try (FileWriter writer = new FileWriter(writeName);
+                     BufferedWriter out = new BufferedWriter(writer)
+                ) {
+                    out.write(getSettings().getLanguage().get().getName().toLowerCase());
+                    out.flush();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         if (Config.MODE_SCENE.mode != 0 && !Config.MODE_SCENE.online) {
             fireNewGame();
         } else if (SocketClient.getInstance().login) {
             if (temp == 0) {
                 Config.MODE_SCENE.online = true;
                 getSceneService().pushSubScene(Config.MODE_SCENE);
-                FXGL.getNotificationService().pushNotification("Login Successfully");
+                FXGL.getNotificationService().pushNotification(SplendorApp.lang.equals("english") ? "Login Successfully" : "I tutuki pai te takiuru");
                 temp = 1;
             }
             if (SocketClient.getInstance().match) {
@@ -299,7 +310,7 @@ public class SplendorMainMenu extends FXGLMenu {
             }
         }
         if (! SocketClient.getInstance().info_corr) {
-            FXGL.getNotificationService().pushNotification("Information Error");
+            FXGL.getNotificationService().pushNotification(SplendorApp.lang.equals("english") ? "Information Error" : "Hapa Mōhiohio");
             SocketClient.getInstance().info_corr = true;
         }
     }

@@ -1,6 +1,7 @@
 package nz.proj;
 
 import com.almasb.fxgl.app.GameApplication;
+import com.almasb.fxgl.localization.Language;
 import javafx.application.Platform;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
@@ -28,9 +29,12 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import nz.net.SocketClient;
 import nz.ui.LoseInterface;
-import nz.ui.OtherPlayersInfo;
 import nz.ui.WinInterface;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import static com.almasb.fxgl.dsl.FXGL.*;
 public class SplendorApp extends GameApplication {
@@ -58,8 +62,16 @@ public class SplendorApp extends GameApplication {
     List<Point2D> num=new ArrayList<>();
     //判断是不是ai的回合
     boolean ai_round=false;
+    public static String lang = "english";
     @Override
     protected void initSettings(GameSettings settings) {
+        try (InputStreamReader reader = new InputStreamReader(getClass().getResourceAsStream("/assets/languages/language.txt"));
+             BufferedReader br = new BufferedReader(reader)
+        ) {
+            lang = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         SocketClient.getInstance().match = false;
         settings.setHeight(Config.APP_HEIGHT);
         settings.setWidth(Config.APP_WIDTH);
@@ -71,6 +83,9 @@ public class SplendorApp extends GameApplication {
         settings.setMainMenuEnabled(true);
         settings.setManualResizeEnabled(true);
         settings.setPreserveResizeRatio(true);
+        Language maori = new Language("Maori");
+        settings.getSupportedLanguages().add(maori);
+        settings.setDefaultLanguage(SplendorApp.lang.equals("english") ? Language.ENGLISH : maori);
         settings.setSceneFactory(new SceneFactory(){
             @Override
             public FXGLMenu newMainMenu() {
@@ -86,7 +101,7 @@ public class SplendorApp extends GameApplication {
     //鼠标对应动作
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Click") {
+        getInput().addAction(new UserAction(SplendorApp.lang.equals("english") ? "Click" : "Pāwhiri") {
             @Override
             protected void onActionEnd() {
                 mouse_x =getInput().mouseXWorldProperty().getValue();
@@ -117,7 +132,7 @@ public class SplendorApp extends GameApplication {
                 }
             }
         }, MouseButton.PRIMARY);
-        getInput().addAction(new UserAction("Get saved Card") {
+        getInput().addAction(new UserAction(SplendorApp.lang.equals("english") ? "Get saved Card" : "Tiki Kāri i tiakina") {
             @Override
             protected void onActionEnd() {
                 mouse_x =getInput().mouseXWorldProperty().getValue();
@@ -738,11 +753,11 @@ public class SplendorApp extends GameApplication {
             deal_once=1;
 
             List<Button> buttonList=new ArrayList<>(){{
-                add(actionBut("Get three different coins"));
-                add(actionBut("Get two identical coins"));
-                add(actionBut("Purchase a card"));
-                add(actionBut("Buy a development card"));
-                add(actionBut("Reserve a development card"));
+                add(actionBut(SplendorApp.lang.equals("english") ? "Get three different coins" : "Tīkina kia toru ngā moni rerekē"));
+                add(actionBut(SplendorApp.lang.equals("english") ? "Get two identical coins" : "Tīkina kia rua ngā moni ōrite"));
+                add(actionBut(SplendorApp.lang.equals("english") ? "Purchase a card" : "Hokona he kāri"));
+                add(actionBut(SplendorApp.lang.equals("english") ? "Buy a development card" : "Hokona he kāri whanaketanga"));
+                add(actionBut(SplendorApp.lang.equals("english") ? "Reserve a development card" : "Rāhuitia he kāri whanaketanga"));
 
             }};
             for (int i = 0; i < 5; i++) {
