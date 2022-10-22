@@ -222,13 +222,7 @@ public class OtherPlayersComponent extends Component{
         for (String token : tokens) {
             if (token.equals("score")) {
             	score = mapToken.get(token).toString();
-                //Text text = new Text(240,43,mapToken.get(token).toString());
-                //text.setStyle("-fx-font-size: 20;");
-                //entity.getViewComponent().addChild(text);
             } else {
-                //Text text = new Text(40+its*71,79,mapToken.get(token).toString());
-                //text.setStyle("-fx-font-size: 20;");
-                //entity.getViewComponent().addChild(text);
             	gems[its] = mapToken.get(token).toString();
                 its++;
             }
@@ -236,14 +230,8 @@ public class OtherPlayersComponent extends Component{
         int iss=0;
         for (String coin : coins) {
             if (coin.equals("goldToken")) {
-                //Text text = new Text(398,79,mapCoin.get(coin).toString());
-                //text.setStyle("-fx-font-size: 20;");
-                //entity.getViewComponent().addChild(text);
             	goldcoin = mapCoin.get(coin).toString();
             } else {
-                //Text text = new Text(67+iss*71,79,mapCoin.get(coin).toString());
-                //text.setStyle("-fx-font-size: 20;");
-                //entity.getViewComponent().addChild(text);
             	othercoins[iss] = mapCoin.get(coin).toString();
                 iss++;
             }

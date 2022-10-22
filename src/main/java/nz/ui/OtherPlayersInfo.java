@@ -93,7 +93,6 @@ public class OtherPlayersInfo extends SubScene {
 			getContentRoot().getChildren().add(gemsText[i]);
 			getContentRoot().getChildren().add(othercoinsText[i]);
 		}
-		//getContentRoot().getChildren().addAll(savecards);
 	}
 	
 

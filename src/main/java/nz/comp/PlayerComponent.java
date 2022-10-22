@@ -133,9 +133,12 @@ public class PlayerComponent extends Component {
         Texture texture = FXGL.texture("savebg.png", 1625, 370);
         texture.setTranslateX(-113);
         texture.setTranslateY(-230);
-        Rectangle rect = new Rectangle(-113, -210, 1625, 350);
+        Rectangle rect = new Rectangle(-113, -210, 1225, 350);
         Color c = Color.web("grey", 0.4);
         rect.setFill(c);
+        Rectangle rect2 = new Rectangle(1112, -210, 390, 350);
+        Color c2 = Color.web("red", 0.4);
+        rect2.setFill(c2);
         Texture texture1= FXGL.texture("record9.png", 1200, 148);
         texture1.setTranslateX(-100);
         texture1.setTranslateY(0);
@@ -143,6 +146,7 @@ public class PlayerComponent extends Component {
         texture2.setTranslateX(200);
         texture2.setTranslateY(-200);
         entity.getViewComponent().addChild(rect);
+        entity.getViewComponent().addChild(rect2);
         entity.getViewComponent().addChild(texture);
         entity.getViewComponent().addChild(texture1);
         entity.getViewComponent().addChild(texture2);

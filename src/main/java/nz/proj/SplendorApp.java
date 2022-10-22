@@ -514,14 +514,6 @@ public class SplendorApp extends GameApplication {
                 if (actname.equals("getOneSaveCard")){
                     List<Entity> saveList=player.call("getSaveCard");
                     saveList = player.call("buySaveCard", entities);
-                    //把这个改成一个函数
-                    /*
-                    saveList.remove(entities);
-                    for (int i = 0; i < saveList.size(); i++) { //208*i+player.getX()+205,player.getY()-195
-                            saveList.get(i).setPosition(208*i+player.getX()+205,player.getY()-195);
-                        }*/
-                    //player.call("setSaveCard",saveList);
-                  
                     
                 }else {
                     //对最左边的三张等级牌操作
