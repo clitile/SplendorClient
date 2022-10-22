@@ -37,6 +37,8 @@ public class PlayerComponent extends Component {
     Image[] imagesNumber2 = new Image[10];
 	
 	ImageView imageview = new ImageView();
+	
+	int saveposition = 0;
     
     @Override
     public void onAdded() {
@@ -88,7 +90,22 @@ public class PlayerComponent extends Component {
     }
     public void setSaveCard(ArrayList<Entity> saveCard) {
         this.saveCard=saveCard;
+        saveCard.get(saveposition).setPosition(208*saveposition+entity.getX()+205,entity.getY()-195);
+        saveposition += 1;
     }
+    
+    
+    public List<Entity> buySaveCard(Entity entities) {
+    	saveCard.remove(entities);
+    	saveposition -= 1;
+        for (int i = 0; i < saveposition; i++) { //208*i+player.getX()+205,player.getY()-195
+            saveCard.get(i).setPosition(208*i+entity.getX()+205,entity.getY()-195);
+        }
+        
+        return saveCard;
+    }
+    
+    
     public boolean enoughCoin(String a,int b){
         if (b>mapCoin.get(a)+mapToken.get(a)){
                 return false;
@@ -105,6 +122,9 @@ public class PlayerComponent extends Component {
     public void setActivity(String activity) {
         this.activity = activity;
     }
+    
+    
+    
     public String getActivity() {
         return activity;
     }
@@ -148,15 +168,12 @@ public class PlayerComponent extends Component {
         for (String token : tokens) {
             if (token.equals("score")) {
                 Text text = new Text(95,80,mapToken.get(token).toString());
-                //text.setStyle("-fx-font-size: 20;");
                 text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
                 text.setFill(Color.GOLD);
                 text.setStroke(Color.BLACK);
                 entity.getViewComponent().addChild(text);
             } else {
                 Text text = new Text(215+its*125,50,mapToken.get(token).toString());
-                //text.setStyle("-fx-font-size: 20;");
-                //text.setStyle("-fx-font-size: 20;");
                 text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
                 text.setFill(Color.YELLOW);
                 text.setStroke(Color.BLACK);
@@ -168,23 +185,21 @@ public class PlayerComponent extends Component {
         for (String coin : coins) {
             if (coin.equals("goldToken")) {
                 Text text = new Text(840,75,mapCoin.get(coin).toString());
-                //text.setStyle("-fx-font-size: 20;");
                 text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
                 text.setFill(Color.YELLOW);
                 text.setStroke(Color.BLACK);
                 entity.getViewComponent().addChild(text);
-                //text.setStyle("-fx-font-size: 20;");
             } else {
                 Text text = new Text(230+iss*125,105,mapCoin.get(coin).toString());
-                //text.setStyle("-fx-font-size: 20;");
                 text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
                 text.setFill(Color.WHITE);
                 text.setStroke(Color.BLACK);
                 entity.getViewComponent().addChild(text);
-                //text.setStyle("-fx-font-size: 20;");
                 iss++;
             }
         }
+        
+        
     }
 }
 
