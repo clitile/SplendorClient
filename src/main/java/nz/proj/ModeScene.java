@@ -41,7 +41,6 @@ public class ModeScene extends SubScene {
     	Button two_player = FXGL.getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Two Player" : "Pūpāpāho Rua");
         Button three_player = FXGL.getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Three Player" : "Pūpāpāho Toru");
         Button four_player = FXGL.getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Four Player" : "Pūpāpāho Whā");
-        Button find_friends = FXGL.getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Find Friends" : "Kimi Hoa");
         
         
         two_player.setLayoutX(1100);
@@ -59,15 +58,8 @@ public class ModeScene extends SubScene {
         four_player.setLayoutY(540 - 90);
         four_player.setMinSize(600,91);
         four_player.setStyle("-fx-background-image: url('assets/textures/butt.png')");
-
-        find_friends.setLayoutX(1220);
-        find_friends.setLayoutY(740 - 90);
-        find_friends.setMinSize(600,91);
-        find_friends.setStyle("-fx-background-image: url('assets/textures/butt.png')");
-        
         two_player.setOnAction(event -> {
         	FXGL.play("bu.wav");
-        	
             mode = 2;
             getSceneService().popSubScene();
             
@@ -95,31 +87,6 @@ public class ModeScene extends SubScene {
                 sendMatch(4);
                 FXGL.getSceneService().pushSubScene(new MatchScene());
             }
-        });
-        find_friends.setOnAction(actionEvent -> {
-            FXGL.play("bu.wav");
-
-            GridPane friends_pane = new GridPane();
-            friends_pane.setAlignment(Pos.CENTER);
-            friends_pane.setHgap(30);
-            friends_pane.setVgap(15);
-
-            TextField name = new TextField("invite your friends via a name or names: name1 name2 ...");
-            name.setPrefWidth(400);
-            Button ok = getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "ok" : "Ka pai");
-
-            ok.setOnAction(event -> {
-                String[] names = name.getText().split(" ");
-                mode = names.length + 1;
-                Bundle b = new Bundle("friends");
-                b.put("name", SocketClient.getInstance().name);
-                b.put("friends", names);
-                SocketClient.getInstance().send(b);
-            });
-
-            friends_pane.addRow(0, getUIFactoryService().newText(SplendorApp.lang.equals("english") ? "Usernames" : "Ngā Ingoa Kaiwhakamahi"));
-            friends_pane.addRow(1, name);
-            FXGL.getDialogService().showBox(SplendorApp.lang.equals("english") ? "Find Friends" : "Kimi Hoa", friends_pane, ok, getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Cancel" : "Whakakore"));
         });
         
         
@@ -166,10 +133,45 @@ public class ModeScene extends SubScene {
         borderpanet2.setStyle("-fx-background-image: url('assets/textures/tit2.png')");
         borderpanet2.setLayoutX(1080);
         borderpanet2.setLayoutY(800);
+        pane.getChildren().addAll(two_player, three_player, four_player, borderpane, next, borderpanet1, borderpanet2);
 
-        pane.getChildren().addAll(two_player, three_player, four_player, find_friends, borderpane, next, borderpanet1, borderpanet2);
-        
-        
+        Button find_friends = FXGL.getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Find Friends" : "Kimi Hoa");
+        find_friends.setLayoutX(1220);
+        find_friends.setLayoutY(740 - 90);
+        find_friends.setMinSize(600,91);
+        find_friends.setStyle("-fx-background-image: url('assets/textures/butt.png')");
+        find_friends.setOnAction(actionEvent -> {
+            if (online) {
+                FXGL.play("bu.wav");
+
+                GridPane friends_pane = new GridPane();
+                friends_pane.setAlignment(Pos.CENTER);
+                friends_pane.setHgap(30);
+                friends_pane.setVgap(15);
+
+                TextField name = new TextField("invite your friends via a name or names: name1 name2 ...");
+                name.setPrefWidth(400);
+                Button ok = getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "ok" : "Ka pai");
+
+                ok.setOnAction(event -> {
+                    String[] names = name.getText().split(" ");
+                    mode = names.length + 1;
+                    Bundle b = new Bundle("friends");
+                    b.put("name", SocketClient.getInstance().name);
+                    b.put("friends", names);
+                    SocketClient.getInstance().send(b);
+                });
+
+                friends_pane.addRow(0, getUIFactoryService().newText(SplendorApp.lang.equals("english") ? "Usernames" : "Ngā Ingoa Kaiwhakamahi"));
+                friends_pane.addRow(1, name);
+                FXGL.getDialogService().showBox(SplendorApp.lang.equals("english") ? "Find Friends" : "Kimi Hoa", friends_pane, ok, getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Cancel" : "Whakakore"));
+            } else {
+                FXGL.getNotificationService().pushNotification("not login");
+            }
+        });
+        pane.getChildren().add(find_friends);
+
+
         pane.setStyle("-fx-background-image: url('assets/textures/modescene2.png')");
         pane.setPrefHeight(1080);
         pane.setPrefWidth(1920);

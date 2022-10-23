@@ -107,8 +107,8 @@ public class SplendorMainMenu extends FXGLMenu {
                 	//getSceneService().pushSubScene(storyLazyValue.get());
                 	//getSceneService().popSubScene();
                 	FXGL.play("bu.wav");
-                	
-                    Config.MODE_SCENE.online = false;
+
+                    ModeScene.online = false;
                     getSceneService().pushSubScene(Config.MODE_SCENE);
                 }),
                 new MenuButton(SplendorApp.lang.equals("english") ? "Online Game" : "Kēmu Tuihono", this::onlineGame),
@@ -296,11 +296,11 @@ public class SplendorMainMenu extends FXGLMenu {
                 e.printStackTrace();
             }
         }
-        if (ModeScene.mode != 0 && !Config.MODE_SCENE.online) {
+        if (ModeScene.mode != 0 && !ModeScene.online) {
             fireNewGame();
         } else if (SocketClient.getInstance().login) {
             if (temp == 0) {
-                Config.MODE_SCENE.online = true;
+                ModeScene.online = true;
                 getSceneService().pushSubScene(Config.MODE_SCENE);
                 FXGL.getNotificationService().pushNotification(SplendorApp.lang.equals("english") ? "Login Successfully" : "I tutuki pai te takiuru");
                 temp = 1;

@@ -19,17 +19,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.28</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.github.almasb</groupId>
       <artifactId>fxgl</artifactId>
       <version>17.2</version>
@@ -122,24 +111,4 @@
       </plugins>
     </pluginManagement>
   </build>
-  <profiles>
-    <profile>
-      <id>ios</id>
-      <properties>
-        <gluonfx.target>ios</gluonfx.target>
-      </properties>
-    </profile>
-    <profile>
-      <id>android</id>
-      <properties>
-        <gluonfx.target>android</gluonfx.target>
-      </properties>
-    </profile>
-    <profile>
-      <id>web</id>
-      <properties>
-        <gluonfx.target>web</gluonfx.target>
-      </properties>
-    </profile>
-  </profiles>
 </project>
