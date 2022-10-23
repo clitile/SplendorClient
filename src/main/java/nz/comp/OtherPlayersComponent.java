@@ -19,6 +19,7 @@ import javafx.scene.text.Text;
 import nz.net.SocketClient;
 import nz.proj.MatchScene;
 import nz.proj.ModeScene;
+import nz.proj.SplendorApp;
 import nz.ui.OtherPlayersInfo;
 
 public class OtherPlayersComponent extends Component{
@@ -30,7 +31,7 @@ public class OtherPlayersComponent extends Component{
     //存储玩家持有的硬币
     private HashMap<String,Integer> mapCoin;
     //存储玩家持有的保留卡
-    private List<Entity> saveCard;
+    public static  List<Entity> saveCard;
     //存储玩家当前的活动
     private String activity="";
     //登录用户名称
@@ -40,6 +41,8 @@ public class OtherPlayersComponent extends Component{
     private LazyValue<OtherPlayersInfo> subscene = new LazyValue<>(() -> {
     	return new OtherPlayersInfo();
     });
+    
+    int saveposition = 0;
     
     public static String score = "0";
     public static String goldcoin = "0";
@@ -91,12 +94,27 @@ public class OtherPlayersComponent extends Component{
     public void addCoin(String name){
         mapCoin.replace(name,1+mapCoin.get(name));
     }
+    
+    
     public List<Entity> getSaveCard() {
         return saveCard;
     }
     public void setSaveCard(ArrayList<Entity> saveCard) {
         this.saveCard=saveCard;
+        saveCard.get(saveposition).setPosition(40*saveposition+entity.getX()+200,entity.getY()+50*saveposition);
+        saveposition += 1;
     }
+    public List<Entity> buySaveCard(Entity entities) {
+    	saveCard.remove(entities);
+    	saveposition -= 1;
+        for (int i = 0; i < saveposition; i++) { //208*i+player.getX()+205,player.getY()-195
+            saveCard.get(i).setPosition(40*saveposition+entity.getX()+20,entity.getY()+50*saveposition);
+        }
+        
+        return saveCard;
+    }
+    
+    
     public boolean enoughCoin(String a,int b){
         if (b>mapCoin.get(a)+mapToken.get(a)){
                 return false;
@@ -117,7 +135,7 @@ public class OtherPlayersComponent extends Component{
         return activity;
     }
     public void showInfo(){
-    	System.out.println(getSaveCard());
+    	
     	int[] y = {50, 300, 550};
     	int i = 0;
     	
@@ -129,7 +147,7 @@ public class OtherPlayersComponent extends Component{
         button.setTranslateX(146);
         button.setTranslateY(18);
         button.setOnAction(event -> {
-        	FXGL.play("button.wav");
+        	FXGL.play("open.wav");
             getSceneService().pushSubScene(new OtherPlayersInfo());
         });
         
@@ -204,13 +222,7 @@ public class OtherPlayersComponent extends Component{
         for (String token : tokens) {
             if (token.equals("score")) {
             	score = mapToken.get(token).toString();
-                //Text text = new Text(240,43,mapToken.get(token).toString());
-                //text.setStyle("-fx-font-size: 20;");
-                //entity.getViewComponent().addChild(text);
             } else {
-                //Text text = new Text(40+its*71,79,mapToken.get(token).toString());
-                //text.setStyle("-fx-font-size: 20;");
-                //entity.getViewComponent().addChild(text);
             	gems[its] = mapToken.get(token).toString();
                 its++;
             }
@@ -218,14 +230,8 @@ public class OtherPlayersComponent extends Component{
         int iss=0;
         for (String coin : coins) {
             if (coin.equals("goldToken")) {
-                //Text text = new Text(398,79,mapCoin.get(coin).toString());
-                //text.setStyle("-fx-font-size: 20;");
-                //entity.getViewComponent().addChild(text);
             	goldcoin = mapCoin.get(coin).toString();
             } else {
-                //Text text = new Text(67+iss*71,79,mapCoin.get(coin).toString());
-                //text.setStyle("-fx-font-size: 20;");
-                //entity.getViewComponent().addChild(text);
             	othercoins[iss] = mapCoin.get(coin).toString();
                 iss++;
             }
