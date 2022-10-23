@@ -51,6 +51,8 @@ public class SplendorApp extends GameApplication {
     //AI player的保留卡
     public static List<Entity> AIsaveList;
     
+    int gamestate = 1;
+    
     //鼠标坐标
     double mouse_x;
     double mouse_y;
@@ -168,8 +170,6 @@ public class SplendorApp extends GameApplication {
     	//背景音乐
     	FXGL.loopBGM("ba.mp3");
     	
-    	
-    	
         getGameWorld().addEntityFactory(new SplendorFactory());
         f_card_3=new ArrayList<>();
         //中间的十二张牌 --- 卡片上需要的不同颜色的宝石用不同颜色的圆形底+数字呈现，最好旁边再加上宝石图片，上方加上有点透明的矩形
@@ -183,6 +183,7 @@ public class SplendorApp extends GameApplication {
         Platform.runLater(new Runnable() {
     		@Override
         	public void run() {
+    			
     			ingame();
     		}
         });
@@ -293,7 +294,9 @@ public class SplendorApp extends GameApplication {
     }
     public void ingame() {
     	spawn("back-ingame");
-
+    	
+    	FXGL.getSettings().setGlobalMusicVolume(0.5);
+    	
         player = getGameWorld().spawn("player",new SpawnData(400,950));
 
         BorderPane borderpane = new BorderPane();
@@ -834,13 +837,20 @@ public class SplendorApp extends GameApplication {
     public void player_win(Entity player){
         int the_score=player.call("getScore");
         if (the_score>=15) {
+        	FXGL.getSettings().setGlobalMusicVolume(0);
             if (player.equals(this.player)) {
-                //getNotificationService().pushNotification("Oh~ You win the game");
+                for(int i=0; i<3000; i++) {
+                	i += 1;
+                }
+                
             	FXGL.play("win.wav");
                 getSceneService().pushSubScene(new WinInterface());
             	
             } else {
-                //getNotificationService().pushNotification("Oh~ You loss the game");
+            	FXGL.getSettings().setGlobalMusicVolume(0);
+            	for(int i=0; i<3000; i++) {
+                	i += 1;
+                }
             	FXGL.play("lose.wav");
             	getSceneService().pushSubScene(new LoseInterface());
             }
