@@ -101,7 +101,9 @@ public class OtherPlayersComponent extends Component{
     }
     public void setSaveCard(ArrayList<Entity> saveCard) {
         this.saveCard=saveCard;
-        saveCard.get(saveposition).setPosition(40*saveposition+entity.getX()+200,entity.getY()+50*saveposition);
+        saveCard.get(saveposition).setScaleX(0.5);
+        saveCard.get(saveposition).setScaleY(0.5);
+        saveCard.get(saveposition).setPosition(60*saveposition+entity.getX()+200,entity.getY()+50*saveposition);
         saveposition += 1;
     }
     public List<Entity> buySaveCard(Entity entities) {
