@@ -4,6 +4,7 @@ import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.core.serialization.Bundle;
 import com.almasb.fxgl.dsl.FXGL;
 import nz.proj.Config;
+import nz.proj.ModeScene;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -69,11 +70,13 @@ public class SocketClient extends WebSocketClient {
         if (mess.getName().equals("login")) {
             login = true;
             FXGL.set("login", true);
-            System.out.println("login" + FXGL.getb("login"));
         } else if (mess.getName().equals("matchFind")) {
             playing = mess.get("next");
             players = mess.get("players");
             allP.addAll(players);
+            if (mess.getData().containsKey("mode")) {
+                ModeScene.mode = mess.get("mode");
+            }
             for (int i = 0; i < players.size(); i++) {
                 if (players.get(i).equals(name)) {
                     players.remove(i);
@@ -83,12 +86,10 @@ public class SocketClient extends WebSocketClient {
             match = true;
             id = mess.get("id");
             int seed = mess.get("seed");
-            System.out.println(seed);
             r = FXGLMath.getRandom(seed);
             FXGL.set("playersNames", mess.get("players"));
             isThis = mess.get("next").equals(this.name);
             round_begin = isThis;
-            System.out.println("myRound: " + isThis);
         } else if (mess.getName().equals("act")) {
             x = mess.get("x");
             y = mess.get("y");

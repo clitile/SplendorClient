@@ -200,7 +200,7 @@ public class SplendorMainMenu extends FXGLMenu {
                 signup_pane.addRow(0, getUIFactoryService().newText(SplendorApp.lang.equals("english") ? "Set Username" : "Tautuhi Ingoa Kaiwhakamahi"), newName);
                 signup_pane.addRow(1, getUIFactoryService().newText(SplendorApp.lang.equals("english") ? "Set Account" : "Tautuhi Pūkete"), newAcc);
                 signup_pane.addRow(2, getUIFactoryService().newText(SplendorApp.lang.equals("english") ? "Set Password" : "Tautuhi Kupuhipa"), newPwd);
-                dialogService.showBox("Login", signup_pane, ok, getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Cancel" : "Whakakore"));
+                dialogService.showBox(SplendorApp.lang.equals("english") ? "Login" : "Takiuru", signup_pane, ok, getUIFactoryService().newButton(SplendorApp.lang.equals("english") ? "Cancel" : "Whakakore"));
             });
 
             retrieve.setOnAction(actionEvent -> {
@@ -283,7 +283,7 @@ public class SplendorMainMenu extends FXGLMenu {
             t = 1;
             try {
                 File writeName = new File("src/main/java/language.txt");
-                writeName.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
+                writeName.createNewFile();
                 try (FileWriter writer = new FileWriter(writeName);
                      BufferedWriter out = new BufferedWriter(writer)
                 ) {
@@ -294,7 +294,7 @@ public class SplendorMainMenu extends FXGLMenu {
                 e.printStackTrace();
             }
         }
-        if (Config.MODE_SCENE.mode != 0 && !Config.MODE_SCENE.online) {
+        if (ModeScene.mode != 0 && !Config.MODE_SCENE.online) {
             fireNewGame();
         } else if (SocketClient.getInstance().login) {
             if (temp == 0) {
